@@ -249,21 +249,14 @@
     "href": "index.html",
     "title": "OHDSI EU 2026 Workshop",
     "section": "",
-    "text": "Quarto enables you to weave together content and executable code into a finished document. To learn more about Quarto see https://quarto.org."
+    "text": "Welcome to the website for the OHDSI EU 2026 workshop on ‘…’"
   },
   {
-    "objectID": "index.html#quarto",
-    "href": "index.html#quarto",
+    "objectID": "index.html#introduction",
+    "href": "index.html#introduction",
     "title": "OHDSI EU 2026 Workshop",
     "section": "",
-    "text": "Quarto enables you to weave together content and executable code into a finished document. To learn more about Quarto see https://quarto.org."
-  },
-  {
-    "objectID": "index.html#running-code",
-    "href": "index.html#running-code",
-    "title": "OHDSI EU 2026 Workshop",
-    "section": "Running Code",
-    "text": "Running Code\nWhen you click the Render button a document will be generated that includes both content and the output of embedded code. You can embed code like this:\n\n1 + 1\n\n[1] 2\n\n\nYou can add options to executable code like this\n\n\n[1] 4\n\n\nThe echo: false option disables the printing of code (only output is displayed)."
+    "text": "Welcome to the website for the OHDSI EU 2026 workshop on ‘…’"
   },
   {
     "objectID": "CohortConstructor/index.html#introduction",
@@ -284,7 +277,7 @@
     "href": "CohortConstructor/index.html#omop-cohorts-in-r-2",
     "title": "CohortConstructor",
     "section": "OMOP Cohorts in R",
-    "text": "OMOP Cohorts in R\n\n\n\nDownload completed!\n\n\n\ncdm$cohort\n\n# Source:   table&lt;my_study_cohort&gt; [?? x 4]\n# Database: DuckDB 1.5.0 [unknown@Linux 6.14.0-1017-azure:R 4.5.3//tmp/RtmpJ6MoLj/file2c514c230c3d.duckdb]\n   cohort_definition_id subject_id cohort_start_date cohort_end_date\n                  &lt;int&gt;      &lt;int&gt; &lt;date&gt;            &lt;date&gt;         \n 1                    2       1947 2019-03-15        2019-03-15     \n 2                    2       2005 2001-04-12        2001-05-03     \n 3                    2       2256 1994-09-06        1994-09-13     \n 4                    2       2344 1988-10-18        1988-11-08     \n 5                    2       2456 2018-06-09        2018-06-23     \n 6                    2       2806 2001-09-11        2001-09-25     \n 7                    2       2915 1985-08-30        1985-09-20     \n 8                    2       3227 2017-11-30        2017-12-21     \n 9                    2       3413 1985-03-08        1985-03-29     \n10                    2       3432 2001-02-22        2001-03-08     \n# ℹ more rows"
+    "text": "OMOP Cohorts in R\n\n\n\nDownload completed!\n\n\n\ncdm$cohort\n\n# Source:   table&lt;my_study_cohort&gt; [?? x 4]\n# Database: DuckDB 1.5.0 [unknown@Linux 6.14.0-1017-azure:R 4.5.3//tmp/RtmpkR6Whq/file1601197c0621.duckdb]\n   cohort_definition_id subject_id cohort_start_date cohort_end_date\n                  &lt;int&gt;      &lt;int&gt; &lt;date&gt;            &lt;date&gt;         \n 1                    1        376 1991-04-02        1991-04-13     \n 2                    1        820 1974-12-26        1975-01-04     \n 3                    1       1146 2004-08-21        2004-09-03     \n 4                    1       1273 1973-12-07        1973-12-16     \n 5                    1       1314 1955-12-28        1956-01-07     \n 6                    1       1605 1991-03-22        1991-04-04     \n 7                    1       2164 1985-05-17        1985-05-30     \n 8                    1       2359 1957-02-07        1957-02-16     \n 9                    1       2782 1953-02-07        1953-02-16     \n10                    1       3991 1981-08-23        1981-09-05     \n# ℹ more rows"
   },
   {
     "objectID": "CohortConstructor/index.html#omop-cohorts-in-r-3",
@@ -312,7 +305,7 @@
     "href": "CohortConstructor/index.html#omop-cohorts-in-r-6",
     "title": "CohortConstructor",
     "section": "OMOP Cohorts in R",
-    "text": "OMOP Cohorts in R\n\nCohort codelist: Codelists used to define entry events and inclusion criteria for each cohort.\n\n\n\nattr(cdm$cohort, \"cohort_codelist\")\n\n# Source:   table&lt;my_study_cohort_codelist&gt; [?? x 4]\n# Database: DuckDB 1.5.0 [unknown@Linux 6.14.0-1017-azure:R 4.5.3//tmp/RtmpJ6MoLj/file2c514c230c3d.duckdb]\n  cohort_definition_id codelist_name     concept_id codelist_type\n                 &lt;int&gt; &lt;chr&gt;                  &lt;int&gt; &lt;chr&gt;        \n1                    1 viral_pharyngitis    4112343 index event  \n2                    2 viral_sinusitis     40481087 index event"
+    "text": "OMOP Cohorts in R\n\nCohort codelist: Codelists used to define entry events and inclusion criteria for each cohort.\n\n\n\nattr(cdm$cohort, \"cohort_codelist\")\n\n# Source:   table&lt;my_study_cohort_codelist&gt; [?? x 4]\n# Database: DuckDB 1.5.0 [unknown@Linux 6.14.0-1017-azure:R 4.5.3//tmp/RtmpkR6Whq/file1601197c0621.duckdb]\n  cohort_definition_id codelist_name     concept_id codelist_type\n                 &lt;int&gt; &lt;chr&gt;                  &lt;int&gt; &lt;chr&gt;        \n1                    1 viral_pharyngitis    4112343 index event  \n2                    2 viral_sinusitis     40481087 index event"
   },
   {
     "objectID": "CohortConstructor/index.html#cohortconstructor-pipeline",
