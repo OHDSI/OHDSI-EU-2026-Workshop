@@ -3,19 +3,21 @@ project:
   output-dir: _site
 
 website:
-  title: "My Website Title"
-# uncomment the mext block if you want to add more pages
-#  navbar:
-#    left:
-#      - href: topic1.qmd
-#        text: Topic1
+  title: "OHDSI EU 2026 Workshop"
+  navbar:
+    left:
+      - href: index.qmd
+        text: Home
+      - href: setup.qmd
+        text: Setup
+      - href: CohortConstructor/index.qmd
+        text: CohortConstructor
+      - href: PhenotypeR/index.qmd
+        text: PhenotypeR
   page-footer:
-    left: "© 2025 Your Name"
     right:
       - icon: github
-        href: https://github.com/yourname/yourrepo
-      - icon: twitter
-        href: https://twitter.com/yourhandle
+        href: https://github.com/ohdsi/OHDSI-EU-2026-Workshop
 
 format:
   html:

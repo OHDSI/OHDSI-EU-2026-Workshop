@@ -48,6 +48,10 @@ po/*~
 # RStudio Connect folder
 rsconnect/
 
+.DS_Store
+
 /_site/
 *.html
 /.quarto/
+
+**/*.quarto_ipynb
