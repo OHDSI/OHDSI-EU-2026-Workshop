@@ -1,5 +1,348 @@
 [
   {
+    "objectID": "CohortConstructor/index.html#motivation",
+    "href": "CohortConstructor/index.html#motivation",
+    "title": "CohortConstructor",
+    "section": "Motivation",
+    "text": "Motivation\nA cohort is a group of individuals that satisfy some inclusion criteria within a defined time period (inclusion criteria + time)."
+  },
+  {
+    "objectID": "CohortConstructor/index.html#motivation-build-in-a-tidy-way",
+    "href": "CohortConstructor/index.html#motivation-build-in-a-tidy-way",
+    "title": "CohortConstructor",
+    "section": "Motivation: Build in a tidy way",
+    "text": "Motivation: Build in a tidy way\n\nomopgenerics and CDMConnector define an ecosystem of R packages that allow us to interact with an OMOP CDM instance using packages such as dplyr and tidyr.\n\n\n\nlibrary(omock)\ncdm &lt;- mockCdmFromDataset(source = \"duckdb\")\ncdm$person\n\n# Source:   table&lt;person&gt; [?? x 18]\n# Database: DuckDB 1.5.0 [unknown@Linux 6.17.0-1008-azure:R 4.5.3//tmp/RtmpB6ozw1/file2ea52c0e424b.duckdb]\n   person_id gender_concept_id year_of_birth month_of_birth day_of_birth birth_datetime      race_concept_id\n       &lt;int&gt;             &lt;int&gt;         &lt;int&gt;          &lt;int&gt;        &lt;int&gt; &lt;dttm&gt;                        &lt;int&gt;\n 1         6              8532          1963             12           31 1963-12-31 00:00:00            8516\n 2       123              8507          1950              4           12 1950-04-12 00:00:00            8527\n 3       129              8507          1974             10            7 1974-10-07 00:00:00            8527\n 4        16              8532          1971             10           13 1971-10-13 00:00:00            8527\n 5        65              8532          1967              3           31 1967-03-31 00:00:00            8516\n 6        74              8532          1972              1            5 1972-01-05 00:00:00            8527\n 7        42              8532          1909             11            2 1909-11-02 00:00:00            8527\n 8       187              8507          1945              7           23 1945-07-23 00:00:00            8527\n 9        18              8532          1965             11           17 1965-11-17 00:00:00            8527\n10       111              8532          1975              5            2 1975-05-02 00:00:00            8527\n# ℹ more rows\n# ℹ 11 more variables: ethnicity_concept_id &lt;int&gt;, location_id &lt;int&gt;, provider_id &lt;int&gt;, care_site_id &lt;int&gt;,\n#   person_source_value &lt;chr&gt;, gender_source_value &lt;chr&gt;, gender_source_concept_id &lt;int&gt;, race_source_value &lt;chr&gt;,\n#   race_source_concept_id &lt;int&gt;, ethnicity_source_value &lt;chr&gt;, ethnicity_source_concept_id &lt;int&gt;"
+  },
+  {
+    "objectID": "CohortConstructor/index.html#motivation-build-in-a-tidy-way-1",
+    "href": "CohortConstructor/index.html#motivation-build-in-a-tidy-way-1",
+    "title": "CohortConstructor",
+    "section": "Motivation: Build in a tidy way",
+    "text": "Motivation: Build in a tidy way\n\nlibrary(dplyr)\ncdm$person |&gt;\n  select(person_id, sex = gender_concept_id) |&gt;\n  left_join(\n    cdm$observation_period |&gt;\n      select(person_id, obs_start = observation_period_start_date),\n    by = \"person_id\"\n  )\n\n# Source:   SQL [?? x 3]\n# Database: DuckDB 1.5.0 [unknown@Linux 6.17.0-1008-azure:R 4.5.3//tmp/RtmpB6ozw1/file2ea52c0e424b.duckdb]\n   person_id   sex obs_start \n       &lt;int&gt; &lt;int&gt; &lt;date&gt;    \n 1         6  8532 1963-12-31\n 2        16  8532 1971-10-14\n 3        42  8532 1909-11-03\n 4        18  8532 1965-11-17\n 5        35  8532 1960-03-22\n 6        40  8507 1951-12-05\n 7        53  8507 1962-08-15\n 8         9  8532 1978-07-20\n 9         2  8532 1920-06-01\n10        49  8507 1972-11-05\n# ℹ more rows\n\n\n\nFor more details on this approach please refer to the following book:\nBurn, E., & Català, M. (2025). Tidy R programming with the OMOP Common Data Model (first edition). Zenodo. https://doi.org/10.5281/zenodo.17532124. Online version"
+  },
+  {
+    "objectID": "CohortConstructor/index.html#motivation-order-of-operations-atlas",
+    "href": "CohortConstructor/index.html#motivation-order-of-operations-atlas",
+    "title": "CohortConstructor",
+    "section": "Motivation: order of operations (ATLAS)",
+    "text": "Motivation: order of operations (ATLAS)\nATLAS is a user friendly interface used to build cohorts (https://atlas-demo.ohdsi.org):"
+  },
+  {
+    "objectID": "CohortConstructor/index.html#motivation-order-of-operations",
+    "href": "CohortConstructor/index.html#motivation-order-of-operations",
+    "title": "CohortConstructor",
+    "section": "Motivation: order of operations",
+    "text": "Motivation: order of operations\n\n\n\ncdm$my_cohort |&gt;\n  # require 180 days of prior history\n  inner_join(\n    cdm$observation_period |&gt;\n      select(\n        \"subject_id\" = \"person_id\", \n        \"start_obs\" = \"observation_period_start_date\",\n        \"end_obs\" = \"observation_period_end_date\"\n      ),\n    by = \"subject_id\"\n  ) |&gt;\n  filter(start_obs + 180 &lt;= cohort_start_date & cohort_start_date &lt;= end_obs) |&gt;\n  # restrict to only first event\n  group_by(cohort_definition_id, subject_id) |&gt;\n  filter(cohort_start_date == min(cohort_start_date)) |&gt;\n  ungroup()\n\n::: {.column width=“8%” style = “display: flex; align-items: center; justify-content: center;} vs\n\n\n\ncdm$my_cohort |&gt;\n  # restrict to only first event\n  group_by(cohort_definition_id, subject_id) |&gt;\n  filter(cohort_start_date == min(cohort_start_date)) |&gt;\n  ungroup() |&gt;\n  # require 180 days of prior history\n  inner_join(\n    cdm$observation_period |&gt;\n      select(\n        \"subject_id\" = \"person_id\", \n        \"start_obs\" = \"observation_period_start_date\",\n        \"end_obs\" = \"observation_period_end_date\"\n      ),\n    by = \"subject_id\"\n  ) |&gt;\n  filter(start_obs + 180 &lt;= cohort_start_date & cohort_start_date &lt;= end_obs)\n\n::::"
+  },
+  {
+    "objectID": "CohortConstructor/index.html#motivation-common-operations",
+    "href": "CohortConstructor/index.html#motivation-common-operations",
+    "title": "CohortConstructor",
+    "section": "Motivation: common operations",
+    "text": "Motivation: common operations\n\n\n\ncdm$my_cohort |&gt;\n  # require 180 days of prior history\n  inner_join(\n    cdm$observation_period |&gt;\n      select(\n        \"subject_id\" = \"person_id\", \n        \"start_obs\" = \"observation_period_start_date\",\n        \"end_obs\" = \"observation_period_end_date\"\n      ),\n    by = \"subject_id\"\n  ) |&gt;\n  filter(start_obs + 180 &lt;= cohort_start_date & cohort_start_date &lt;= end_obs) |&gt;\n  # restrict to only first event\n  group_by(cohort_definition_id, subject_id) |&gt;\n  filter(cohort_start_date == min(cohort_start_date)) |&gt;\n  ungroup()\n\n::: {.column width=“8%” style = “display: flex; align-items: center; justify-content: center;} to\n\n\n\ncdm$my_cohort |&gt;\n  # require 180 days of prior history\n  requirePriorObservation(minPriorObservation = 180) |&gt;\n  # restrict to only first event\n  requireIsFirstEntry()\n\n::::"
+  },
+  {
+    "objectID": "CohortConstructor/index.html#motivation-1",
+    "href": "CohortConstructor/index.html#motivation-1",
+    "title": "CohortConstructor",
+    "section": "Motivation",
+    "text": "Motivation\n\nTidy way\nControl order of operations\nFlexibility"
+  },
+  {
+    "objectID": "CohortConstructor/index.html#introduction",
+    "href": "CohortConstructor/index.html#introduction",
+    "title": "CohortConstructor",
+    "section": "Introduction",
+    "text": "Introduction\n\nCohortConstructor package is designed to support cohort building pipelines in R, using data mapped to the OMOP Common Data Model.\n\n\n\n\n\nThe code is publicly available in OHDSI’s GitHub repository CohortConstructor.\n\n\n\n\n\nCohortConstructor v0.6.3 is available in CRAN.\n\n\n\n\n\nVignettes with further information can be found in the package website."
+  },
+  {
+    "objectID": "CohortConstructor/index.html#omop-cohorts-in-r-1",
+    "href": "CohortConstructor/index.html#omop-cohorts-in-r-1",
+    "title": "CohortConstructor",
+    "section": "OMOP Cohorts in R",
+    "text": "OMOP Cohorts in R\n\nThe &lt;cohort_table&gt; class is defined in the R package omopgenerics.\nThis is the class that CohortConstructor uses, as well as other OMOP analytical packages.\nAs defined in omopgenerics, a &lt;cohort_table&gt; must have at least the following 4 columns (without any missing values in them):\n\ncohort_definition_id: Unique identifier for each cohort in the table.\nsubject_id: Unique patient identifier.\ncohort_start_date: Date when the person enters the cohort.\ncohort_end_date: Date when the person exits the cohort."
+  },
+  {
+    "objectID": "CohortConstructor/index.html#omop-cohorts-in-r-2",
+    "href": "CohortConstructor/index.html#omop-cohorts-in-r-2",
+    "title": "CohortConstructor",
+    "section": "OMOP Cohorts in R",
+    "text": "OMOP Cohorts in R\n\n\n\nDownload completed!\n\n\n\ncdm$cohort\n\n# Source:   table&lt;my_study_cohort&gt; [?? x 4]\n# Database: DuckDB 1.5.0 [unknown@Linux 6.17.0-1008-azure:R 4.5.3//tmp/RtmpB6ozw1/file2ea548605e4f.duckdb]\n   cohort_definition_id subject_id cohort_start_date cohort_end_date\n                  &lt;int&gt;      &lt;int&gt; &lt;date&gt;            &lt;date&gt;         \n 1                    1        971 1991-04-18        1991-05-01     \n 2                    1       1376 1992-06-26        1992-07-09     \n 3                    1       1611 1977-02-16        1977-02-28     \n 4                    1       1982 1957-06-11        1957-06-22     \n 5                    1       1990 1975-07-09        1975-07-22     \n 6                    1       3092 2017-07-08        2017-07-19     \n 7                    1       3717 2010-02-02        2010-02-11     \n 8                    1       4260 1939-01-27        1939-02-06     \n 9                    1       4493 2004-07-11        2004-07-24     \n10                    1       5252 1992-01-23        1992-01-31     \n# ℹ more rows"
+  },
+  {
+    "objectID": "CohortConstructor/index.html#omop-cohorts-in-r-3",
+    "href": "CohortConstructor/index.html#omop-cohorts-in-r-3",
+    "title": "CohortConstructor",
+    "section": "OMOP Cohorts in R",
+    "text": "OMOP Cohorts in R\nAdditionally, the &lt;cohort_table&gt; object has the follwing attributes:\n\nSettings: Relate each cohort definition ID with a cohort name and other variables that define the cohort.\n\n\n\nsettings(cdm$cohort)\n\n# A tibble: 2 × 4\n  cohort_definition_id cohort_name       cdm_version vocabulary_version\n                 &lt;int&gt; &lt;chr&gt;             &lt;chr&gt;       &lt;chr&gt;             \n1                    1 viral_pharyngitis 5.3         v5.0 18-JAN-19    \n2                    2 viral_sinusitis   5.3         v5.0 18-JAN-19"
+  },
+  {
+    "objectID": "CohortConstructor/index.html#omop-cohorts-in-r-4",
+    "href": "CohortConstructor/index.html#omop-cohorts-in-r-4",
+    "title": "CohortConstructor",
+    "section": "OMOP Cohorts in R",
+    "text": "OMOP Cohorts in R\n\nAttrition: Store information on each inclusion criteria applied and how many records and subjects were kept after.\n\n\n\nattrition(cdm$cohort)\n\n# A tibble: 8 × 7\n  cohort_definition_id number_records number_subjects reason_id reason                excluded_records excluded_subjects\n                 &lt;int&gt;          &lt;int&gt;           &lt;int&gt;     &lt;int&gt; &lt;chr&gt;                            &lt;int&gt;             &lt;int&gt;\n1                    1          10217            2606         1 Initial qualifying e…                0                 0\n2                    1          10217            2606         2 Record in observation                0                 0\n3                    1          10217            2606         3 Not missing record d…                0                 0\n4                    1          10217            2606         4 Merge overlapping re…                0                 0\n5                    2          17268            2686         1 Initial qualifying e…                0                 0\n6                    2          17268            2686         2 Record in observation                0                 0\n7                    2          17268            2686         3 Not missing record d…                0                 0\n8                    2          17268            2686         4 Merge overlapping re…                0                 0"
+  },
+  {
+    "objectID": "CohortConstructor/index.html#omop-cohorts-in-r-5",
+    "href": "CohortConstructor/index.html#omop-cohorts-in-r-5",
+    "title": "CohortConstructor",
+    "section": "OMOP Cohorts in R",
+    "text": "OMOP Cohorts in R\n\nCohort count: Number of records and subjects for each cohort.\n\n\n\ncohortCount(cdm$cohort)\n\n# A tibble: 2 × 3\n  cohort_definition_id number_records number_subjects\n                 &lt;int&gt;          &lt;int&gt;           &lt;int&gt;\n1                    1          10217            2606\n2                    2          17268            2686"
+  },
+  {
+    "objectID": "CohortConstructor/index.html#omop-cohorts-in-r-6",
+    "href": "CohortConstructor/index.html#omop-cohorts-in-r-6",
+    "title": "CohortConstructor",
+    "section": "OMOP Cohorts in R",
+    "text": "OMOP Cohorts in R\n\nCohort codelist: Codelists used to define entry events and inclusion criteria for each cohort.\n\n\n\nattr(cdm$cohort, \"cohort_codelist\")\n\n# Source:   table&lt;my_study_cohort_codelist&gt; [?? x 4]\n# Database: DuckDB 1.5.0 [unknown@Linux 6.17.0-1008-azure:R 4.5.3//tmp/RtmpB6ozw1/file2ea548605e4f.duckdb]\n  cohort_definition_id codelist_name     concept_id codelist_type\n                 &lt;int&gt; &lt;chr&gt;                  &lt;int&gt; &lt;chr&gt;        \n1                    1 viral_pharyngitis    4112343 index event  \n2                    2 viral_sinusitis     40481087 index event"
+  },
+  {
+    "objectID": "CohortConstructor/index.html#cohortconstructor-pipeline",
+    "href": "CohortConstructor/index.html#cohortconstructor-pipeline",
+    "title": "CohortConstructor",
+    "section": "CohortConstructor pipeline",
+    "text": "CohortConstructor pipeline\n\n\n\n\n1) Create base cohorts\nCohorts defined using clinical concepts (e.g., asthma diagnoses) or demographics (e.g., females aged &gt;18)\n\n\n\n\n\n2) Cohort-curation\nTranform base cohorts to meet study-specific inclusion criteria."
+  },
+  {
+    "objectID": "CohortConstructor/index.html#function-sets",
+    "href": "CohortConstructor/index.html#function-sets",
+    "title": "CohortConstructor",
+    "section": "Function Sets",
+    "text": "Function Sets\n\n\n\n\n\n\n\n\n\n \n\n\n\n\nBase cohorts Cohort construction based on clinical concepts or demographics.\n\n\n\n\n\n\n\n\n\n\n\n\n\n \n\n\n\n\nRequirements and Filtering Demographic restrictions, event presence/absence conditions, and filtering specific records.\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n \n\n\n\n\nUpdate cohort entry and exit Adjusting entry and exit dates to align with study periods, observation windows, or key events.\n\n\n\n\n\n\n\n\n\n\n\n\n\n \n\n\n\n\nTransformation and Combination Merging, stratifying, collapsing, matching, or intersecting cohorts."
+  },
+  {
+    "objectID": "CohortConstructor/index.html#functions-to-build-base-cohorts",
+    "href": "CohortConstructor/index.html#functions-to-build-base-cohorts",
+    "title": "CohortConstructor",
+    "section": "Functions to build base cohorts",
+    "text": "Functions to build base cohorts\n\n\n\n\ndemographicsCohort()\n\n\n\n\n\nconceptCohort()\n\n\n\n\n\nmeasurementCohort()\n\n\n\n\n\ndeathCohort()"
+  },
+  {
+    "objectID": "CohortConstructor/index.html#create-the-cdm_reference-object",
+    "href": "CohortConstructor/index.html#create-the-cdm_reference-object",
+    "title": "CohortConstructor",
+    "section": "Create the cdm_reference object",
+    "text": "Create the cdm_reference object\n\n# Load relevant packages\nlibrary(CDMConnector)\nlibrary(CodelistGenerator)\nlibrary(CohortConstructor)\nlibrary(CohortCharacteristics)\nlibrary(duckdb)\nlibrary(DBI)\nlibrary(dplyr)\nlibrary(gt)\nlibrary(here)\n\n\ndatasetName &lt;- \"GiBleed\"\ndbdir &lt;- here(paste0(datasetName, \".duckdb\"))\ncon &lt;- dbConnect(drv = duckdb(dbdir = dbdir))\n\ncdm &lt;- cdmFromCon(\n  con = con, \n  cdmSchema = \"main\",\n  writeSchema = \"main\",\n  writePrefix = \"my_study_\", \n  cdmName = datasetName\n)"
+  },
+  {
+    "objectID": "CohortConstructor/index.html#demographics-based---example",
+    "href": "CohortConstructor/index.html#demographics-based---example",
+    "title": "CohortConstructor",
+    "section": "Demographics based - Example",
+    "text": "Demographics based - Example\n\n\n\n\nTwo cohorts, females and males, both aged 18 to 60 years old, with at least 365 days of previous observation in the database.\n\n\n\ncdm$age_cohort &lt;- demographicsCohort(\n  cdm = cdm, \n  ageRange = c(18, 60), \n  sex = c(\"Female\", \"Male\"),\n  minPriorObservation = 365,\n  name = \"age_cohort\"\n)\n\nsettings(x = cdm$age_cohort)\n\n# A tibble: 2 × 5\n  cohort_definition_id cohort_name    age_range sex    min_prior_observation\n                 &lt;int&gt; &lt;chr&gt;          &lt;chr&gt;     &lt;chr&gt;                  &lt;dbl&gt;\n1                    1 demographics_1 18_60     Female                   365\n2                    2 demographics_2 18_60     Male                     365"
+  },
+  {
+    "objectID": "CohortConstructor/index.html#demographics-based---example-1",
+    "href": "CohortConstructor/index.html#demographics-based---example-1",
+    "title": "CohortConstructor",
+    "section": "Demographics based - Example",
+    "text": "Demographics based - Example\n\n\n\n\ncohortCount(cohort = cdm$age_cohort)\n\n# A tibble: 2 × 3\n  cohort_definition_id number_records number_subjects\n                 &lt;int&gt;          &lt;int&gt;           &lt;int&gt;\n1                    1           1373            1373\n2                    2           1321            1321\n\n\n\n\n\n\n\nattrition(x = cdm$age_cohort)\n\n# A tibble: 12 × 7\n   cohort_definition_id number_records number_subjects reason_id reason               excluded_records excluded_subjects\n                  &lt;int&gt;          &lt;int&gt;           &lt;int&gt;     &lt;int&gt; &lt;chr&gt;                           &lt;int&gt;             &lt;int&gt;\n 1                    1           2694            2694         1 Initial qualifying …                0                 0\n 2                    1           2694            2694         2 Non-missing sex                     0                 0\n 3                    1           1373            1373         3 Sex requirement: Fe…             1321              1321\n 4                    1           1373            1373         4 Non-missing year of…                0                 0\n 5                    1           1373            1373         5 Age requirement: 18…                0                 0\n 6                    1           1373            1373         6 Prior observation r…                0                 0\n 7                    2           2694            2694         1 Initial qualifying …                0                 0\n 8                    2           2694            2694         2 Non-missing sex                     0                 0\n 9                    2           1321            1321         3 Sex requirement: Ma…             1373              1373\n10                    2           1321            1321         4 Non-missing year of…                0                 0\n11                    2           1321            1321         5 Age requirement: 18…                0                 0\n12                    2           1321            1321         6 Prior observation r…                0                 0"
+  },
+  {
+    "objectID": "CohortConstructor/index.html#demographics-based---example-2",
+    "href": "CohortConstructor/index.html#demographics-based---example-2",
+    "title": "CohortConstructor",
+    "section": "Demographics based - Example",
+    "text": "Demographics based - Example\n\n\n\nTo better visualise the attrition, we can use the package CohortCharacteristics to create a formatted table:\n\ncdm$age_cohort |&gt; \n  summariseCohortAttrition() |&gt;\n  tableCohortAttrition()\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nReason\n\nVariable name\n\n\n\nnumber_records\nnumber_subjects\nexcluded_records\nexcluded_subjects\n\n\n\n\nGiBleed; demographics_1\n\n\nInitial qualifying events\n2,694\n2,694\n0\n0\n\n\nNon-missing sex\n2,694\n2,694\n0\n0\n\n\nSex requirement: Female\n1,373\n1,373\n1,321\n1,321\n\n\nNon-missing year of birth\n1,373\n1,373\n0\n0\n\n\nAge requirement: 18 to 60\n1,373\n1,373\n0\n0\n\n\nPrior observation requirement: 365 days\n1,373\n1,373\n0\n0\n\n\nGiBleed; demographics_2\n\n\nInitial qualifying events\n2,694\n2,694\n0\n0\n\n\nNon-missing sex\n2,694\n2,694\n0\n0\n\n\nSex requirement: Male\n1,321\n1,321\n1,373\n1,373\n\n\nNon-missing year of birth\n1,321\n1,321\n0\n0\n\n\nAge requirement: 18 to 60\n1,321\n1,321\n0\n0\n\n\nPrior observation requirement: 365 days\n1,321\n1,321\n0\n0"
+  },
+  {
+    "objectID": "CohortConstructor/index.html#concept-based---example",
+    "href": "CohortConstructor/index.html#concept-based---example",
+    "title": "CohortConstructor",
+    "section": "Concept based - Example",
+    "text": "Concept based - Example\n\n\n\n\nLet’s create a cohort of medications that contains two drugs: diclofenac, and acetaminophen.\n\n\n\n\nGet relevant codelists with CodelistGenerator\n\n\n\n\ndrug_codes &lt;- getDrugIngredientCodes(\n  cdm = cdm, \n  name = c(\"diclofenac\", \"acetaminophen\"),\n  nameStyle = \"{concept_name}\"\n)\ndrug_codes\n\n\n- acetaminophen (7 codes)\n- diclofenac (1 codes)"
+  },
+  {
+    "objectID": "CohortConstructor/index.html#concept-based---example-1",
+    "href": "CohortConstructor/index.html#concept-based---example-1",
+    "title": "CohortConstructor",
+    "section": "Concept based - Example",
+    "text": "Concept based - Example\n\nCreate concept based cohorts\n\n\n\ncdm$medications &lt;- conceptCohort(\n  cdm = cdm, \n  conceptSet = drug_codes, \n  name = \"medications\"\n)\n\nsettings(x = cdm$medications)\n\n# A tibble: 2 × 4\n  cohort_definition_id cohort_name   cdm_version vocabulary_version\n                 &lt;int&gt; &lt;chr&gt;         &lt;chr&gt;       &lt;chr&gt;             \n1                    1 acetaminophen 5.3         v5.0 18-JAN-19    \n2                    2 diclofenac    5.3         v5.0 18-JAN-19"
+  },
+  {
+    "objectID": "CohortConstructor/index.html#concept-based---example-2",
+    "href": "CohortConstructor/index.html#concept-based---example-2",
+    "title": "CohortConstructor",
+    "section": "Concept based - Example",
+    "text": "Concept based - Example\n\n\n\n\nAttrition\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nReason\n\nVariable name\n\n\n\nnumber_records\nnumber_subjects\nexcluded_records\nexcluded_subjects\n\n\n\n\nacetaminophen\n\n\nInitial qualifying events\n14,205\n2,679\n0\n0\n\n\nRecord in observation\n14,205\n2,679\n0\n0\n\n\nNot missing record date\n14,205\n2,679\n0\n0\n\n\nMerge overlapping records\n13,908\n2,679\n297\n0\n\n\ndiclofenac\n\n\nInitial qualifying events\n850\n850\n0\n0\n\n\nRecord in observation\n830\n830\n20\n20\n\n\nNot missing record date\n830\n830\n0\n0\n\n\nMerge overlapping records\n830\n830\n0\n0"
+  },
+  {
+    "objectID": "CohortConstructor/index.html#concept-based---example-3",
+    "href": "CohortConstructor/index.html#concept-based---example-3",
+    "title": "CohortConstructor",
+    "section": "Concept based - Example",
+    "text": "Concept based - Example\n\n\n\n\nCohort codelist as an attribute\n\n\n\nattr(cdm$medications, \"cohort_codelist\")\n\n# Source:   table&lt;my_study_medications_codelist&gt; [?? x 4]\n# Database: DuckDB 1.5.0 [unknown@Linux 6.17.0-1008-azure:R 4.5.3//home/runner/work/OHDSI-EU-2026-Workshop/OHDSI-EU-2026-Workshop/GiBleed.duckdb]\n  cohort_definition_id codelist_name concept_id codelist_type\n                 &lt;int&gt; &lt;chr&gt;              &lt;int&gt; &lt;chr&gt;        \n1                    1 acetaminophen    1125315 index event  \n2                    1 acetaminophen    1127078 index event  \n3                    1 acetaminophen    1127433 index event  \n4                    1 acetaminophen   19133768 index event  \n5                    1 acetaminophen   40162522 index event  \n6                    1 acetaminophen   40229134 index event  \n7                    1 acetaminophen   40231925 index event  \n8                    2 diclofenac       1124300 index event"
+  },
+  {
+    "objectID": "CohortConstructor/index.html#get-started-create-the-cdm_reference-object",
+    "href": "CohortConstructor/index.html#get-started-create-the-cdm_reference-object",
+    "title": "CohortConstructor",
+    "section": "Get Started: Create the cdm_reference object",
+    "text": "Get Started: Create the cdm_reference object\n\n# Load relevant packages\nlibrary(CDMConnector)\nlibrary(CodelistGenerator)\nlibrary(CohortConstructor)\nlibrary(CohortCharacteristics)\nlibrary(duckdb)\nlibrary(DBI)\nlibrary(dplyr)\nlibrary(gt)\nlibrary(here)\n\n\ndatasetName &lt;- \"GiBleed\"\ndbdir &lt;- here(paste0(datasetName, \".duckdb\"))\ncon &lt;- dbConnect(drv = duckdb(dbdir = dbdir))\n\ncdm &lt;- cdmFromCon(\n  con = con, \n  cdmSchema = \"main\",\n  writeSchema = \"main\",\n  writePrefix = \"my_study_\", \n  cdmName = datasetName\n)"
+  },
+  {
+    "objectID": "CohortConstructor/index.html#exercise-1---base-cohorts",
+    "href": "CohortConstructor/index.html#exercise-1---base-cohorts",
+    "title": "CohortConstructor",
+    "section": "Exercise 1 - Base cohorts",
+    "text": "Exercise 1 - Base cohorts\n\n\n\nCreate a cohort of aspirin use.\n\nHow many records does it have? And how many subjects?\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nCDM name\nVariable name\nEstimate name\n\nCohort name\n\n\n\naspirin\n\n\n\n\nGiBleed\nNumber records\nN\n4,379\n\n\n\nNumber subjects\nN\n1,927\n\n\n\n\n\n\n\n\n\n💡 Click to see solution\n\n\naspirin &lt;- getDrugIngredientCodes(\n  cdm = cdm, name  = \"aspirin\", nameStyle = \"{concept_name}\"\n)\ncdm$aspirin &lt;- conceptCohort(cdm = cdm, conceptSet = aspirin, name = \"aspirin\")\ncounts &lt;- summariseCohortCount(cohort = cdm$aspirin) \ntableCohortCount(reuslt = counts)"
+  },
+  {
+    "objectID": "CohortConstructor/index.html#functions-to-apply-requirements-and-filter",
+    "href": "CohortConstructor/index.html#functions-to-apply-requirements-and-filter",
+    "title": "CohortConstructor",
+    "section": "Functions to apply requirements and filter",
+    "text": "Functions to apply requirements and filter\n\n\n\n\n\n\nOn demographics\n\nrequireDemographics()\nrequireAge()\nrequireSex()\nrequirePriorObservation()\nrequireFutureObservation()\n\n\n\n\n\n\nOn cohort entries\n\nrequireIsFirstEntry()\nrequireIsLastEntry()\nrequireIsEntry()\n\n\n\n\nRequire presence or absence based on other cohorts, concepts, and tables\n\nrequireCohortIntersect()\nrequireConceptIntersect()\nrequireTableIntersect()\n\n\n\n\n\n\nOther\n\nrequireInDateRange()\nrequireMincohortCount(cohort = )"
+  },
+  {
+    "objectID": "CohortConstructor/index.html#requirement-functions---example",
+    "href": "CohortConstructor/index.html#requirement-functions---example",
+    "title": "CohortConstructor",
+    "section": "Requirement functions - Example",
+    "text": "Requirement functions - Example\n\n\n\n\nWe can apply different inclusion criteria using CohortConstructor’s functions in a pipe-line fashion. For instance, in what follows we require\n\nonly first record per person\nsubjects 18 years old or more at cohort start date\nonly females\nat least 30 days of prior observation at cohort start date\n\n\n\n\ncdm$medications_requirement &lt;- cdm$medications |&gt; \n  requireIsFirstEntry(name = \"medications_requirement\") |&gt; \n  requireDemographics(\n    ageRange = list(c(18, 150)),\n    sex = \"Female\", \n    minPriorObservation = 30\n  )"
+  },
+  {
+    "objectID": "CohortConstructor/index.html#requirement-functions---example-1",
+    "href": "CohortConstructor/index.html#requirement-functions---example-1",
+    "title": "CohortConstructor",
+    "section": "Requirement functions - Example",
+    "text": "Requirement functions - Example\n\n\n\nAttrition Acetaminophen\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nReason\n\nVariable name\n\n\n\nnumber_records\nnumber_subjects\nexcluded_records\nexcluded_subjects\n\n\n\n\nacetaminophen\n\n\nInitial qualifying events\n14,205\n2,679\n0\n0\n\n\nRecord in observation\n14,205\n2,679\n0\n0\n\n\nNot missing record date\n14,205\n2,679\n0\n0\n\n\nMerge overlapping records\n13,908\n2,679\n297\n0\n\n\nRestricted to first entry\n2,679\n2,679\n11,229\n0\n\n\nAge requirement: 18 to 150\n309\n309\n2,370\n2,370\n\n\nSex requirement: Female\n176\n176\n133\n133\n\n\nPrior observation requirement: 30 days\n176\n176\n0\n0\n\n\nFuture observation requirement: 0 days\n176\n176\n0\n0"
+  },
+  {
+    "objectID": "CohortConstructor/index.html#requirement-functions---example-2",
+    "href": "CohortConstructor/index.html#requirement-functions---example-2",
+    "title": "CohortConstructor",
+    "section": "Requirement functions - Example",
+    "text": "Requirement functions - Example\n\n\n\n\nNow, we only want to keep those exposures coinciding with at least one healthcare visit on that same day:\n\n\n\ncdm$medications_requirement &lt;- cdm$medications_requirement |&gt; \n  requireTableIntersect(\n    tableName = \"visit_occurrence\",\n    window = c(0, 0),\n    intersections = c(1, Inf)\n  )"
+  },
+  {
+    "objectID": "CohortConstructor/index.html#requirement-functions---example-3",
+    "href": "CohortConstructor/index.html#requirement-functions---example-3",
+    "title": "CohortConstructor",
+    "section": "Requirement functions - Example",
+    "text": "Requirement functions - Example\n\n\n\nAttrition Acetaminophen\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nReason\n\nVariable name\n\n\n\nnumber_records\nnumber_subjects\nexcluded_records\nexcluded_subjects\n\n\n\n\nacetaminophen\n\n\nInitial qualifying events\n14,205\n2,679\n0\n0\n\n\nRecord in observation\n14,205\n2,679\n0\n0\n\n\nNot missing record date\n14,205\n2,679\n0\n0\n\n\nMerge overlapping records\n13,908\n2,679\n297\n0\n\n\nRestricted to first entry\n2,679\n2,679\n11,229\n0\n\n\nAge requirement: 18 to 150\n309\n309\n2,370\n2,370\n\n\nSex requirement: Female\n176\n176\n133\n133\n\n\nPrior observation requirement: 30 days\n176\n176\n0\n0\n\n\nFuture observation requirement: 0 days\n176\n176\n0\n0\n\n\nIn table visit_occurrence between 0 & 0 days relative to cohort_start_date between 1 and Inf\n1\n1\n175\n175"
+  },
+  {
+    "objectID": "CohortConstructor/index.html#exercise-2---requirement-and-filtering",
+    "href": "CohortConstructor/index.html#exercise-2---requirement-and-filtering",
+    "title": "CohortConstructor",
+    "section": "Exercise 2 - Requirement and filtering",
+    "text": "Exercise 2 - Requirement and filtering\nCreate a new cohort named “aspirin_last” by applying the following criteria to the base aspirin cohort:\n\nInclude only the last drug exposure for each subject.\nInclude exposures that start between January 1, 1960, and December 31, 1979.\nExclude individuals with an amoxicillin exposure in the 7 days prior to the aspirin exposure.\n\n\n\n\n💡 Click to see solution\n\n\namoxicillin &lt;- getDrugIngredientCodes(\n  cdm = cdm, name  = \"amoxicillin\", nameStyle = \"{concept_name}\"\n)\ncdm$aspirin_last &lt;- cdm$aspirin |&gt;\n  requireIsLastEntry(name = \"aspirin_last\") |&gt;\n  requireInDateRange(dateRange = as.Date(c(\"1960-01-01\", \"1979-12-31\"))) |&gt;\n  requireConceptIntersect(\n    conceptSet = amoxicillin,\n    window = list(c(-7, 0)),\n    intersections = 0\n  )\nresult &lt;- summariseCohortAttrition(cdm$aspirin_last)\ntableCohortAttrition(result = result)\n\n\nMove to the next slide to see the attrition."
+  },
+  {
+    "objectID": "CohortConstructor/index.html#exercise-2---requirement-and-filtering-1",
+    "href": "CohortConstructor/index.html#exercise-2---requirement-and-filtering-1",
+    "title": "CohortConstructor",
+    "section": "Exercise 2 - Requirement and filtering",
+    "text": "Exercise 2 - Requirement and filtering\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nReason\n\nVariable name\n\n\n\nnumber_records\nnumber_subjects\nexcluded_records\nexcluded_subjects\n\n\n\n\nGiBleed; aspirin\n\n\nInitial qualifying events\n4,380\n1,927\n0\n0\n\n\nRecord in observation\n4,380\n1,927\n0\n0\n\n\nNot missing record date\n4,380\n1,927\n0\n0\n\n\nMerge overlapping records\n4,379\n1,927\n1\n0\n\n\nRestricted to last entry\n1,927\n1,927\n2,452\n0\n\n\ncohort_start_date after 1960-01-01\n1,511\n1,511\n416\n416\n\n\ncohort_start_date before 1979-12-31\n1,174\n1,174\n337\n337\n\n\nNot in concept amoxicillin between -7 & 0 days relative to cohort_start_date\n1,163\n1,163\n11\n11"
+  },
+  {
+    "objectID": "CohortConstructor/index.html#functions-to-update-cohort-start-and-end-dates",
+    "href": "CohortConstructor/index.html#functions-to-update-cohort-start-and-end-dates",
+    "title": "CohortConstructor",
+    "section": "Functions to update cohort start and end dates",
+    "text": "Functions to update cohort start and end dates\n\n\n\n\n\n\nCohort exit\n\nexitAtObservationEnd()\nexitAtDeath()\nexitAtFirstDate()\nexitAtLastDate()\n\n\n\n\n\n\nCohort entry\n\nentryAtFirstDate()\nentryAtLastDate()\n\n\n\n\nTrim start and end dates\n\ntrimDemographics()\ntrimToDateRange()\n\n\n\n\n\n\nPad start and end dates\n\npadCohortDate()\npadCohortEnd()\npadCohortStart()"
+  },
+  {
+    "objectID": "CohortConstructor/index.html#update-cohort-entry-and-exit---example",
+    "href": "CohortConstructor/index.html#update-cohort-entry-and-exit---example",
+    "title": "CohortConstructor",
+    "section": "Update cohort entry and exit - Example",
+    "text": "Update cohort entry and exit - Example\n\n\n\n\nWe can trim start and end dates to match demographic requirements.\nFor instance, cohort dates can be trimmed so the subject contributes time while:\n\nAged 20 to 40 years old\nPrior observation of at least 365 days\n\n\n\n\ncdm$medications_trimmed &lt;- cdm$medications |&gt;\n  trimDemographics(\n    ageRange = list(c(20, 40)),\n    minPriorObservation = 365,\n    name = \"medications_trimmed\"\n  )"
+  },
+  {
+    "objectID": "CohortConstructor/index.html#update-cohort-entry-and-exit---example-1",
+    "href": "CohortConstructor/index.html#update-cohort-entry-and-exit---example-1",
+    "title": "CohortConstructor",
+    "section": "Update cohort entry and exit - Example",
+    "text": "Update cohort entry and exit - Example\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nReason\n\nVariable name\n\n\n\nnumber_records\nnumber_subjects\nexcluded_records\nexcluded_subjects\n\n\n\n\nacetaminophen\n\n\nInitial qualifying events\n14,205\n2,679\n0\n0\n\n\nRecord in observation\n14,205\n2,679\n0\n0\n\n\nNot missing record date\n14,205\n2,679\n0\n0\n\n\nMerge overlapping records\n13,908\n2,679\n297\n0\n\n\nNon-missing year of birth\n13,908\n2,679\n0\n0\n\n\nAge requirement: 20 to 40\n4,049\n2,124\n9,859\n555\n\n\nPrior observation requirement: 365 days\n4,049\n2,124\n0\n0"
+  },
+  {
+    "objectID": "CohortConstructor/index.html#exercise-3---update-cohort-entry-and-exit",
+    "href": "CohortConstructor/index.html#exercise-3---update-cohort-entry-and-exit",
+    "title": "CohortConstructor",
+    "section": "Exercise 3 - Update cohort entry and exit",
+    "text": "Exercise 3 - Update cohort entry and exit\nCreate a cohort of ibuprofen. From it, create an “ibuprofen_death” cohort which includes only subjects that have a future record of death in the database, and update cohort end date to be the death date.\n\n\n\n💡 Click to see solution\n\n\nibuprofen &lt;- getDrugIngredientCodes(\n  cdm = cdm, name  = \"ibuprofen\", nameStyle = \"{concept_name}\"\n)\ncdm$ibuprofen &lt;- conceptCohort(\n  cdm = cdm, conceptSet = ibuprofen, name = \"ibuprofen\"\n)\ncdm$ibuprofen_death &lt;- cdm$ibuprofen |&gt; \n  exitAtDeath(requireDeath = TRUE, name = \"ibuprofen_death\")\n\nresult &lt;- summariseCohortAttrition(cdm$ibuprofen_death)\ntableCohortAttrition(result = result)\n\n\nMove to the next slide to see the attrition."
+  },
+  {
+    "objectID": "CohortConstructor/index.html#exercise-3---update-cohort-entry-and-exit-1",
+    "href": "CohortConstructor/index.html#exercise-3---update-cohort-entry-and-exit-1",
+    "title": "CohortConstructor",
+    "section": "Exercise 3 - Update cohort entry and exit",
+    "text": "Exercise 3 - Update cohort entry and exit\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nReason\n\nVariable name\n\n\n\nnumber_records\nnumber_subjects\nexcluded_records\nexcluded_subjects\n\n\n\n\nGiBleed; ibuprofen\n\n\nInitial qualifying events\n2,148\n1,451\n0\n0\n\n\nRecord in observation\n2,148\n1,451\n0\n0\n\n\nNot missing record date\n2,148\n1,451\n0\n0\n\n\nMerge overlapping records\n2,148\n1,451\n0\n0\n\n\nNo death recorded\n0\n0\n2,148\n1,451\n\n\nExit at death\n0\n0\n0\n0"
+  },
+  {
+    "objectID": "CohortConstructor/index.html#functions-for-cohort-transformation-and-combination",
+    "href": "CohortConstructor/index.html#functions-for-cohort-transformation-and-combination",
+    "title": "CohortConstructor",
+    "section": "Functions for Cohort Transformation and Combination",
+    "text": "Functions for Cohort Transformation and Combination\n\n\n\nSplit cohorts\n\nyearCohorts()\nstratifyCohorts()\n\n\n\n\n\n\nCombine cohorts\n\nunionCohorts()\nintersectCohorts()\n\n\n\n\n\n\nFilter cohorts\n\nsubsetCohorts()\nsampleCohorts()\n\n\n\n\nMatch cohorts\n\nmatchCohorts()\n\n\n\n\n\n\nConcatenate entries\n\ncollapseCohorts()\n\n\n\n\n\n\nCopy and rename cohorts\n\nrenameCohort()\ncopyCohorts()"
+  },
+  {
+    "objectID": "CohortConstructor/index.html#cohort-combinations---example",
+    "href": "CohortConstructor/index.html#cohort-combinations---example",
+    "title": "CohortConstructor",
+    "section": "Cohort combinations - Example",
+    "text": "Cohort combinations - Example\n\n\n\n\nCollapse drug exposures that are within a gap of 7 days."
+  },
+  {
+    "objectID": "CohortConstructor/index.html#cohort-combinations---example-1",
+    "href": "CohortConstructor/index.html#cohort-combinations---example-1",
+    "title": "CohortConstructor",
+    "section": "Cohort combinations - Example",
+    "text": "Cohort combinations - Example\n\n\n\n\ncdm$medications_collapsed &lt;- cdm$medications |&gt;\n  collapseCohorts(gap = 7, name = \"medications_collapsed\")\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nReason\n\nVariable name\n\n\n\nnumber_records\nnumber_subjects\nexcluded_records\nexcluded_subjects\n\n\n\n\nacetaminophen\n\n\nInitial qualifying events\n14,205\n2,679\n0\n0\n\n\nRecord in observation\n14,205\n2,679\n0\n0\n\n\nNot missing record date\n14,205\n2,679\n0\n0\n\n\nMerge overlapping records\n13,908\n2,679\n297\n0\n\n\nCollapse cohort with a gap of 7 days.\n13,899\n2,679\n9\n0"
+  },
+  {
+    "objectID": "CohortConstructor/index.html#cohort-combinations---example-2",
+    "href": "CohortConstructor/index.html#cohort-combinations---example-2",
+    "title": "CohortConstructor",
+    "section": "Cohort combinations - Example",
+    "text": "Cohort combinations - Example\n\n\n\n\nCreate a new cohort that contains people who had an exposure to both diclofenac and acetaminophen at the same time using."
+  },
+  {
+    "objectID": "CohortConstructor/index.html#cohort-combinations---example-3",
+    "href": "CohortConstructor/index.html#cohort-combinations---example-3",
+    "title": "CohortConstructor",
+    "section": "Cohort combinations - Example",
+    "text": "Cohort combinations - Example\n\n\n\n\ncdm$intersection &lt;- cdm$medications_collapsed |&gt;\n  intersectCohorts(name = \"intersection\")\n\nsettings(x = cdm$intersection)\n\n# A tibble: 1 × 5\n  cohort_definition_id cohort_name                gap acetaminophen diclofenac\n                 &lt;int&gt; &lt;chr&gt;                    &lt;dbl&gt;         &lt;dbl&gt;      &lt;dbl&gt;\n1                    1 acetaminophen_diclofenac     0             1          1"
+  },
+  {
+    "objectID": "CohortConstructor/index.html#exercise-4---transformation-and-combination",
+    "href": "CohortConstructor/index.html#exercise-4---transformation-and-combination",
+    "title": "CohortConstructor",
+    "section": "Exercise 4 - Transformation and Combination",
+    "text": "Exercise 4 - Transformation and Combination\nFrom the ibuprofen base cohort (not subseted to death), create five separate cohorts. Each cohort should include records for one specific year from the following list: 1975, 1976, 1977, 1978, 1979, and 1980.\n\nHow many records and subjects are in each cohort?\n\n\n\n\n💡 Click to see solution\n\n\ncdm$ibuprofen_years &lt;- cdm$ibuprofen |&gt;\n  yearCohorts(years = 1975:1980, name = \"ibuprofen_years\")\ncounts &lt;- summariseCohortCount(cohort = cdm$ibuprofen_years)\ntableCohortCount(result = counts)\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nCDM name\nVariable name\nEstimate name\n\nCohort name\n\n\n\nibuprofen_1975\nibuprofen_1976\nibuprofen_1977\nibuprofen_1978\nibuprofen_1979\nibuprofen_1980\n\n\n\n\nGiBleed\nNumber records\nN\n71\n64\n60\n75\n66\n63\n\n\n\nNumber subjects\nN\n68\n61\n60\n74\n66\n63"
+  },
+  {
+    "objectID": "CohortConstructor/index.html#optional-exercise-5",
+    "href": "CohortConstructor/index.html#optional-exercise-5",
+    "title": "CohortConstructor",
+    "section": "[Optional] Exercise 5",
+    "text": "[Optional] Exercise 5\nUse CohortConstructor to create a cohort with the following criteria:\n\nUsers of diclofenac\nFemales aged 16 or older\nWith at least 365 days of continuous observation prior to exposure\nWithout prior exposure to amoxicillin\nWith cohort exit defined as first discontinuation of exposure. An exposure being define as recorded exposures within 7-days gap\n\n\nMove to the next slide to see the attrition."
+  },
+  {
+    "objectID": "CohortConstructor/index.html#optional-exercise-5-1",
+    "href": "CohortConstructor/index.html#optional-exercise-5-1",
+    "title": "CohortConstructor",
+    "section": "[Optional] Exercise 5",
+    "text": "[Optional] Exercise 5\nMove to the next slide to see the solution.\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nReason\n\nVariable name\n\n\n\nnumber_records\nnumber_subjects\nexcluded_records\nexcluded_subjects\n\n\n\n\nGiBleed; diclofenac\n\n\nInitial qualifying events\n850\n850\n0\n0\n\n\nRecord in observation\n830\n830\n20\n20\n\n\nNot missing record date\n830\n830\n0\n0\n\n\nMerge overlapping records\n830\n830\n0\n0\n\n\nAge requirement: 16 to 150\n830\n830\n0\n0\n\n\nSex requirement: Female\n435\n435\n395\n395\n\n\nPrior observation requirement: 365 days\n435\n435\n0\n0\n\n\nFuture observation requirement: 0 days\n435\n435\n0\n0\n\n\nNot in concept amoxicillin between -Inf & -1 days relative to cohort_start_date\n161\n161\n274\n274\n\n\nCollapse cohort with a gap of 7 days.\n161\n161\n0\n0\n\n\nRestricted to first entry\n161\n161\n0\n0"
+  },
+  {
+    "objectID": "CohortConstructor/index.html#optional-exercise-5-2",
+    "href": "CohortConstructor/index.html#optional-exercise-5-2",
+    "title": "CohortConstructor",
+    "section": "[Optional] Exercise 5",
+    "text": "[Optional] Exercise 5\n\n\n💡 Click to see solution\n\n\namoxicillin &lt;- getDrugIngredientCodes(\n  cdm = cdm, \n  name  = c(\"amoxicillin\"), \n  nameStyle = \"{concept_name}\"\n)\ndiclofenac &lt;- getDrugIngredientCodes(\n  cdm = cdm, \n  name  = \"diclofenac\", \n  nameStyle = \"{concept_name}\"\n)\ncdm$diclofenac &lt;- conceptCohort(\n  cdm = cdm, \n  conceptSet = diclofenac, \n  name = \"diclofenac\"\n) |&gt;\n  requireDemographics(\n    sex = \"Female\",\n    ageRange = list(c(16, 150)), \n    minPriorObservation = 365\n  ) |&gt;\n  requireConceptIntersect(\n    conceptSet = amoxicillin,\n    window = list(c(-Inf, -1)),\n    intersections = 0\n  ) |&gt;\n  collapseCohorts(gap = 7) |&gt;\n  requireIsFirstEntry()\n\nresult &lt;- summariseCohortAttrition(cdm$diclofenac)\ntableCohortAttrition(result = result)"
+  },
+  {
+    "objectID": "CohortConstructor/index.html#cohortconstructor",
+    "href": "CohortConstructor/index.html#cohortconstructor",
+    "title": "CohortConstructor",
+    "section": "CohortConstructor",
+    "text": "CohortConstructor\n\n\n👉 Packages website\n👉 CRAN link\n👉 Manual\n📧 nuria.mercadebesora@ndorms.ox.ac.uk"
+  },
+  {
     "objectID": "PhenotypeR/index.html#introduction",
     "href": "PhenotypeR/index.html#introduction",
     "title": "PhenotypeR",
@@ -257,299 +600,5 @@
     "title": "OHDSI EU 2026 Workshop",
     "section": "",
     "text": "Welcome to the website for the OHDSI EU 2026 workshop on ‘…’"
-  },
-  {
-    "objectID": "CohortConstructor/index.html#introduction",
-    "href": "CohortConstructor/index.html#introduction",
-    "title": "CohortConstructor",
-    "section": "Introduction",
-    "text": "Introduction\n\nCohortConstructor package is designed to support cohort building pipelines in R, using data mapped to the OMOP Common Data Model.\n\n\n\n\n\nThe code is publicly available in OHDSI’s GitHub repository CohortConstructor.\n\n\n\n\n\nCohortConstructor v0.4.0 is available in CRAN.\n\n\n\n\n\nVignettes with further information can be found in the package website."
-  },
-  {
-    "objectID": "CohortConstructor/index.html#omop-cohorts-in-r-1",
-    "href": "CohortConstructor/index.html#omop-cohorts-in-r-1",
-    "title": "CohortConstructor",
-    "section": "OMOP Cohorts in R",
-    "text": "OMOP Cohorts in R\n\nThe &lt;cohort_table&gt; class is defined in the R package omopgenerics.\nThis is the class that CohortConstructor uses, as well as other OMOP analytical packages.\nAs defined in omopgenerics, a &lt;cohort_table&gt; must have at least the following 4 columns (without any missing values in them):\n\ncohort_definition_id: Unique identifier for each cohort in the table.\nsubject_id: Unique patient identifier.\ncohort_start_date: Date when the person enters the cohort.\ncohort_end_date: Date when the person exits the cohort."
-  },
-  {
-    "objectID": "CohortConstructor/index.html#omop-cohorts-in-r-2",
-    "href": "CohortConstructor/index.html#omop-cohorts-in-r-2",
-    "title": "CohortConstructor",
-    "section": "OMOP Cohorts in R",
-    "text": "OMOP Cohorts in R\n\n\n\nDownload completed!\n\n\n\ncdm$cohort\n\n# Source:   table&lt;my_study_cohort&gt; [?? x 4]\n# Database: DuckDB 1.5.0 [unknown@Linux 6.14.0-1017-azure:R 4.5.3//tmp/RtmpkR6Whq/file1601197c0621.duckdb]\n   cohort_definition_id subject_id cohort_start_date cohort_end_date\n                  &lt;int&gt;      &lt;int&gt; &lt;date&gt;            &lt;date&gt;         \n 1                    1        376 1991-04-02        1991-04-13     \n 2                    1        820 1974-12-26        1975-01-04     \n 3                    1       1146 2004-08-21        2004-09-03     \n 4                    1       1273 1973-12-07        1973-12-16     \n 5                    1       1314 1955-12-28        1956-01-07     \n 6                    1       1605 1991-03-22        1991-04-04     \n 7                    1       2164 1985-05-17        1985-05-30     \n 8                    1       2359 1957-02-07        1957-02-16     \n 9                    1       2782 1953-02-07        1953-02-16     \n10                    1       3991 1981-08-23        1981-09-05     \n# ℹ more rows"
-  },
-  {
-    "objectID": "CohortConstructor/index.html#omop-cohorts-in-r-3",
-    "href": "CohortConstructor/index.html#omop-cohorts-in-r-3",
-    "title": "CohortConstructor",
-    "section": "OMOP Cohorts in R",
-    "text": "OMOP Cohorts in R\nAdditionally, the &lt;cohort_table&gt; object has the follwing attributes:\n\nSettings: Relate each cohort definition ID with a cohort name and other variables that define the cohort.\n\n\n\nsettings(cdm$cohort)\n\n# A tibble: 2 × 4\n  cohort_definition_id cohort_name       cdm_version vocabulary_version\n                 &lt;int&gt; &lt;chr&gt;             &lt;chr&gt;       &lt;chr&gt;             \n1                    1 viral_pharyngitis 5.3         v5.0 18-JAN-19    \n2                    2 viral_sinusitis   5.3         v5.0 18-JAN-19"
-  },
-  {
-    "objectID": "CohortConstructor/index.html#omop-cohorts-in-r-4",
-    "href": "CohortConstructor/index.html#omop-cohorts-in-r-4",
-    "title": "CohortConstructor",
-    "section": "OMOP Cohorts in R",
-    "text": "OMOP Cohorts in R\n\nAttrition: Store information on each inclusion criteria applied and how many records and subjects were kept after.\n\n\n\nattrition(cdm$cohort)\n\n# A tibble: 8 × 7\n  cohort_definition_id number_records number_subjects reason_id reason                excluded_records excluded_subjects\n                 &lt;int&gt;          &lt;int&gt;           &lt;int&gt;     &lt;int&gt; &lt;chr&gt;                            &lt;int&gt;             &lt;int&gt;\n1                    1          10217            2606         1 Initial qualifying e…                0                 0\n2                    1          10217            2606         2 Record in observation                0                 0\n3                    1          10217            2606         3 Not missing record d…                0                 0\n4                    1          10217            2606         4 Merge overlapping re…                0                 0\n5                    2          17268            2686         1 Initial qualifying e…                0                 0\n6                    2          17268            2686         2 Record in observation                0                 0\n7                    2          17268            2686         3 Not missing record d…                0                 0\n8                    2          17268            2686         4 Merge overlapping re…                0                 0"
-  },
-  {
-    "objectID": "CohortConstructor/index.html#omop-cohorts-in-r-5",
-    "href": "CohortConstructor/index.html#omop-cohorts-in-r-5",
-    "title": "CohortConstructor",
-    "section": "OMOP Cohorts in R",
-    "text": "OMOP Cohorts in R\n\nCohort count: Number of records and subjects for each cohort.\n\n\n\ncohortCount(cdm$cohort)\n\n# A tibble: 2 × 3\n  cohort_definition_id number_records number_subjects\n                 &lt;int&gt;          &lt;int&gt;           &lt;int&gt;\n1                    1          10217            2606\n2                    2          17268            2686"
-  },
-  {
-    "objectID": "CohortConstructor/index.html#omop-cohorts-in-r-6",
-    "href": "CohortConstructor/index.html#omop-cohorts-in-r-6",
-    "title": "CohortConstructor",
-    "section": "OMOP Cohorts in R",
-    "text": "OMOP Cohorts in R\n\nCohort codelist: Codelists used to define entry events and inclusion criteria for each cohort.\n\n\n\nattr(cdm$cohort, \"cohort_codelist\")\n\n# Source:   table&lt;my_study_cohort_codelist&gt; [?? x 4]\n# Database: DuckDB 1.5.0 [unknown@Linux 6.14.0-1017-azure:R 4.5.3//tmp/RtmpkR6Whq/file1601197c0621.duckdb]\n  cohort_definition_id codelist_name     concept_id codelist_type\n                 &lt;int&gt; &lt;chr&gt;                  &lt;int&gt; &lt;chr&gt;        \n1                    1 viral_pharyngitis    4112343 index event  \n2                    2 viral_sinusitis     40481087 index event"
-  },
-  {
-    "objectID": "CohortConstructor/index.html#cohortconstructor-pipeline",
-    "href": "CohortConstructor/index.html#cohortconstructor-pipeline",
-    "title": "CohortConstructor",
-    "section": "CohortConstructor pipeline",
-    "text": "CohortConstructor pipeline\n\n\n\n\n1) Create base cohorts\nCohorts defined using clinical concepts (e.g., asthma diagnoses) or demographics (e.g., females aged &gt;18)\n\n\n\n\n\n2) Cohort-curation\nTranform base cohorts to meet study-specific inclusion criteria."
-  },
-  {
-    "objectID": "CohortConstructor/index.html#function-sets",
-    "href": "CohortConstructor/index.html#function-sets",
-    "title": "CohortConstructor",
-    "section": "Function Sets",
-    "text": "Function Sets\n\n\n\n\n\n\n\n\n\n \n\n\n\n\nBase cohorts Cohort construction based on clinical concepts or demographics.\n\n\n\n\n\n\n\n\n\n\n\n\n\n \n\n\n\n\nRequirements and Filtering Demographic restrictions, event presence/absence conditions, and filtering specific records.\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n \n\n\n\n\nUpdate cohort entry and exit Adjusting entry and exit dates to align with study periods, observation windows, or key events.\n\n\n\n\n\n\n\n\n\n\n\n\n\n \n\n\n\n\nTransformation and Combination Merging, stratifying, collapsing, matching, or intersecting cohorts."
-  },
-  {
-    "objectID": "CohortConstructor/index.html#functions-to-build-base-cohorts",
-    "href": "CohortConstructor/index.html#functions-to-build-base-cohorts",
-    "title": "CohortConstructor",
-    "section": "Functions to build base cohorts",
-    "text": "Functions to build base cohorts\n\n\n\n\ndemographicsCohort()\n\n\n\n\n\nconceptCohort()\n\n\n\n\n\nmeasurementCohort()\n\n\n\n\n\ndeathCohort()"
-  },
-  {
-    "objectID": "CohortConstructor/index.html#create-the-cdm_reference-object",
-    "href": "CohortConstructor/index.html#create-the-cdm_reference-object",
-    "title": "CohortConstructor",
-    "section": "Create the cdm_reference object",
-    "text": "Create the cdm_reference object\n\n# Load relevant packages\nlibrary(CDMConnector)\nlibrary(CodelistGenerator)\nlibrary(CohortConstructor)\nlibrary(CohortCharacteristics)\nlibrary(duckdb)\nlibrary(DBI)\nlibrary(dplyr)\nlibrary(gt)\nlibrary(here)\n\n\ndatasetName &lt;- \"GiBleed\"\ndbdir &lt;- here(paste0(datasetName, \".duckdb\"))\ncon &lt;- dbConnect(drv = duckdb(dbdir = dbdir))\n\ncdm &lt;- cdmFromCon(\n  con = con, \n  cdmSchema = \"main\",\n  writeSchema = \"main\",\n  writePrefix = \"my_study_\", \n  cdmName = datasetName\n)"
-  },
-  {
-    "objectID": "CohortConstructor/index.html#demographics-based---example",
-    "href": "CohortConstructor/index.html#demographics-based---example",
-    "title": "CohortConstructor",
-    "section": "Demographics based - Example",
-    "text": "Demographics based - Example\n\n\n\n\nTwo cohorts, females and males, both aged 18 to 60 years old, with at least 365 days of previous observation in the database.\n\n\n\ncdm$age_cohort &lt;- demographicsCohort(\n  cdm = cdm, \n  ageRange = c(18, 60), \n  sex = c(\"Female\", \"Male\"),\n  minPriorObservation = 365,\n  name = \"age_cohort\"\n)\n\nsettings(x = cdm$age_cohort)\n\n# A tibble: 2 × 5\n  cohort_definition_id cohort_name    age_range sex    min_prior_observation\n                 &lt;int&gt; &lt;chr&gt;          &lt;chr&gt;     &lt;chr&gt;                  &lt;dbl&gt;\n1                    1 demographics_1 18_60     Female                   365\n2                    2 demographics_2 18_60     Male                     365"
-  },
-  {
-    "objectID": "CohortConstructor/index.html#demographics-based---example-1",
-    "href": "CohortConstructor/index.html#demographics-based---example-1",
-    "title": "CohortConstructor",
-    "section": "Demographics based - Example",
-    "text": "Demographics based - Example\n\n\n\n\ncohortCount(cohort = cdm$age_cohort)\n\n# A tibble: 2 × 3\n  cohort_definition_id number_records number_subjects\n                 &lt;int&gt;          &lt;int&gt;           &lt;int&gt;\n1                    1           1373            1373\n2                    2           1321            1321\n\n\n\n\n\n\n\nattrition(x = cdm$age_cohort)\n\n# A tibble: 12 × 7\n   cohort_definition_id number_records number_subjects reason_id reason               excluded_records excluded_subjects\n                  &lt;int&gt;          &lt;int&gt;           &lt;int&gt;     &lt;int&gt; &lt;chr&gt;                           &lt;int&gt;             &lt;int&gt;\n 1                    1           2694            2694         1 Initial qualifying …                0                 0\n 2                    1           2694            2694         2 Non-missing sex                     0                 0\n 3                    1           1373            1373         3 Sex requirement: Fe…             1321              1321\n 4                    1           1373            1373         4 Non-missing year of…                0                 0\n 5                    1           1373            1373         5 Age requirement: 18…                0                 0\n 6                    1           1373            1373         6 Prior observation r…                0                 0\n 7                    2           2694            2694         1 Initial qualifying …                0                 0\n 8                    2           2694            2694         2 Non-missing sex                     0                 0\n 9                    2           1321            1321         3 Sex requirement: Ma…             1373              1373\n10                    2           1321            1321         4 Non-missing year of…                0                 0\n11                    2           1321            1321         5 Age requirement: 18…                0                 0\n12                    2           1321            1321         6 Prior observation r…                0                 0"
-  },
-  {
-    "objectID": "CohortConstructor/index.html#demographics-based---example-2",
-    "href": "CohortConstructor/index.html#demographics-based---example-2",
-    "title": "CohortConstructor",
-    "section": "Demographics based - Example",
-    "text": "Demographics based - Example\n\n\n\nTo better visualise the attrition, we can use the package CohortCharacteristics to create a formatted table:\n\ncdm$age_cohort |&gt; \n  summariseCohortAttrition() |&gt;\n  tableCohortAttrition()\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nReason\n\nVariable name\n\n\n\nnumber_records\nnumber_subjects\nexcluded_records\nexcluded_subjects\n\n\n\n\nGiBleed; demographics_1\n\n\nInitial qualifying events\n2,694\n2,694\n0\n0\n\n\nNon-missing sex\n2,694\n2,694\n0\n0\n\n\nSex requirement: Female\n1,373\n1,373\n1,321\n1,321\n\n\nNon-missing year of birth\n1,373\n1,373\n0\n0\n\n\nAge requirement: 18 to 60\n1,373\n1,373\n0\n0\n\n\nPrior observation requirement: 365 days\n1,373\n1,373\n0\n0\n\n\nGiBleed; demographics_2\n\n\nInitial qualifying events\n2,694\n2,694\n0\n0\n\n\nNon-missing sex\n2,694\n2,694\n0\n0\n\n\nSex requirement: Male\n1,321\n1,321\n1,373\n1,373\n\n\nNon-missing year of birth\n1,321\n1,321\n0\n0\n\n\nAge requirement: 18 to 60\n1,321\n1,321\n0\n0\n\n\nPrior observation requirement: 365 days\n1,321\n1,321\n0\n0"
-  },
-  {
-    "objectID": "CohortConstructor/index.html#concept-based---example",
-    "href": "CohortConstructor/index.html#concept-based---example",
-    "title": "CohortConstructor",
-    "section": "Concept based - Example",
-    "text": "Concept based - Example\n\n\n\n\nLet’s create a cohort of medications that contains two drugs: diclofenac, and acetaminophen.\n\n\n\n\nGet relevant codelists with CodelistGenerator\n\n\n\n\ndrug_codes &lt;- getDrugIngredientCodes(\n  cdm = cdm, \n  name = c(\"diclofenac\", \"acetaminophen\"),\n  nameStyle = \"{concept_name}\"\n)\ndrug_codes\n\n\n- acetaminophen (7 codes)\n- diclofenac (1 codes)"
-  },
-  {
-    "objectID": "CohortConstructor/index.html#concept-based---example-1",
-    "href": "CohortConstructor/index.html#concept-based---example-1",
-    "title": "CohortConstructor",
-    "section": "Concept based - Example",
-    "text": "Concept based - Example\n\nCreate concept based cohorts\n\n\n\ncdm$medications &lt;- conceptCohort(\n  cdm = cdm, \n  conceptSet = drug_codes, \n  name = \"medications\"\n)\n\nsettings(x = cdm$medications)\n\n# A tibble: 2 × 4\n  cohort_definition_id cohort_name   cdm_version vocabulary_version\n                 &lt;int&gt; &lt;chr&gt;         &lt;chr&gt;       &lt;chr&gt;             \n1                    1 acetaminophen 5.3         v5.0 18-JAN-19    \n2                    2 diclofenac    5.3         v5.0 18-JAN-19"
-  },
-  {
-    "objectID": "CohortConstructor/index.html#concept-based---example-2",
-    "href": "CohortConstructor/index.html#concept-based---example-2",
-    "title": "CohortConstructor",
-    "section": "Concept based - Example",
-    "text": "Concept based - Example\n\n\n\n\nAttrition\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nReason\n\nVariable name\n\n\n\nnumber_records\nnumber_subjects\nexcluded_records\nexcluded_subjects\n\n\n\n\nacetaminophen\n\n\nInitial qualifying events\n14,205\n2,679\n0\n0\n\n\nRecord in observation\n14,205\n2,679\n0\n0\n\n\nNot missing record date\n14,205\n2,679\n0\n0\n\n\nMerge overlapping records\n13,908\n2,679\n297\n0\n\n\ndiclofenac\n\n\nInitial qualifying events\n850\n850\n0\n0\n\n\nRecord in observation\n830\n830\n20\n20\n\n\nNot missing record date\n830\n830\n0\n0\n\n\nMerge overlapping records\n830\n830\n0\n0"
-  },
-  {
-    "objectID": "CohortConstructor/index.html#concept-based---example-3",
-    "href": "CohortConstructor/index.html#concept-based---example-3",
-    "title": "CohortConstructor",
-    "section": "Concept based - Example",
-    "text": "Concept based - Example\n\n\n\n\nCohort codelist as an attribute\n\n\n\nattr(cdm$medications, \"cohort_codelist\")\n\n# Source:   table&lt;my_study_medications_codelist&gt; [?? x 4]\n# Database: DuckDB 1.5.0 [unknown@Linux 6.14.0-1017-azure:R 4.5.3//home/runner/work/OHDSI-EU-2026-Workshop/OHDSI-EU-2026-Workshop/GiBleed.duckdb]\n  cohort_definition_id codelist_name concept_id codelist_type\n                 &lt;int&gt; &lt;chr&gt;              &lt;int&gt; &lt;chr&gt;        \n1                    1 acetaminophen    1125315 index event  \n2                    1 acetaminophen    1127078 index event  \n3                    1 acetaminophen    1127433 index event  \n4                    1 acetaminophen   19133768 index event  \n5                    1 acetaminophen   40162522 index event  \n6                    1 acetaminophen   40229134 index event  \n7                    1 acetaminophen   40231925 index event  \n8                    2 diclofenac       1124300 index event"
-  },
-  {
-    "objectID": "CohortConstructor/index.html#get-started-create-the-cdm_reference-object",
-    "href": "CohortConstructor/index.html#get-started-create-the-cdm_reference-object",
-    "title": "CohortConstructor",
-    "section": "Get Started: Create the cdm_reference object",
-    "text": "Get Started: Create the cdm_reference object\n\n# Load relevant packages\nlibrary(CDMConnector)\nlibrary(CodelistGenerator)\nlibrary(CohortConstructor)\nlibrary(CohortCharacteristics)\nlibrary(duckdb)\nlibrary(DBI)\nlibrary(dplyr)\nlibrary(gt)\nlibrary(here)\n\n\ndatasetName &lt;- \"GiBleed\"\ndbdir &lt;- here(paste0(datasetName, \".duckdb\"))\ncon &lt;- dbConnect(drv = duckdb(dbdir = dbdir))\n\ncdm &lt;- cdmFromCon(\n  con = con, \n  cdmSchema = \"main\",\n  writeSchema = \"main\",\n  writePrefix = \"my_study_\", \n  cdmName = datasetName\n)"
-  },
-  {
-    "objectID": "CohortConstructor/index.html#exercise-1---base-cohorts",
-    "href": "CohortConstructor/index.html#exercise-1---base-cohorts",
-    "title": "CohortConstructor",
-    "section": "Exercise 1 - Base cohorts",
-    "text": "Exercise 1 - Base cohorts\n\n\n\nCreate a cohort of aspirin use.\n\nHow many records does it have? And how many subjects?\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nCDM name\nVariable name\nEstimate name\n\nCohort name\n\n\n\naspirin\n\n\n\n\nGiBleed\nNumber records\nN\n4,379\n\n\n\nNumber subjects\nN\n1,927\n\n\n\n\n\n\n\n\n\n💡 Click to see solution\n\n\naspirin &lt;- getDrugIngredientCodes(\n  cdm = cdm, name  = \"aspirin\", nameStyle = \"{concept_name}\"\n)\ncdm$aspirin &lt;- conceptCohort(cdm = cdm, conceptSet = aspirin, name = \"aspirin\")\ncounts &lt;- summariseCohortCount(cohort = cdm$aspirin) \ntableCohortCount(reuslt = counts)"
-  },
-  {
-    "objectID": "CohortConstructor/index.html#functions-to-apply-requirements-and-filter",
-    "href": "CohortConstructor/index.html#functions-to-apply-requirements-and-filter",
-    "title": "CohortConstructor",
-    "section": "Functions to apply requirements and filter",
-    "text": "Functions to apply requirements and filter\n\n\n\n\n\n\nOn demographics\n\nrequireDemographics()\nrequireAge()\nrequireSex()\nrequirePriorObservation()\nrequireFutureObservation()\n\n\n\n\n\n\nOn cohort entries\n\nrequireIsFirstEntry()\nrequireIsLastEntry()\nrequireIsEntry()\n\n\n\n\nRequire presence or absence based on other cohorts, concepts, and tables\n\nrequireCohortIntersect()\nrequireConceptIntersect()\nrequireTableIntersect()\n\n\n\n\n\n\nOther\n\nrequireInDateRange()\nrequireMincohortCount(cohort = )"
-  },
-  {
-    "objectID": "CohortConstructor/index.html#requirement-functions---example",
-    "href": "CohortConstructor/index.html#requirement-functions---example",
-    "title": "CohortConstructor",
-    "section": "Requirement functions - Example",
-    "text": "Requirement functions - Example\n\n\n\n\nWe can apply different inclusion criteria using CohortConstructor’s functions in a pipe-line fashion. For instance, in what follows we require\n\nonly first record per person\nsubjects 18 years old or more at cohort start date\nonly females\nat least 30 days of prior observation at cohort start date\n\n\n\n\ncdm$medications_requirement &lt;- cdm$medications |&gt; \n  requireIsFirstEntry(name = \"medications_requirement\") |&gt; \n  requireDemographics(\n    ageRange = list(c(18, 150)),\n    sex = \"Female\", \n    minPriorObservation = 30\n  )"
-  },
-  {
-    "objectID": "CohortConstructor/index.html#requirement-functions---example-1",
-    "href": "CohortConstructor/index.html#requirement-functions---example-1",
-    "title": "CohortConstructor",
-    "section": "Requirement functions - Example",
-    "text": "Requirement functions - Example\n\n\n\nAttrition Acetaminophen\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nReason\n\nVariable name\n\n\n\nnumber_records\nnumber_subjects\nexcluded_records\nexcluded_subjects\n\n\n\n\nacetaminophen\n\n\nInitial qualifying events\n14,205\n2,679\n0\n0\n\n\nRecord in observation\n14,205\n2,679\n0\n0\n\n\nNot missing record date\n14,205\n2,679\n0\n0\n\n\nMerge overlapping records\n13,908\n2,679\n297\n0\n\n\nRestricted to first entry\n2,679\n2,679\n11,229\n0\n\n\nAge requirement: 18 to 150\n309\n309\n2,370\n2,370\n\n\nSex requirement: Female\n176\n176\n133\n133\n\n\nPrior observation requirement: 30 days\n176\n176\n0\n0\n\n\nFuture observation requirement: 0 days\n176\n176\n0\n0"
-  },
-  {
-    "objectID": "CohortConstructor/index.html#requirement-functions---example-2",
-    "href": "CohortConstructor/index.html#requirement-functions---example-2",
-    "title": "CohortConstructor",
-    "section": "Requirement functions - Example",
-    "text": "Requirement functions - Example\n\n\n\n\nNow, we only want to keep those exposures coinciding with at least one healthcare visit on that same day:\n\n\n\ncdm$medications_requirement &lt;- cdm$medications_requirement |&gt; \n  requireTableIntersect(\n    tableName = \"visit_occurrence\",\n    window = c(0, 0),\n    intersections = c(1, Inf)\n  )"
-  },
-  {
-    "objectID": "CohortConstructor/index.html#requirement-functions---example-3",
-    "href": "CohortConstructor/index.html#requirement-functions---example-3",
-    "title": "CohortConstructor",
-    "section": "Requirement functions - Example",
-    "text": "Requirement functions - Example\n\n\n\nAttrition Acetaminophen\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nReason\n\nVariable name\n\n\n\nnumber_records\nnumber_subjects\nexcluded_records\nexcluded_subjects\n\n\n\n\nacetaminophen\n\n\nInitial qualifying events\n14,205\n2,679\n0\n0\n\n\nRecord in observation\n14,205\n2,679\n0\n0\n\n\nNot missing record date\n14,205\n2,679\n0\n0\n\n\nMerge overlapping records\n13,908\n2,679\n297\n0\n\n\nRestricted to first entry\n2,679\n2,679\n11,229\n0\n\n\nAge requirement: 18 to 150\n309\n309\n2,370\n2,370\n\n\nSex requirement: Female\n176\n176\n133\n133\n\n\nPrior observation requirement: 30 days\n176\n176\n0\n0\n\n\nFuture observation requirement: 0 days\n176\n176\n0\n0\n\n\nIn table visit_occurrence between 0 & 0 days relative to cohort_start_date between 1 and Inf\n1\n1\n175\n175"
-  },
-  {
-    "objectID": "CohortConstructor/index.html#exercise-2---requirement-and-filtering",
-    "href": "CohortConstructor/index.html#exercise-2---requirement-and-filtering",
-    "title": "CohortConstructor",
-    "section": "Exercise 2 - Requirement and filtering",
-    "text": "Exercise 2 - Requirement and filtering\nCreate a new cohort named “aspirin_last” by applying the following criteria to the base aspirin cohort:\n\nInclude only the last drug exposure for each subject.\nInclude exposures that start between January 1, 1960, and December 31, 1979.\nExclude individuals with an amoxicillin exposure in the 7 days prior to the aspirin exposure.\n\n\n\n\n💡 Click to see solution\n\n\namoxicillin &lt;- getDrugIngredientCodes(\n  cdm = cdm, name  = \"amoxicillin\", nameStyle = \"{concept_name}\"\n)\ncdm$aspirin_last &lt;- cdm$aspirin |&gt;\n  requireIsLastEntry(name = \"aspirin_last\") |&gt;\n  requireInDateRange(dateRange = as.Date(c(\"1960-01-01\", \"1979-12-31\"))) |&gt;\n  requireConceptIntersect(\n    conceptSet = amoxicillin,\n    window = list(c(-7, 0)),\n    intersections = 0\n  )\nresult &lt;- summariseCohortAttrition(cdm$aspirin_last)\ntableCohortAttrition(result = result)\n\n\nMove to the next slide to see the attrition."
-  },
-  {
-    "objectID": "CohortConstructor/index.html#exercise-2---requirement-and-filtering-1",
-    "href": "CohortConstructor/index.html#exercise-2---requirement-and-filtering-1",
-    "title": "CohortConstructor",
-    "section": "Exercise 2 - Requirement and filtering",
-    "text": "Exercise 2 - Requirement and filtering\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nReason\n\nVariable name\n\n\n\nnumber_records\nnumber_subjects\nexcluded_records\nexcluded_subjects\n\n\n\n\nGiBleed; aspirin\n\n\nInitial qualifying events\n4,380\n1,927\n0\n0\n\n\nRecord in observation\n4,380\n1,927\n0\n0\n\n\nNot missing record date\n4,380\n1,927\n0\n0\n\n\nMerge overlapping records\n4,379\n1,927\n1\n0\n\n\nRestricted to last entry\n1,927\n1,927\n2,452\n0\n\n\ncohort_start_date after 1960-01-01\n1,511\n1,511\n416\n416\n\n\ncohort_start_date before 1979-12-31\n1,174\n1,174\n337\n337\n\n\nNot in concept amoxicillin between -7 & 0 days relative to cohort_start_date\n1,163\n1,163\n11\n11"
-  },
-  {
-    "objectID": "CohortConstructor/index.html#functions-to-update-cohort-start-and-end-dates",
-    "href": "CohortConstructor/index.html#functions-to-update-cohort-start-and-end-dates",
-    "title": "CohortConstructor",
-    "section": "Functions to update cohort start and end dates",
-    "text": "Functions to update cohort start and end dates\n\n\n\n\n\n\nCohort exit\n\nexitAtObservationEnd()\nexitAtDeath()\nexitAtFirstDate()\nexitAtLastDate()\n\n\n\n\n\n\nCohort entry\n\nentryAtFirstDate()\nentryAtLastDate()\n\n\n\n\nTrim start and end dates\n\ntrimDemographics()\ntrimToDateRange()\n\n\n\n\n\n\nPad start and end dates\n\npadCohortDate()\npadCohortEnd()\npadCohortStart()"
-  },
-  {
-    "objectID": "CohortConstructor/index.html#update-cohort-entry-and-exit---example",
-    "href": "CohortConstructor/index.html#update-cohort-entry-and-exit---example",
-    "title": "CohortConstructor",
-    "section": "Update cohort entry and exit - Example",
-    "text": "Update cohort entry and exit - Example\n\n\n\n\nWe can trim start and end dates to match demographic requirements.\nFor instance, cohort dates can be trimmed so the subject contributes time while:\n\nAged 20 to 40 years old\nPrior observation of at least 365 days\n\n\n\n\ncdm$medications_trimmed &lt;- cdm$medications |&gt;\n  trimDemographics(\n    ageRange = list(c(20, 40)),\n    minPriorObservation = 365,\n    name = \"medications_trimmed\"\n  )"
-  },
-  {
-    "objectID": "CohortConstructor/index.html#update-cohort-entry-and-exit---example-1",
-    "href": "CohortConstructor/index.html#update-cohort-entry-and-exit---example-1",
-    "title": "CohortConstructor",
-    "section": "Update cohort entry and exit - Example",
-    "text": "Update cohort entry and exit - Example\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nReason\n\nVariable name\n\n\n\nnumber_records\nnumber_subjects\nexcluded_records\nexcluded_subjects\n\n\n\n\nacetaminophen\n\n\nInitial qualifying events\n14,205\n2,679\n0\n0\n\n\nRecord in observation\n14,205\n2,679\n0\n0\n\n\nNot missing record date\n14,205\n2,679\n0\n0\n\n\nMerge overlapping records\n13,908\n2,679\n297\n0\n\n\nNon-missing year of birth\n13,908\n2,679\n0\n0\n\n\nAge requirement: 20 to 40\n4,049\n2,124\n9,859\n555\n\n\nPrior observation requirement: 365 days\n4,049\n2,124\n0\n0"
-  },
-  {
-    "objectID": "CohortConstructor/index.html#exercise-3---update-cohort-entry-and-exit",
-    "href": "CohortConstructor/index.html#exercise-3---update-cohort-entry-and-exit",
-    "title": "CohortConstructor",
-    "section": "Exercise 3 - Update cohort entry and exit",
-    "text": "Exercise 3 - Update cohort entry and exit\nCreate a cohort of ibuprofen. From it, create an “ibuprofen_death” cohort which includes only subjects that have a future record of death in the database, and update cohort end date to be the death date.\n\n\n\n💡 Click to see solution\n\n\nibuprofen &lt;- getDrugIngredientCodes(\n  cdm = cdm, name  = \"ibuprofen\", nameStyle = \"{concept_name}\"\n)\ncdm$ibuprofen &lt;- conceptCohort(\n  cdm = cdm, conceptSet = ibuprofen, name = \"ibuprofen\"\n)\ncdm$ibuprofen_death &lt;- cdm$ibuprofen |&gt; \n  exitAtDeath(requireDeath = TRUE, name = \"ibuprofen_death\")\n\nresult &lt;- summariseCohortAttrition(cdm$ibuprofen_death)\ntableCohortAttrition(result = result)\n\n\nMove to the next slide to see the attrition."
-  },
-  {
-    "objectID": "CohortConstructor/index.html#exercise-3---update-cohort-entry-and-exit-1",
-    "href": "CohortConstructor/index.html#exercise-3---update-cohort-entry-and-exit-1",
-    "title": "CohortConstructor",
-    "section": "Exercise 3 - Update cohort entry and exit",
-    "text": "Exercise 3 - Update cohort entry and exit\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nReason\n\nVariable name\n\n\n\nnumber_records\nnumber_subjects\nexcluded_records\nexcluded_subjects\n\n\n\n\nGiBleed; ibuprofen\n\n\nInitial qualifying events\n2,148\n1,451\n0\n0\n\n\nRecord in observation\n2,148\n1,451\n0\n0\n\n\nNot missing record date\n2,148\n1,451\n0\n0\n\n\nMerge overlapping records\n2,148\n1,451\n0\n0\n\n\nNo death recorded\n0\n0\n2,148\n1,451\n\n\nExit at death\n0\n0\n0\n0"
-  },
-  {
-    "objectID": "CohortConstructor/index.html#functions-for-cohort-transformation-and-combination",
-    "href": "CohortConstructor/index.html#functions-for-cohort-transformation-and-combination",
-    "title": "CohortConstructor",
-    "section": "Functions for Cohort Transformation and Combination",
-    "text": "Functions for Cohort Transformation and Combination\n\n\n\nSplit cohorts\n\nyearCohorts()\nstratifyCohorts()\n\n\n\n\n\n\nCombine cohorts\n\nunionCohorts()\nintersectCohorts()\n\n\n\n\n\n\nFilter cohorts\n\nsubsetCohorts()\nsampleCohorts()\n\n\n\n\nMatch cohorts\n\nmatchCohorts()\n\n\n\n\n\n\nConcatenate entries\n\ncollapseCohorts()\n\n\n\n\n\n\nCopy and rename cohorts\n\nrenameCohort()\ncopyCohorts()"
-  },
-  {
-    "objectID": "CohortConstructor/index.html#cohort-combinations---example",
-    "href": "CohortConstructor/index.html#cohort-combinations---example",
-    "title": "CohortConstructor",
-    "section": "Cohort combinations - Example",
-    "text": "Cohort combinations - Example\n\n\n\n\nCollapse drug exposures that are within a gap of 7 days."
-  },
-  {
-    "objectID": "CohortConstructor/index.html#cohort-combinations---example-1",
-    "href": "CohortConstructor/index.html#cohort-combinations---example-1",
-    "title": "CohortConstructor",
-    "section": "Cohort combinations - Example",
-    "text": "Cohort combinations - Example\n\n\n\n\ncdm$medications_collapsed &lt;- cdm$medications |&gt;\n  collapseCohorts(gap = 7, name = \"medications_collapsed\")\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nReason\n\nVariable name\n\n\n\nnumber_records\nnumber_subjects\nexcluded_records\nexcluded_subjects\n\n\n\n\nacetaminophen\n\n\nInitial qualifying events\n14,205\n2,679\n0\n0\n\n\nRecord in observation\n14,205\n2,679\n0\n0\n\n\nNot missing record date\n14,205\n2,679\n0\n0\n\n\nMerge overlapping records\n13,908\n2,679\n297\n0\n\n\nCollapse cohort with a gap of 7 days.\n13,899\n2,679\n9\n0"
-  },
-  {
-    "objectID": "CohortConstructor/index.html#cohort-combinations---example-2",
-    "href": "CohortConstructor/index.html#cohort-combinations---example-2",
-    "title": "CohortConstructor",
-    "section": "Cohort combinations - Example",
-    "text": "Cohort combinations - Example\n\n\n\n\nCreate a new cohort that contains people who had an exposure to both diclofenac and acetaminophen at the same time using."
-  },
-  {
-    "objectID": "CohortConstructor/index.html#cohort-combinations---example-3",
-    "href": "CohortConstructor/index.html#cohort-combinations---example-3",
-    "title": "CohortConstructor",
-    "section": "Cohort combinations - Example",
-    "text": "Cohort combinations - Example\n\n\n\n\ncdm$intersection &lt;- cdm$medications_collapsed |&gt;\n  intersectCohorts(name = \"intersection\")\n\nsettings(x = cdm$intersection)\n\n# A tibble: 1 × 5\n  cohort_definition_id cohort_name                gap acetaminophen diclofenac\n                 &lt;int&gt; &lt;chr&gt;                    &lt;dbl&gt;         &lt;dbl&gt;      &lt;dbl&gt;\n1                    1 acetaminophen_diclofenac     0             1          1"
-  },
-  {
-    "objectID": "CohortConstructor/index.html#exercise-4---transformation-and-combination",
-    "href": "CohortConstructor/index.html#exercise-4---transformation-and-combination",
-    "title": "CohortConstructor",
-    "section": "Exercise 4 - Transformation and Combination",
-    "text": "Exercise 4 - Transformation and Combination\nFrom the ibuprofen base cohort (not subseted to death), create five separate cohorts. Each cohort should include records for one specific year from the following list: 1975, 1976, 1977, 1978, 1979, and 1980.\n\nHow many records and subjects are in each cohort?\n\n\n\n\n💡 Click to see solution\n\n\ncdm$ibuprofen_years &lt;- cdm$ibuprofen |&gt;\n  yearCohorts(years = 1975:1980, name = \"ibuprofen_years\")\ncounts &lt;- summariseCohortCount(cohort = cdm$ibuprofen_years)\ntableCohortCount(result = counts)\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nCDM name\nVariable name\nEstimate name\n\nCohort name\n\n\n\nibuprofen_1975\nibuprofen_1976\nibuprofen_1977\nibuprofen_1978\nibuprofen_1979\nibuprofen_1980\n\n\n\n\nGiBleed\nNumber records\nN\n71\n64\n60\n75\n66\n63\n\n\n\nNumber subjects\nN\n68\n61\n60\n74\n66\n63"
-  },
-  {
-    "objectID": "CohortConstructor/index.html#optional-exercise-5",
-    "href": "CohortConstructor/index.html#optional-exercise-5",
-    "title": "CohortConstructor",
-    "section": "[Optional] Exercise 5",
-    "text": "[Optional] Exercise 5\nUse CohortConstructor to create a cohort with the following criteria:\n\nUsers of diclofenac\nFemales aged 16 or older\nWith at least 365 days of continuous observation prior to exposure\nWithout prior exposure to amoxicillin\nWith cohort exit defined as first discontinuation of exposure. An exposure being define as recorded exposures within 7-days gap\n\n\nMove to the next slide to see the attrition."
-  },
-  {
-    "objectID": "CohortConstructor/index.html#optional-exercise-5-1",
-    "href": "CohortConstructor/index.html#optional-exercise-5-1",
-    "title": "CohortConstructor",
-    "section": "[Optional] Exercise 5",
-    "text": "[Optional] Exercise 5\nMove to the next slide to see the solution.\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nReason\n\nVariable name\n\n\n\nnumber_records\nnumber_subjects\nexcluded_records\nexcluded_subjects\n\n\n\n\nGiBleed; diclofenac\n\n\nInitial qualifying events\n850\n850\n0\n0\n\n\nRecord in observation\n830\n830\n20\n20\n\n\nNot missing record date\n830\n830\n0\n0\n\n\nMerge overlapping records\n830\n830\n0\n0\n\n\nAge requirement: 16 to 150\n830\n830\n0\n0\n\n\nSex requirement: Female\n435\n435\n395\n395\n\n\nPrior observation requirement: 365 days\n435\n435\n0\n0\n\n\nFuture observation requirement: 0 days\n435\n435\n0\n0\n\n\nNot in concept amoxicillin between -Inf & -1 days relative to cohort_start_date\n161\n161\n274\n274\n\n\nCollapse cohort with a gap of 7 days.\n161\n161\n0\n0\n\n\nRestricted to first entry\n161\n161\n0\n0"
-  },
-  {
-    "objectID": "CohortConstructor/index.html#optional-exercise-5-2",
-    "href": "CohortConstructor/index.html#optional-exercise-5-2",
-    "title": "CohortConstructor",
-    "section": "[Optional] Exercise 5",
-    "text": "[Optional] Exercise 5\n\n\n💡 Click to see solution\n\n\namoxicillin &lt;- getDrugIngredientCodes(\n  cdm = cdm, \n  name  = c(\"amoxicillin\"), \n  nameStyle = \"{concept_name}\"\n)\ndiclofenac &lt;- getDrugIngredientCodes(\n  cdm = cdm, \n  name  = \"diclofenac\", \n  nameStyle = \"{concept_name}\"\n)\ncdm$diclofenac &lt;- conceptCohort(\n  cdm = cdm, \n  conceptSet = diclofenac, \n  name = \"diclofenac\"\n) |&gt;\n  requireDemographics(\n    sex = \"Female\",\n    ageRange = list(c(16, 150)), \n    minPriorObservation = 365\n  ) |&gt;\n  requireConceptIntersect(\n    conceptSet = amoxicillin,\n    window = list(c(-Inf, -1)),\n    intersections = 0\n  ) |&gt;\n  collapseCohorts(gap = 7) |&gt;\n  requireIsFirstEntry()\n\nresult &lt;- summariseCohortAttrition(cdm$diclofenac)\ntableCohortAttrition(result = result)"
-  },
-  {
-    "objectID": "CohortConstructor/index.html#cohortconstructor",
-    "href": "CohortConstructor/index.html#cohortconstructor",
-    "title": "CohortConstructor",
-    "section": "CohortConstructor",
-    "text": "CohortConstructor\n\n\n👉 Packages website\n👉 CRAN link\n👉 Manual\n📧 nuria.mercadebesora@ndorms.ox.ac.uk"
   }
 ]
