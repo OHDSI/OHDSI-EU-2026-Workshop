@@ -15,7 +15,6 @@ format:
     width: 1600
     footer: |
       <div style="position: relative; width: 100%;">
-        <div style="text-align: center; font-weight: 500;">Real World Evidence Summer School 2025</div>
         <div style="position: fixed; top: 20px; right: 20px;"><a href="../index.qmd" style="text-decoration: none;">⬅ Back to Workshop</a></div>
       </div>
 execute:
@@ -27,6 +26,150 @@ editor: visual
 ```{r, echo=FALSE}
 options(width = 120)
 ```
+
+## Motivation
+
+A *cohort* is a group of individuals that satisfy some inclusion criteria within a defined time period (inclusion criteria + time).
+
+## Motivation: Build in a tidy way
+
+- *omopgenerics* and *CDMConnector* define an [ecosystem of R packages](https://ohdsi.github.io/Tidy-R-with-OMOP-WG/Presentations/ecosystem) that allow us to interact with an OMOP CDM instance using packages such as dplyr and tidyr.
+
+. . .
+
+```{r}
+library(omock)
+cdm <- mockCdmFromDataset(source = "duckdb")
+cdm$person
+```
+
+## Motivation: Build in a tidy way
+
+```{r}
+library(dplyr)
+cdm$person |>
+  select(person_id, sex = gender_concept_id) |>
+  left_join(
+    cdm$observation_period |>
+      select(person_id, obs_start = observation_period_start_date),
+    by = "person_id"
+  )
+```
+
+. . .
+
+For more details on this approach please refer to the following book:
+
+Burn, E., & Català, M. (2025). Tidy R programming with the OMOP Common Data Model (first edition). Zenodo. https://doi.org/10.5281/zenodo.17532124. [Online version](https://ohdsi.github.io/Tidy-R-programming-with-OMOP/)
+
+## Motivation: order of operations (ATLAS)
+
+ATLAS is a user friendly interface used to build cohorts (<https://atlas-demo.ohdsi.org>):
+
+. . .
+
+![](ATLAS.png)
+
+## Motivation: order of operations
+
+:::: {.columns}
+
+::: {.column width="45%"}
+```{r, eval=FALSE}
+cdm$my_cohort |>
+  # require 180 days of prior history
+  inner_join(
+    cdm$observation_period |>
+      select(
+        "subject_id" = "person_id", 
+        "start_obs" = "observation_period_start_date",
+        "end_obs" = "observation_period_end_date"
+      ),
+    by = "subject_id"
+  ) |>
+  filter(start_obs + 180 <= cohort_start_date & cohort_start_date <= end_obs) |>
+  # restrict to only first event
+  group_by(cohort_definition_id, subject_id) |>
+  filter(cohort_start_date == min(cohort_start_date)) |>
+  ungroup()
+```
+:::
+
+::: {.column width="8%" style = "display: flex; align-items: center; justify-content: center;}
+vs
+:::
+
+::: {.column width="45%"}
+```{r, eval=FALSE}
+cdm$my_cohort |>
+  # restrict to only first event
+  group_by(cohort_definition_id, subject_id) |>
+  filter(cohort_start_date == min(cohort_start_date)) |>
+  ungroup() |>
+  # require 180 days of prior history
+  inner_join(
+    cdm$observation_period |>
+      select(
+        "subject_id" = "person_id", 
+        "start_obs" = "observation_period_start_date",
+        "end_obs" = "observation_period_end_date"
+      ),
+    by = "subject_id"
+  ) |>
+  filter(start_obs + 180 <= cohort_start_date & cohort_start_date <= end_obs)
+```
+:::
+
+::::
+
+## Motivation: common operations
+
+:::: {.columns}
+
+::: {.column width="45%"}
+```{r, eval=FALSE}
+cdm$my_cohort |>
+  # require 180 days of prior history
+  inner_join(
+    cdm$observation_period |>
+      select(
+        "subject_id" = "person_id", 
+        "start_obs" = "observation_period_start_date",
+        "end_obs" = "observation_period_end_date"
+      ),
+    by = "subject_id"
+  ) |>
+  filter(start_obs + 180 <= cohort_start_date & cohort_start_date <= end_obs) |>
+  # restrict to only first event
+  group_by(cohort_definition_id, subject_id) |>
+  filter(cohort_start_date == min(cohort_start_date)) |>
+  ungroup()
+```
+:::
+
+::: {.column width="8%" style = "display: flex; align-items: center; justify-content: center;}
+to
+:::
+
+::: {.column width="45%"}
+```{r, eval=FALSE}
+cdm$my_cohort |>
+  # require 180 days of prior history
+  requirePriorObservation(minPriorObservation = 180) |>
+  # restrict to only first event
+  requireIsFirstEntry()
+```
+:::
+
+::::
+
+## Motivation
+
+- Tidy way
+
+- Control order of operations
+
+- Flexibility
 
 ## Introduction
 
@@ -40,7 +183,7 @@ options(width = 120)
 ::: {style="margin-bottom: 10px;"}
 :::
 
--   CohortConstructor v0.4.0 is available in [CRAN](https://cran.r-project.org/web/packages/CohortConstructor/CohortConstructor.pdf){.link}.
+-   CohortConstructor v0.6.3 is available in [CRAN](https://cran.r-project.org/web/packages/CohortConstructor/CohortConstructor.pdf){.link}.
 
 ::: {style="margin-bottom: 10px;"}
 :::
