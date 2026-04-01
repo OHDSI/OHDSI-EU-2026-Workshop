@@ -49,7 +49,7 @@ It is the key and principal piece used in epidemiological studies. In the OMOP C
 
 ```{r}
 library(omock)
-cdm <- mockCdmFromDataset(source = "duckdb")
+cdm <- mockCdmFromDataset(datasetName = "GiBleed", source = "duckdb")
 cdm$person
 ```
 
