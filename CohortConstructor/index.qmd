@@ -412,6 +412,7 @@ library(CohortCharacteristics)
 library(dplyr)
 library(gt)
 library(here)
+library(PatientProfiles)
 
 requireEunomia(datasetName = "delphi-100k", cdmVersion = "5.4")
 con <- dbConnect(drv = duckdb(dbdir = eunomiaDir(datasetName = "delphi-100k", cdmVersion = "5.4")))
@@ -622,7 +623,7 @@ attr(cdm$hyp_sbp, "cohort_codelist")
 
 ```{r, eval=FALSE}
 # Load relevant packages
-library(omock)
+library(CDMConnector)
 library(duckdb)
 library(CohortConstructor)
 library(CodelistGenerator)
@@ -630,8 +631,15 @@ library(CohortCharacteristics)
 library(dplyr)
 library(gt)
 library(here)
+library(PatientProfiles)
 
-cdm <- mockCdmFromDataset(datasetName = "GiBleed", source = "duckdb")
+requireEunomia(datasetName = "delphi-100k", cdmVersion = "5.4")
+con <- dbConnect(drv = duckdb(dbdir = eunomiaDir(datasetName = "delphi-100k", cdmVersion = "5.4")))
+cdm <- cdmFromCon(
+  con = con, 
+  cdmSchema = "main",
+  writeSchema = "main"
+)
 ```
 
 ## Exercise 1 - Base cohorts
@@ -935,7 +943,7 @@ cdm$medications_trimmed <- cdm$medications |>
 
 ```{r, echo=FALSE}
 result <- cdm$medications_trimmed |> 
-  summariseCohortAttrition(cohortId = 1) 
+  summariseCohortAttrition(cohortId = "acetaminophen") 
 tableCohortAttrition(
   result = result, 
   groupColumn = c("cohort_name"),
@@ -1122,6 +1130,130 @@ counts <- summariseCohortCount(cohort = cdm$ibuprofen_years)
 tableCohortCount(result = counts)
 ```
 
+## Complex cohort 1
+
+- We want to define a cohort of individuals taking `acetaminophen` and `ibuprofen` (prescriptions separated by 90 days or less are concatenated in a unique era of exposure) with at least 365 days of prior history, not taking opoiods on index date and censor individual if they start taking opioids.
+
+## Complex cohort 1
+
+```{r}
+codelist <- getDrugIngredientCodes(
+  cdm = cdm, 
+  name = c("acetaminophen", "ibuprofen"),
+  nameStyle = "{concept_name}"
+)
+opioids <- getDrugIngredientCodes(
+  cdm = cdm, 
+  name = c("morphine", "tramadol", "codeine"),
+  nameStyle = "{concept_name}"
+) |>
+  unionCodelists()
+
+cdm$drugs <- conceptCohort(
+  cdm = cdm,
+  conceptSet = codelist,
+  name = "drugs",
+  exit = "event_end_date"
+) |>
+  # collapse in 90 days eras
+  collapseCohorts(gap = 90) |>
+  # intersect both cohorts
+  intersectCohorts() |>
+  # min prior observation
+  requirePriorObservation(minPriorObservation = 365) |>
+  # require no opioids
+  requireConceptIntersect(
+    conceptSet = opioids,
+    window = c(0, 0),
+    intersections = 0
+  ) |>
+  # add start opioids date
+  addConceptIntersectDate(
+    conceptSet = opioids, 
+    window = c(1, Inf), 
+    order = "first", 
+    nameStyle = "start_opioids",
+    name = "drugs"
+  ) |>
+  exitAtFirstDate(dateColumns = c("start_opioids", "cohort_end_date"))
+
+cohortCount(cdm$drugs)
+```
+
+## Complex cohort 2
+
+- Hypertension cohort defined as:
+
+  - Two records of systolic blood pressure higher than 140 separated less than 365 days apart.
+  
+  - Two records of diastolic blood pressure higher than 90 separated less than 365 days apart.
+  
+  - Record of hypertension as a condition.
+  
+  - Follow individuals till end of observation
+  
+## Complex cohort 2  
+
+```{r}
+# concept search
+systBP <- getCandidateCodes(cdm = cdm, keywords = "Systolic blood pressure", domains = "measurement") 
+diaBP <- getCandidateCodes(cdm = cdm, keywords = "Diastolic blood pressure", domains = "measurement") 
+hyp <- getCandidateCodes(cdm = cdm, keywords = "hypertension", domains = "condition") 
+
+codelist <- list(
+  syst_blood_presure = systBP$concept_id, 
+  dia_blood_presure = diaBP$concept_id,
+  hyp = hyp$concept_id
+)
+
+# systolic cohort
+cdm$syst_measurement <- measurementCohort(
+  cdm = cdm, 
+  conceptSet = codelist["syst_blood_presure"], 
+  name = "syst_measurement", 
+  valueAsNumber = list("syst_blood_presure" = list("8876" = c(140, 9999)))
+) |>
+  # require prior record in 365 days before
+  requireCohortIntersect(
+    targetCohortTable = "syst_measurement",
+    window = c(-365, -1),
+    intersections = c(1, Inf)
+  )
+
+# diastolic cohort
+cdm$dia_measurement <- measurementCohort(
+  cdm = cdm, 
+  conceptSet = codelist["dia_blood_presure"], 
+  name = "dia_measurement", 
+  valueAsNumber = list("dia_blood_presure" = list("8876" = c(90, 9999)))
+) |>
+  # require prior record in 365 days before
+  requireCohortIntersect(
+    targetCohortTable = "dia_measurement",
+    window = c(-365, -1),
+    intersections = c(1, Inf)
+  )
+
+# condition cohort
+cdm$hyp_condition <- conceptCohort(
+  cdm = cdm, 
+  conceptSet = codelist["hyp"], 
+  name = "hyp_condition"
+)
+
+# bind all cohorts together
+cdm <- bind(cdm$syst_measurement, cdm$dia_measurement, cdm$hyp_condition, name = "hypertension")
+
+# end of observation
+cdm$hypertension <- cdm$hypertension |>
+  exitAtObservationEnd() |>
+  # merge cohorts together
+  unionCohorts()
+
+cohortCount(cdm$hypertension)
+```
+
+  
 ## \[Optional\] Exercise 5
 
 **Use CohortConstructor to create a cohort with the following criteria:**
