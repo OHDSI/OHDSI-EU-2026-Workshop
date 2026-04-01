@@ -29,6 +29,14 @@ options(width = 120)
 
 ## Motivation
 
+<!-- # phylosofical differences -->
+<!-- # scalability -->
+<!-- # set of cohorts -->
+<!-- # building blocks -->
+<!-- # R notebook -->
+<!-- # how smoking is recorded -->
+<!-- # real study -->
+
 A **cohort** is a group of individuals that satisfy some inclusion criteria within a defined time period (inclusion criteria + time).
 
 It is the key and principal piece used in epidemiological studies. In the OMOP CDM we define a cohort a table with 4 columns:
