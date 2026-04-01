@@ -29,7 +29,17 @@ options(width = 120)
 
 ## Motivation
 
-A *cohort* is a group of individuals that satisfy some inclusion criteria within a defined time period (inclusion criteria + time).
+A **cohort** is a group of individuals that satisfy some inclusion criteria within a defined time period (inclusion criteria + time).
+
+It is the key and principal piece used in epidemiological studies. In the OMOP CDM we define a cohort a table with 4 columns:
+
+-   *cohort_definition_id*: Unique identifier for each cohort in the table.
+
+-   *subject_id*: Unique patient identifier.
+
+-   *cohort_start_date*: Date when the person enters the cohort.
+
+-   *cohort_end_date*: Date when the person exits the cohort.
 
 ## Motivation: Build in a tidy way
 
@@ -53,7 +63,8 @@ cdm$person |>
     cdm$observation_period |>
       select(person_id, obs_start = observation_period_start_date),
     by = "person_id"
-  )
+  ) |>
+  glimpse()
 ```
 
 . . .
@@ -69,6 +80,12 @@ ATLAS is a user friendly interface used to build cohorts (<https://atlas-demo.oh
 . . .
 
 ![](ATLAS.png)
+
+## Motivation: order of operations (ATLAS)
+
+ATLAS is a user friendly interface used to build cohorts (<https://atlas-demo.ohdsi.org>):
+
+![](ATLAS2.png)
 
 ## Motivation: order of operations
 
@@ -95,7 +112,7 @@ cdm$my_cohort |>
 ```
 :::
 
-::: {.column width="8%" style = "display: flex; align-items: center; justify-content: center;}
+::: {.column width="8%"}
 vs
 :::
 
@@ -147,7 +164,7 @@ cdm$my_cohort |>
 ```
 :::
 
-::: {.column width="8%" style = "display: flex; align-items: center; justify-content: center;}
+::: {.column width="8%"}
 to
 :::
 
@@ -168,6 +185,8 @@ cdm$my_cohort |>
 - Tidy way
 
 - Control order of operations
+
+- Record decisions and its impact in attrition
 
 - Flexibility
 
@@ -211,22 +230,7 @@ cdm$my_cohort |>
 ## OMOP Cohorts in R
 
 ```{r, echo=FALSE, message=FALSE}
-library(CDMConnector)
-library(CodelistGenerator)
 library(CohortConstructor)
-library(CohortCharacteristics)
-library(dplyr)
-
-requireEunomia()
-
-con <- DBI::dbConnect(duckdb::duckdb(), dbdir = eunomiaDir())
-cdm <- cdmFromCon(
-  con, 
-  cdmSchema = "main", 
-  writeSchema = "main",
-  writePrefix = "my_study_"
-)
-
 cdm$cohort <- conceptCohort(
   cdm = cdm, 
   conceptSet = list("viral_sinusitis" = 40481087L, "viral_pharyngitis" = 4112343L), 
@@ -240,7 +244,7 @@ cdm$cohort
 
 ## OMOP Cohorts in R {.nonincremental}
 
-Additionally, the `<cohort_table>` object has the follwing **attributes**:
+Additionally, the `<cohort_table>` object has the following **attributes**:
 
 -   **Settings**: Relate each cohort definition ID with a cohort name and other variables that define the cohort.
 
@@ -296,12 +300,17 @@ Cohorts defined using clinical concepts (e.g., asthma diagnoses) or demographics
 ::: {style="margin-bottom: 25px;"}
 :::
 
-**2) Cohort-curation**
+**2) Inclusion criteria**
 
-Tranform base cohorts to meet study-specific inclusion criteria.
+Transform base cohorts to meet study-specific inclusion criteria.
 
 ::: {style="margin-bottom: 25px;"}
 :::
+
+**3) Follow-up**
+
+Set follow-up for the cohort of interest (this can also be done at earlier stages).
+
 
 ## Function Sets
 
@@ -396,38 +405,20 @@ Tranform base cohorts to meet study-specific inclusion criteria.
 ```{r, message=FALSE}
 # Load relevant packages
 library(CDMConnector)
-library(CodelistGenerator)
-library(CohortConstructor)
-library(CohortCharacteristics)
 library(duckdb)
-library(DBI)
+library(CohortConstructor)
+library(CodelistGenerator)
+library(CohortCharacteristics)
 library(dplyr)
 library(gt)
 library(here)
-```
 
-```{r, echo=FALSE}
-# Create cdm_reference object
-datasetName <- "GiBleed"
-dbdir <- here::here(paste0(datasetName, ".duckdb"))
-con <- duckdb::dbConnect(drv = duckdb::duckdb(dbdir = dbdir))
-
-cdm <- omock::mockCdmFromDataset(datasetName = datasetName)
-CDMConnector::insertCdmTo(cdm = cdm, to = CDMConnector::dbSource(con = con, writeSchema = "main"))
-duckdb::dbDisconnect(conn = con)
-```
-
-```{r}
-datasetName <- "GiBleed"
-dbdir <- here(paste0(datasetName, ".duckdb"))
-con <- dbConnect(drv = duckdb(dbdir = dbdir))
-
+requireEunomia(datasetName = "delphi-100k", cdmVersion = "5.4")
+con <- dbConnect(drv = duckdb(dbdir = eunomiaDir(datasetName = "delphi-100k", cdmVersion = "5.4")))
 cdm <- cdmFromCon(
   con = con, 
   cdmSchema = "main",
-  writeSchema = "main",
-  writePrefix = "my_study_", 
-  cdmName = datasetName
+  writeSchema = "main"
 )
 ```
 
@@ -478,9 +469,9 @@ attrition(x = cdm$age_cohort)
 To better visualise the **attrition**, we can use the package `CohortCharacteristics` to create a **formatted table**:
 
 ```{r}
-cdm$age_cohort |> 
-  summariseCohortAttrition() |>
-  tableCohortAttrition()
+result <- summariseCohortAttrition(cohort = cdm$age_cohort)
+
+tableCohortAttrition(result = result)
 ```
 
 ## Concept based - Example {.incremental:FALSE}
@@ -534,8 +525,7 @@ settings(x = cdm$medications)
 . . .
 
 ```{r, echo=FALSE}
-result <- cdm$medications |> 
-  summariseCohortAttrition() 
+result <- summariseCohortAttrition(cohort = cdm$medications) 
 result |> 
   tableCohortAttrition(
     groupColumn = c("cohort_name"),
@@ -556,35 +546,92 @@ result |>
 attr(cdm$medications, "cohort_codelist")
 ```
 
+## Measurement based - Example
+
+::: {style="margin-bottom: 20px;"}
+:::
+
+. . .
+
+Let's create a cohort of hypertension defined as two records of high pressure separated by less than a year. We will start identifying the measurement records that satisfy our criteria
+
+::: {style="margin-bottom: 10px;"}
+:::
+
+1)  Get relevant codelists with `CodelistGenerator`
+
+. . .
+
+```{r}
+systBP <- getCandidateCodes(cdm = cdm, keywords = "Systolic blood pressure", domains = "measurement") 
+systBP
+systBP <- list(syst_blood_presure = systBP$concept_id)
+```
+
+## Measurement based - Example {.incremental:FALSE}
+
+2)  Create measurement based cohorts
+
+. . .
+
+```{r}
+cdm$hyp_sbp <- measurementCohort(
+  cdm = cdm, 
+  conceptSet = systBP, 
+  name = "hyp_sbp", 
+  valueAsNumber = list("syst_blood_presure" = list("8876" = c(140, 9999)))
+)
+
+settings(x = cdm$hyp_sbp)
+```
+
+## Measurement based - Example
+
+::: {style="margin-bottom: 15px;"}
+:::
+
+-   Attrition
+
+. . .
+
+```{r, echo=FALSE}
+result <- summariseCohortAttrition(cohort = cdm$hyp_sbp) 
+result |> 
+  tableCohortAttrition(
+    groupColumn = c("cohort_name"),
+    hide = c("variable_level", "reason_id", "estimate_name", "cdm_name", settingsColumns(result))
+  )
+```
+
+## Measurement based - Example
+
+::: {style="margin-bottom: 15px;"}
+:::
+
+-   Cohort codelist as an attribute
+
+. . .
+
+```{r}
+attr(cdm$hyp_sbp, "cohort_codelist")
+```
+
 # Your turn!
 
 ## Get Started: Create the cdm_reference object
 
-```{r, message=FALSE, eval=FALSE}
+```{r, eval=FALSE}
 # Load relevant packages
-library(CDMConnector)
-library(CodelistGenerator)
-library(CohortConstructor)
-library(CohortCharacteristics)
+library(omock)
 library(duckdb)
-library(DBI)
+library(CohortConstructor)
+library(CodelistGenerator)
+library(CohortCharacteristics)
 library(dplyr)
 library(gt)
 library(here)
-```
 
-```{r, eval=FALSE}
-datasetName <- "GiBleed"
-dbdir <- here(paste0(datasetName, ".duckdb"))
-con <- dbConnect(drv = duckdb(dbdir = dbdir))
-
-cdm <- cdmFromCon(
-  con = con, 
-  cdmSchema = "main",
-  writeSchema = "main",
-  writePrefix = "my_study_", 
-  cdmName = datasetName
-)
+cdm <- mockCdmFromDataset(datasetName = "GiBleed", source = "duckdb")
 ```
 
 ## Exercise 1 - Base cohorts
@@ -601,7 +648,8 @@ cdm <- cdmFromCon(
 ```{r, echo=FALSE}
 aspirin <- getDrugIngredientCodes(cdm = cdm, name  = "aspirin", nameStyle = "{concept_name}")
 cdm$aspirin <- conceptCohort(cdm = cdm, conceptSet = aspirin, name = "aspirin")
-summariseCohortCount(cohort = cdm$aspirin) |> tableCohortCount()
+summariseCohortCount(cohort = cdm$aspirin) |> 
+  tableCohortCount()
 ```
 
 <details>
@@ -614,7 +662,7 @@ aspirin <- getDrugIngredientCodes(
 )
 cdm$aspirin <- conceptCohort(cdm = cdm, conceptSet = aspirin, name = "aspirin")
 counts <- summariseCohortCount(cohort = cdm$aspirin) 
-tableCohortCount(reuslt = counts)
+tableCohortCount(result = counts)
 ```
 
 </details>
@@ -674,6 +722,8 @@ tableCohortCount(reuslt = counts)
 
 ## Requirement functions - Example
 
+- *require** functions eliminate the records that **do not** satisfy the inclusion criteria at `indexDate`.
+
 ::: {style="margin-bottom: 10px;"}
 :::
 
@@ -708,7 +758,7 @@ cdm$medications_requirement <- cdm$medications |>
 
 ```{r, echo=FALSE}
 result <- cdm$medications_requirement |> 
-  summariseCohortAttrition(cohortId = 1) 
+  summariseCohortAttrition(cohortId = "acetaminophen") 
 tableCohortAttrition(
   result = result,
   groupColumn = c("cohort_name"),
@@ -743,7 +793,7 @@ cdm$medications_requirement <- cdm$medications_requirement |>
 
 ```{r, echo=FALSE}
 result <- cdm$medications_requirement |> 
-  summariseCohortAttrition(cohortId = 1) 
+  summariseCohortAttrition(cohortId = "acetaminophen") 
 tableCohortAttrition(
   result = result,
   groupColumn = c("cohort_name"),
@@ -1011,7 +1061,7 @@ cdm$medications_collapsed <- cdm$medications |>
 
 ```{r, echo=FALSE}
 result <- cdm$medications_collapsed |> 
-  summariseCohortAttrition(cohortId = 1) 
+  summariseCohortAttrition(cohortId = "acetaminophen") 
 tableCohortAttrition(
   result = result,
   groupColumn = c("cohort_name"),
@@ -1177,6 +1227,7 @@ tableCohortAttrition(result = result)
 👉 [**Manual**](https://cran.r-project.org/web/packages/CohortConstructor/CohortConstructor)
 
 📧 <a href="mailto:nuria.mercadebesora@ndorms.ox.ac.uk">nuria.mercadebesora\@ndorms.ox.ac.uk</a>
+📧 <a href="mailto:marti.catalasabate@ndorms.ox.ac.uk">marti.catalasabate\@ndorms.ox.ac.uk</a>
 :::
 
 ::: {style="flex: 1; text-align: center;"}
