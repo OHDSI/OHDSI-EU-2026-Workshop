@@ -85,8 +85,10 @@ editor: visual
 ```{r, eval = FALSE}
 result <- phenotypeDiagnostics(
   cohort,
-  diagnostics = c("databaseDiagnostics", "codelistDiagnostics",
-                  "cohortDiagnostics", "populationDiagnostics")
+  databaseDiagnostics = list(),
+  codelistDiagnostics = list(),
+  cohortDiagnostics = list(),
+  populationDiagnostics = list()
 )
 ```
 
@@ -101,10 +103,32 @@ result <- phenotypeDiagnostics(
 . . .
 
 ```{r, eval = FALSE}
-result <- phenotypeDiagnostics(
+db_diagnostics <- databaseDiagnostics(
   cohort,
-  diagnostics = c("databaseDiagnostics"),
-  clinicalTableSample = NULL
+  snapshot = TRUE,
+  personTableSummary = TRUE,
+  observationPeriodsSummary = TRUE,
+  clinicalRecordsSummary = TRUE
+)
+
+# OR 
+db_diagnostics <- phenotypeDiagnostics(
+  cohort,
+  databaseDiagnostics = list(
+    "diagnostics" = c("snapshot", "personTableSummary", "observationPeriodsSummary",
+                      "clinicalRecordsSummary")),
+  codelistDiagnostics = NULL,
+  cohortDiagnostics = NULL,
+  populationDiagnostics = NULL
+)
+
+# OR 
+db_diagnostics <- phenotypeDiagnostics(
+  cohort,
+  databaseDiagnostics = list(),
+  codelistDiagnostics = NULL,
+  cohortDiagnostics = NULL,
+  populationDiagnostics = NULL
 )
 ```
 
@@ -120,41 +144,93 @@ result <- phenotypeDiagnostics(
 . . .
 
 ```{r, eval = FALSE}
-result <- phenotypeDiagnostics(
+cl_diagnostics <- codelistDiagnostics(
   cohort,
-  diagnostics = c("codelistDiagnostics"),
-  measurementSample = 1000, 
-  drugExposureSample = 1000
+  achillesCodeUse = TRUE,
+  orphanCodeUse = TRUE,
+  cohortCodeUse = TRUE,
+  drugDiagnostics = TRUE,
+  measurementDiagnostics = TRUE,
+  measurementDiagnosticsSample = 20000,
+  drugDiagnosticsSample = 20000
 )
+
+# OR 
+cl_diagnostics <- phenotypeDiagnostics(
+  cohort,
+  databaseDiagnostics = NULL,
+  codelistDiagnostics = list(
+    "diagnostics" = c("achillesCodeUse", "orphanCodeUse", "cohortCodeUse", 
+                      "drugDiagnostics", "measurementDiagnostics"),
+    "measurementSample" = 20000, 
+    "drugExposureSample" = 20000
+  ),
+  cohortDiagnostics = NULL,
+  populationDiagnostics = NULL)
+  
+# OR 
+cl_diagnostics <- phenotypeDiagnostics(
+  cohort,
+  databaseDiagnostics = NULL,
+  codelistDiagnostics = list(),
+  cohortDiagnostics = NULL,
+  populationDiagnostics = NULL)
 ```
 
 ## Cohort Diagnostics
 
 -   Summarise your cohort characteristics:
-    1.  **Cohort count & attrition** 
+    1.  **Cohort count & attrition**
     2.  **Cohort characteristics**: Baseline characteristics of your cohort
-    3.  **Large scale characteristics**: Summary of the records from clinical tables within a time window. 
+    3.  **Large scale characteristics**: Summary of the records from clinical tables within a time window.
     4.  **Compare large scale characteristics**: Comparison of the LSC with a matched (by age & sex) cohort.
     5.  **Compare cohorts**: Overlap and timing between cohorts (only if more than one cohort are present).
-    6.  **Cohort survival**: Survival curves.
-. . .
+    6.  **Cohort survival**: Survival curves
+    
+. . . 
 
 ```{r, eval = FALSE}
+c_diagnostics <- cohortDiagnostics(
+  cohort,
+  cohortCount = TRUE,
+  cohortCharacteristics = TRUE,
+  largeScaleCharacteristics = TRUE,
+  compareCohorts = TRUE,
+  cohortSurvival = FALSE,
+  cohortSample = 20000,
+  matchedSample = 1000
+)
+
+# OR 
 result <- phenotypeDiagnostics(
   cohort,
-  diagnostics = c("cohortDiagnostics"),
-  survival = TRUE, 
-  cohortSample = 20000, 
-  matchedSample = 1000
+  databaseDiagnostics = NULL
+  cohortDiagnostics = list(
+    "diagnostics" = c("cohortCount", "cohortCharacteristics", "largeScaleCharacteristics",
+                      "compareCohorts"),
+    "cohortSample" = 20000,
+    "matchedSample" = 1000
+  ),
+  cohortDiagnostics = NULL,
+  populationDiagnostics = NULL
+)
+
+# OR 
+result <- phenotypeDiagnostics(
+  cohort,
+  databaseDiagnostics = NULL,
+  cohortDiagnostics = list(),
+  cohortDiagnostics = NULL,
+  populationDiagnostics = NULL
 )
 ```
 
 ## Population Diagnostics
 
 -   Contextualise your cohort including:
-    1.  **Incidence** 
+    1.  **Incidence**
     2.  **Prevalence**
-    
+
 . . .
 
 ```{r, eval = FALSE}
@@ -165,7 +241,6 @@ result <- phenotypeDiagnostics(
   populationDateRange = as.Date(c("2010-01-01", NA))
 )
 ```
-
 
 ## Extra: Create a clinical description manually and add it to the shiny app!
 
@@ -187,7 +262,9 @@ chat <- chat("google_gemini")
 exp <- getCohortExpectations(chat = chat, 
                              phenotypes = c("type_2_diabetes")) 
 ```
+
 ## Final: Create a shiny app to visualise all the results!
+
 -   Create a shiny app to visualize all the results
 
 . . .
