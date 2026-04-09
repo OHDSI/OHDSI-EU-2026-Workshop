@@ -26,7 +26,7 @@ editor: visual
 
 ## Introduction
 
--   PhenotypeR package is designed to review cohorts in OMOP CDM.
+-   PhenotypeR package can help us to assess the research-readiness of a set of cohorts we have defined.
 
 ::: {style="margin-bottom: 10px;"}
 :::
@@ -36,7 +36,7 @@ editor: visual
 ::: {style="margin-bottom: 10px;"}
 :::
 
--   PhenotypeR 0.1.6 is available in [CRAN](https://cran.r-project.org/web/packages/PhenotypeR/index.html){.link}.
+-   PhenotypeR 0.3.4 is available in [CRAN](https://cran.r-project.org/web/packages/PhenotypeR/index.html){.link}.
 
 ::: {style="margin-bottom: 10px;"}
 :::
@@ -52,7 +52,6 @@ editor: visual
 :::: {.column width="45%"}
 -   **Database diagnostics**
 
-    -   Summarises the databases metadata and the observation period.
     -   `databaseDiagnostics()`
 
 ::: {style="margin-bottom: 10px;"}
@@ -60,14 +59,12 @@ editor: visual
 
 -   **Codelist diagnostics**
 
-    -   Summarises the codelist use associated to our cohort.
     -   `codelistDiagnostics()`
 ::::
 
 :::: {.column width="55%"}
 -   **Cohort diagnostics**
 
-    -   Summarises baseline characteristics, attrition, overlap, and large-scale characteristics. It also allows to compare our results with a matched cohort.
     -   `cohortDiagnostics()`
 
 ::: {style="margin-bottom: 10px;"}
@@ -75,7 +72,6 @@ editor: visual
 
 -   **Population diagnostics**
 
-    -   Incidence and prevalence of our cohort in the database.
     -   `populationDiagnostics()`
 ::::
 :::::::
@@ -89,75 +85,246 @@ editor: visual
 ```{r, eval = FALSE}
 result <- phenotypeDiagnostics(
   cohort,
-  databaseDiagnostics = TRUE,
-  codelistDiagnostics = TRUE,
-  cohortDiagnostics = TRUE,
-  survival = TRUE,
-  match = TRUE,
-  matchedSample = NULL,
-  populationDiagnostics = TRUE,
-  populationSample = NULL,
-  populationDateRange = as.Date(c(NA,NA))
+  databaseDiagnostics = list(),
+  codelistDiagnostics = list(),
+  cohortDiagnostics = list(),
+  populationDiagnostics = list()
 )
 ```
+
+## Database Diagnostics
+
+-   Summarise the database metadata including:
+    1.  **Snapshot**
+    2.  Summary of the **person table**
+    3.  Summary of the **observation period**
+    4.  Summary of the **clinical tables** (i.e., *condition_occurrence*) where the concepts of the codelist defining your cohort are found.
+
+. . .
+
+```{r, eval = FALSE}
+db_diagnostics <- databaseDiagnostics(
+  cohort,
+  snapshot = TRUE,
+  personTableSummary = TRUE,
+  observationPeriodsSummary = TRUE,
+  clinicalRecordsSummary = TRUE
+)
+
+# OR 
+db_diagnostics <- phenotypeDiagnostics(
+  cohort,
+  databaseDiagnostics = list(
+    "diagnostics" = c("snapshot", "personTableSummary", "observationPeriodsSummary",
+                      "clinicalRecordsSummary")),
+  codelistDiagnostics = NULL,
+  cohortDiagnostics = NULL,
+  populationDiagnostics = NULL
+)
+
+# OR 
+db_diagnostics <- phenotypeDiagnostics(
+  cohort,
+  databaseDiagnostics = list(),
+  codelistDiagnostics = NULL,
+  cohortDiagnostics = NULL,
+  populationDiagnostics = NULL
+)
+```
+
+## Codelist Diagnostics
+
+-   Summarise the codelist associated with your cohort including:
+    1.  **Achilles codes use** (only if ACHILLES tables are present)
+    2.  **Orphan codes use** (only if ACHILLES tables are present)
+    3.  **Cohort code use**
+    4.  **Measurement code use** (only if measurement concepts are present in your codelist)
+    5.  **Drug diagnostics** (only if drug concepts are present in your codelist)
+
+. . .
+
+```{r, eval = FALSE}
+cl_diagnostics <- codelistDiagnostics(
+  cohort,
+  achillesCodeUse = TRUE,
+  orphanCodeUse = TRUE,
+  cohortCodeUse = TRUE,
+  drugDiagnostics = TRUE,
+  measurementDiagnostics = TRUE,
+  measurementDiagnosticsSample = 20000,
+  drugDiagnosticsSample = 20000
+)
+
+# OR 
+cl_diagnostics <- phenotypeDiagnostics(
+  cohort,
+  databaseDiagnostics = NULL,
+  codelistDiagnostics = list(
+    "diagnostics" = c("achillesCodeUse", "orphanCodeUse", "cohortCodeUse", 
+                      "drugDiagnostics", "measurementDiagnostics"),
+    "measurementSample" = 20000, 
+    "drugExposureSample" = 20000
+  ),
+  cohortDiagnostics = NULL,
+  populationDiagnostics = NULL)
+  
+# OR 
+cl_diagnostics <- phenotypeDiagnostics(
+  cohort,
+  databaseDiagnostics = NULL,
+  codelistDiagnostics = list(),
+  cohortDiagnostics = NULL,
+  populationDiagnostics = NULL)
+```
+
+## Cohort Diagnostics
+
+-   Summarise your cohort characteristics:
+    1.  **Cohort count & attrition**
+    2.  **Cohort characteristics**: Baseline characteristics of your cohort
+    3.  **Large scale characteristics**: Summary of the records from clinical tables within a time window.
+    4.  **Compare large scale characteristics**: Comparison of the LSC with a matched (by age & sex) cohort.
+    5.  **Compare cohorts**: Overlap and timing between cohorts (only if more than one cohort are present).
+    6.  **Cohort survival**: Survival curves
+    
+. . . 
+
+```{r, eval = FALSE}
+c_diagnostics <- cohortDiagnostics(
+  cohort,
+  cohortCount = TRUE,
+  cohortCharacteristics = TRUE,
+  largeScaleCharacteristics = TRUE,
+  compareCohorts = TRUE,
+  cohortSurvival = FALSE,
+  cohortSample = 20000,
+  matchedSample = 1000
+)
+
+# OR 
+result <- phenotypeDiagnostics(
+  cohort,
+  databaseDiagnostics = NULL
+  cohortDiagnostics = list(
+    "diagnostics" = c("cohortCount", "cohortCharacteristics", "largeScaleCharacteristics",
+                      "compareCohorts"),
+    "cohortSample" = 20000,
+    "matchedSample" = 1000
+  ),
+  cohortDiagnostics = NULL,
+  populationDiagnostics = NULL
+)
+
+# OR 
+result <- phenotypeDiagnostics(
+  cohort,
+  databaseDiagnostics = NULL,
+  cohortDiagnostics = list(),
+  cohortDiagnostics = NULL,
+  populationDiagnostics = NULL
+)
+```
+
+## Population Diagnostics
+
+-   Contextualise your cohort including:
+    1.  **Incidence**
+    2.  **Prevalence**
+
+. . .
+
+```{r, eval = FALSE}
+result <- phenotypeDiagnostics(
+  cohort,
+  diagnostics = c("populationDiagnostics"),
+  populationSample = 20000, 
+  populationDateRange = as.Date(c("2010-01-01", NA))
+)
+```
+
+## Extra: Create a clinical description manually and add it to the shiny app!
+
+```{r, eval = FALSE}
+downloadClinicalDescriptionTemplate(
+  directory = here(),
+  name = "type_2_diabetes") # Same name of your cohort!!!!
+```
+
+## Extra: Create clinical expectations using AI!
+
+```{r, eval = FALSE}
+library(ellmer)
+
+GEMINI_API_KEY = "your API"
+chat <- chat("google_gemini")
+
+chat <- chat("google_gemini")
+exp <- getCohortExpectations(chat = chat, 
+                             phenotypes = c("type_2_diabetes")) 
+```
+
+## Final: Create a shiny app to visualise all the results!
 
 -   Create a shiny app to visualize all the results
 
 . . .
 
 ```{r, eval = FALSE}
-shinyDiagnostics(result = result, directory = here())
+shinyDiagnostics(result = result, 
+                 directory = here(), 
+                 minCellCount = 5, 
+                 expectations = exp, 
+                 removeEmptyTabs = FALSE)
 ```
 
-## Run Phenotype Diagnostics - Example
+## Exercise - Run your PhenotypeR analysis and create your shiny app!
 
 ```{r, eval = FALSE}
-library(CDMConnector)
-library(CodelistGenerator)
-library(CohortConstructor)
-library(CohortCharacteristics)
-library(dplyr)
-library(PhenotypeR)
-library(here)
 library(omock)
-library(duckdb)
+library(here)
+library(PhenotypeR)
+library(OmopConstructor)
+library(CohortConstructor)
+library(CohortSurvival)
 
-# Create mock cdm
-datasetName <- "synpuf-1k_5.3"
-dbdir <- here(paste0(datasetName, ".duckdb"))
-con <- dbConnect(drv = duckdb(dbdir = dbdir))
-cdm <- mockCdmFromDataset(datasetName = datasetName)
-cdm <- insertCdmTo(cdm = cdm, to = dbSource(con = con, writeSchema = "main"))
+# Create mock CDM
+cdm <- mockCdmFromDataset(datasetName = "synpuf-1k_5.3", source = "duckdb")
+cdm <- cdm |> buildAchillesTables()
 
-cdm <- cdm %>%
-  buildAchillesTables()
-
-# Create mock cohorts
-drug_codes <- getDrugIngredientCodes(
-  cdm = cdm, 
-  name = c("diclofenac", "acetaminophen"),
-  nameStyle = "{concept_name}"
+# Define code list for your cohort
+codes <- list(
+  "type_2_diabetes" = c(201826L, 40482801L),
+  "user_of_warfarin" = c(1310149L, 40163554L),
+  "measurement_of_prostate_specific_antigen_level" = c(2617206L)
 )
 
-cdm$medications <- conceptCohort(
-  cdm = cdm, 
-  conceptSet = drug_codes, 
-  name = "medications"
-)
+# Instantiate your cohort
+cdm[["study_cohorts"]] <- conceptCohort(cdm,
+                                        conceptSet = codes,
+                                        name = "study_cohorts")
 
 # Run Phenotype Diagnostics 
-result <- phenotypeDiagnostics(cdm$medications,
-                               databaseDiagnostics = TRUE,
-                               codelistDiagnostics = TRUE,
-                               cohortDiagnostics = TRUE,
-                               survival = TRUE,
-                               match = TRUE,
-                               matchedSample = NULL,
-                               populationDiagnostics = TRUE,
-                               populationSample = NULL,
-                               populationDateRange = as.Date(c(NA,NA)))
+result <- phenotypeDiagnostics(cohort = cdm[["study_cohorts"]], 
+                               diagnostics = c("databaseDiagnostics", "codelistDiagnostics",
+                                               "cohortDiagnostics", "populationDiagnostics"), 
+                               clinicalTableSample = NULL, 
+                               measurementSample = 1000, 
+                               drugExposureSample = 1000, 
+                               survival = TRUE, 
+                               cohortSample = 1000, 
+                               matchedSample = 1000, 
+                               populationSample = 1000, 
+                               populationDateRange = as.Date(c("2000-01-01", NA)))
 
-shinyDiagnostics(result = result, directory = here())
+# Download the expectations from the website
+exp_table <- read_csv(file = "...") # Paste here the directory where you saved the clinical description
+
+# Download the clinical descriptions from the website
+clinical_descriptions_dir <- "..." # Paste here the directory where you saved the clinical description
+
+shinyDiagnostics(result = result, 
+                 directory = here(), 
+                 expectations = exp_table)
 ```
 
 # Visualise the results
