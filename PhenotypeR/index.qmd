@@ -1,6 +1,4 @@
 ---
-title: "PhenotypeR"
-subtitle: "Review codelists and cohorts in OMOP CDM"
 format:
   revealjs: 
     theme: [simple, ../styleSS25.scss]
@@ -15,7 +13,7 @@ format:
     width: 1600
     footer: |
       <div style="position: relative; width: 100%;">
-        <div style="text-align: center; font-weight: 500;">Real World Evidence Summer School 2025</div>
+        <div style="text-align: center; font-weight: 500;">OHDSI EUROPE 2026</div>
         <div style="position: fixed; top: 20px; right: 20px;"><a href="../index.qmd" style="text-decoration: none;">⬅ Back to Workshop</a></div>
       </div>
 execute:
@@ -23,6 +21,16 @@ execute:
   eval: true
 editor: visual
 ---
+
+# PhenotypeR
+
+Review codelists and cohorts in OMOP CDM
+
+<p style="text-align:center;">
+
+<img src="Figures/logo.png" style="width:180px; height:auto;"/>
+
+</p>
 
 ## Introduction
 
@@ -341,6 +349,8 @@ shinyDiagnostics(result = result,
                  removeEmptyTabs = FALSE)
 ```
 
+See the results in the [shiny app](https://dpa-pde-oxford.shinyapps.io/PhenotypeRShiny_OHDSIEuropeWorkshop/)
+
 # Exercise - Run your PhenotypeR analysis and create your shiny app!
 
 ## 1. Load the packages
@@ -353,8 +363,8 @@ shinyDiagnostics(result = result,
 
 ```{r, eval = FALSE}
 # Install all the packages:
-install.packages(c("omock", "OmopConstructor", "CohortConstructor",
-                   "CohortSurvival", "readr"))
+install.packages(c("omock", "here", "OmopConstructor", "CohortConstructor",
+                   "CohortSurvival", "omopgenerics", "readr", "duckdb"))
 remotes::install_github("OHDSI/PhenotypeR")
 
 # Load all the packages
@@ -375,7 +385,7 @@ cdm <- cdm |> buildAchillesTables()
 
 ## 2. Instantiate your cohorts
 
--   We will now instantiate our cohorts using [https://ohdsi.github.io/CohortConstructor/](CohortConstructor) R Package.
+-   We will now instantiate our cohorts using [CohortConstructor](https://ohdsi.github.io/CohortConstructor/) R Package.
 
 . . .
 
@@ -407,7 +417,9 @@ To create a database description, follow the following instructions:
 
 . . .
 
-Help: You can check the arguments of the function using: `??downloadDatabaseDescriptionTemplate` or in the **PhenotypeR** website: <https://ohdsi.github.io/PhenotypeR/reference/index.html>
+Help: You can check the arguments of the function using:
+
+`??downloadDatabaseDescriptionTemplate` or in the [**PhenotypeR website**](https://ohdsi.github.io/PhenotypeR/reference/index.html)
 
 . . .
 
@@ -418,6 +430,7 @@ Help: You can check the arguments of the function using: `??downloadDatabaseDesc
 ```{r, eval=FALSE}
 Information source: 
 "OHDSI/Eunomia: An R package that facilitates access to a variety of OMOP CDM sample data sets."
+
 Description: 
 "synput-1k_5.3 is a synthetic dataset designed for testing OHDSI tools. It is based on a subsample of Medicare claims data standardised to the OMOP Common Data Model (CDM) version 5.3.  It contains approximately records for 1k participants."
 
@@ -429,11 +442,15 @@ To create clinical descriptions for the previous cohorts, follow the following i
 
 . . .
 
+0.  Check the name of your cohorts using `getCohortName(cdm)`
+
+. . .
+
 1.  Download three templates for each of the cohorts using `downloadClinicalDescriptionTemplate()`. Remember that the docx files **MUST** have the same name as the cohorts!!!
 
 . . .
 
-Help: You can check the arguments of the function using: `??downloadClinicalDescriptionTemplate` or in the **PhenotypeR** website: <https://ohdsi.github.io/PhenotypeR/reference/index.html>
+`??downloadDatabaseDescriptionTemplate` or in the [**PhenotypeR website**](https://ohdsi.github.io/PhenotypeR/reference/index.html)
 
 ## 4. Your turn! Create clinical descriptions for this cohorts
 
@@ -443,7 +460,9 @@ Help: You can check the arguments of the function using: `??downloadClinicalDesc
 
 ```{r, eval=FALSE}
 # Hypertension
-Information source: "Dynamed (Home - DynaMed)"
+Information source: 
+"Dynamed (Home - DynaMed)"
+
 Introduction: 
 "Hypertension is a sustained elevation of systemic arterial blood pressure, most commonly defined as a systolic blood pressure (BP) ≥ 140 mm Hg or diastolic BP ≥ 90 mm Hg, but definitions vary by professional organization and cardiovascular risk.
 Other names include: primary hypertension, essential hypertension, idiopathic hypertension, sustained hypertension."
@@ -465,9 +484,12 @@ Exit criteria: As it is considered a chronic condition, once a patient enters th
 
 ```{r, eval=FALSE}
 # Warfarin users
-Information source: "Gemini (https://gemini.google.com/)"
+Information source: 
+"Gemini (https://gemini.google.com/)"
+
 Introduction: 
 "Warfarin is an oral anticoagulant that interferes with the hepatic synthesis of Vitamin K-dependent clotting factors (II, VII, IX, and X). It is primarily indicated for the prophylaxis and treatment of venous thrombosis, pulmonary embolism, and thromboembolic complications associated with atrial fibrillation (AFib) or cardiac valve replacement."
+
 Phenotyping plan: 
 "Inclusion criteria: At least one record in the drug_exposure table of warfarin prescription. Multiple records per person are allowed.
 Index date: Date of the recorded drug exposure.
@@ -482,7 +504,9 @@ Washout period: No washout period is used."
 
 ```{r, eval=FALSE}
 # Measurement of antigen specific cancer
-Information source: "Dynamed (https://www.dynamed.com/)"
+Information source: 
+"Dynamed (https://www.dynamed.com/)"
+
 Introduction: 
 "Measurement of prostate specific antigen in serum for the detection and management of benign prostatic hyperplasia and prostate cancer. 
 Other names include: PSA measurement, PSA - Prostate-specific antigen level, PSA - Serum prostate specific antigen level, tPSA measurement - Total prostate specific antigen measurement"
@@ -528,7 +552,6 @@ We'll now run `phenotypeDiagnostics()` with the following specifications:
     -   Run the default diagnostics AND cohortSurvival
     -   Do not use any cohort sample
     -   Use a `matchedSample = 1000`
-
 -   For **populationDiagnostics**:
     -   Use a `populationSample = 10000`
 
@@ -538,7 +561,9 @@ Do you want to check your answer? Go to the following slide!
 
 ## 6. Your turn! Run phenotypeDiagnostics
 
-100% sure you've written and reviewed your code and now you're ready to see the answer?
+. . .
+
+Are you 100% sure that you're ready to see the answer?
 
 ## 6. Solution:
 
@@ -578,13 +603,29 @@ shinyDiagnostics(result,
                  ) 
 ```
 
-. . .
+Help: You can check the arguments of the function using:
 
-Help: Explore `shinyDiagnostics()` documentation using ??shinyDiagnostics or in the website: [https://ohdsi.github.io/PhenotypeR/reference/index.html](https://ohdsi.github.io/PhenotypeR/reference/index.html)
+`??shinyDiagnostics` or in the [**PhenotypeR website**](https://ohdsi.github.io/PhenotypeR/reference/index.html)
 
-# Visualise the results
+## 8. Your turn! Answer the following questions from the shiny app:
 
-See the results in the [shiny app](https://dpa-pde-oxford.shinyapps.io/PhenotypeR_RWESummerSchool/)
+Use the Shiny App to answer the following questions. The next slide lists questions from 1-20. After that, you'll find the same questions again with hints to guide you.
+
+After that, you'll find the answers!
+
+## 8. Your turn! Answer the following questions from the shiny app:
+
+1.  Check that database descriptions and clinical descriptions have been uploaded correctly
+
+2.  When does the database observation period start and end?
+
+    -   RE: Start is in 2008-01-01 and end in 2010-12-31
+
+3.  How many females and males are in the database?
+
+    -   RE: Females 498 (49.80%) and males 502 (50.20%)
+
+4.  
 
 ## PhenotypeR
 
@@ -601,4 +642,3 @@ See the results in the [shiny app](https://dpa-pde-oxford.shinyapps.io/Phenotype
 <img src="https://github.com/OHDSI/PhenotypeR/blob/main/man/figures/logo.png?raw=true" width="600"/>
 :::
 :::::
-
