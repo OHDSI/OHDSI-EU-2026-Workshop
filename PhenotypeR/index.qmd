@@ -598,8 +598,8 @@ shinyDiagnostics(result,
                  expectations = "...", 
                  clinicalDescriptionsDir = "...", 
                  databaseDescriptionsDir = "...",
-                 minCellCount = 3, 
-                 open = TRUE,
+                 minCellCount = 1, 
+                 open = TRUE
                  ) 
 ```
 
@@ -616,16 +616,216 @@ After that, you'll find the answers!
 ## 8. Your turn! Answer the following questions from the shiny app:
 
 1.  Check that database descriptions and clinical descriptions have been uploaded correctly
+2.  When does the database observation period start and end?
+3.  How many females and males are in the database?
+4.  What is the average number of days during the first observation period?
+5.  What is the average number of records per person in the drug_exposure table?
+
+## 8. Your turn! Answer the following questions from the shiny app:
+
+6.  According to ACHILLES tables, how many records of essential hypertension (concept ID = 320128) are in the database?
+7.  Which is the orphan code for the cohort *hypertension* with less number of records in the database?
+8.  How many people have the concept *Prostate cancer screening; prostate specific antigen test (psa)* (concept ID = 2617206) in our cohort *measurement of prostate specific antigen level*?
+9.  For our cohort *measurement of prostate specific antigen level*, how many days are between measurements (in average)?
+10. How many records are excluded after merging overlapping records in the cohort *hypertension*?
+
+## 8. Your turn! Answer the following questions from the shiny app:
+
+11. How many females are within the cohort *hypertension*?
+12. How many people get a prescription of *tolazamide 250 MG Oral Tablet* (concept ID = 1502811) after 30 days of having an *hypertension* diagnosis?
+13. Within the window 366 to Inf and for the concept *Systemic lupus erythematosus* (concept ID = 257628), what is the standardised mean differences between the hypertension sampled and the matched cohorts?
+14. How many people are in both, *hypertension* and *users of warfarin* cohorts?
+15. What is the average number of days between people entering the *hypertension* cohort and then to the *users of warfarin* cohort?
+
+## 8. Your turn! Answer the following questions from the shiny app:
+
+16. How many people die in the *hypertension* cohort? Check if it is aligned with the cohort expectations!
+17. What is the incidence of *hypertension* between 1/01/2009 to 31/12/2009 in our subsample of 10,000?
+18. What is the prevalence of *hypertension* between 1/01/2009 to 31/12/2009 in our subsample of 10,000?
+19. What is the prevalence of *hypertension* between 1/01/2009 to 31/12/2009 in our subsample of 10,000 only among Females?
+20. Save the prevalence plot as a png image.
+
+## 8. Your turn! Answer the following questions from the shiny app (with HINTS)
+
+1.  Check that database descriptions and clinical descriptions have been uploaded correctly
+
+    -   **HINT:** Go to Background tab. Notice that *clinical_descriptions* has an expandable menu on the left where you can choose to see the phenotyping plan
 
 2.  When does the database observation period start and end?
 
-    -   RE: Start is in 2008-01-01 and end in 2010-12-31
+    -   **HINT:** Go to Database Diagnostics / Snapshot
 
 3.  How many females and males are in the database?
 
-    -   RE: Females 498 (49.80%) and males 502 (50.20%)
+    -   **HINT:** Go to Database Diagnostics / Person table summary
 
-4.  
+4.  What is the average number of days during the first observation period?
+
+    -   **HINT:** Go to Database Diagnostics / Observation Periods and scroll down until you see the observation period cardinal number 1.
+
+## 8. Your turn! Answer the following questions from the shiny app (with HINTS)
+
+5.  What is the average number of records per person in the drug_exposure table?
+
+    -   **HINT:** Go to Database Diagnostics / Clinical tables and filter (using the expandable menu on the left) for the drug_exposure table
+
+6.  According to ACHILLES tables, how many records of essential hypertension (concept ID = 320128) are in the database?
+
+    -   **HINT:** Go to Codelist Diagnostics / Achilles code use and expand the results for the cohort *hypertension*
+
+7.  Which is the orphan code for the cohort *hypertension* with less number of records in the database?
+
+    -   **HINT:** Go to Codelist Diagnostics / Orphan codes and expand the results for the cohort *hypertension*. You can arrange the results tapping into the column *synpuf-1k: Record count*
+
+## 8. Your turn! Answer the following questions from the shiny app (with HINTS)
+
+8.  How many people have the concept *Prostate cancer screening; prostate specific antigen test (psa)* (concept ID = 2617206) in our cohort *measurement of prostate specific antigen level*?
+
+    -   **HINT:** Go to Codelist Diagnostics / Cohort code use, select the cohort *measurement of prostate specific antigen level* and expand its results.
+
+9.  For our cohort *measurement of prostate specific antigen level*, how many days are between measurements (in average)?
+
+    -   **HINT:** Go to Codelist Diagnostics / Measurement diagnostics and select the cohort *measurement of prostate specific antigen level*
+
+10. How many records are excluded after merging overlapping records in the cohort *hypertension*?
+
+    -   **HINT:** Go to Cohort Diagnostics / Cohort count / Attrition and select the cohort *hypertension*
+
+## 8. Your turn! Answer the following questions from the shiny app (with HINTS)
+
+11. How many females are within the cohort *hypertension*?
+
+    -   **HINT:** Go to Cohort Diagnostics / Cohort characteristics and select the cohort *hypertension*
+
+12. How many people get a prescription of *tolazamide 250 MG Oral Tablet* (concept ID = 1502811) after 30 days of having an *hypertension* diagnosis?
+
+    -   **HINT:** Go to Cohort Diagnostics / Large scale characteristics and select the cohort *hypertension*. Use the left expandable menu to select *drug_exposure* table and the window c(1,30)
+
+
+## 8. Your turn! Answer the following questions from the shiny app (with HINTS)
+
+13. Within the window 366 to Inf and for the concept *Systemic lupus erythematosus* (concept ID = 257628), what is the standardised mean differences between the hypertension sampled and the matched cohorts?
+
+    -   **HINT:** Go to Cohort Diagnostics / Compare Large scale characteristics and select the cohort *hypertension sampled* as reference cohort, and *hypertension matched* as a comparator cohort. Use the left expandable menu to select *condition_occurrence* table and the window c(366,Inf)
+
+14. How many people are in both, *hypertension* and *users of warfarin* cohorts?
+
+    -   **HINT:** Go to Cohort Diagnostics / Compare cohorts / Cohort Overlap and select the cohort *hypertension*
+
+
+## 8. Your turn! Answer the following questions from the shiny app (with HINTS)
+
+15. What is the average number of days between people entering the *hypertension* cohort and then to the *users of warfarin* cohort?
+
+    -   **HINT:** Go to Cohort Diagnostics / Compare cohorts / Cohort Timing and select the cohort *hypertension*
+
+16. How many people die in the *hypertension* cohort? Check if it is aligned with the cohort expectations!
+
+    -   **HINT:** Go to Cohort Diagnostics / Cohort Survival and select the cohort *hypertension*. Explore the table and the plot!
+
+17. What is the incidence of *hypertension* between 1/01/2009 to 31/12/2009 in our subsample of 10,000?
+
+    -   **HINT:** Go to Population Diagnostics / Incidence and select the cohort *hypertension*
+
+## 8. Your turn! Answer the following questions from the shiny app (with HINTS)
+
+18. What is the prevalence of *hypertension* between 1/01/2009 to 31/12/2009 in our subsample of 10,000?
+
+    -   **HINT:** Go to Population Diagnostics / Prevalence and select the cohort *hypertension*
+
+19. What is the prevalence of *hypertension* between 1/01/2009 to 31/12/2009 in our subsample of 10,000 only among Females?
+
+    -   **HINT:** Go to Population Diagnostics / Prevalence and select the cohort *hypertension*. Expand the menu on the left to select Female sex.
+
+20. Save the prevalence plot as a png image.
+
+    -   **HINT:** Go to Population Diagnostics / Prevalence and select the cohort *hypertension*. Select the small arrow pointing to a box on the top left of the figure.
+
+## 8. Your turn! Answer the following questions from the shiny app (ANSWERS)
+
+1.  Check that database descriptions and clinical descriptions have been uploaded correctly
+
+2.  When does the database observation period start and end?
+
+    -   **RE:** Start is in 2008-01-01 and end in 2010-12-31
+
+3.  How many females and males are in the database?
+
+    -   **RE:** Females 498 (49.80%) and males 502 (50.20%)
+
+4.  What is the average number of days during the first observation period?
+
+    -   **RE:** Mean (SD) = 994.16 (257.95)
+
+5.  What is the average number of records per person in the drug_exposure table?
+
+    -   **RE:** Mean (SD) = 56.75 (54.13)
+
+## 8. Your turn! Answer the following questions from the shiny app (ANSWERS)
+
+6.  According to ACHILLES tables, how many records of essential hypertension (concept ID = 320128) are in the database?
+
+    -   **RE:** 5,617
+
+7.  Which is the orphan code for the cohort *hypertension* with less number of records in the database?
+
+    -   **RE:** *Complications affecting other specified body systems, not elsewhere classified, hypertension*, with 7 records.
+
+8.  How many people have the concept *Prostate cancer screening; prostate specific antigen test (psa)* (concept ID = 2617206) in our cohort *measurement of prostate specific antigen level*?
+
+    -   **RE:** 124
+
+## 8. Your turn! Answer the following questions from the shiny app (ANSWERS)
+
+9.  For our cohort *measurement of prostate specific antigen level*, how many days are between measurements (in average)?
+
+    -   **RE:** Median \[Q25 - Q75\] = 226 \[88 – 571\]
+
+10. How many records are excluded after merging overlapping records in the cohort *hypertension*?
+
+    -   **RE:** 1,406
+
+11. How many females are within the cohort *hypertension*?
+
+    -   **RE:** N (%) = 2,145 (50.94%)
+
+12. How many people get a prescription of *tolazamide 250 MG Oral Tablet* (concept ID = 1502811) after 30 days of having an *hypertension* diagnosis?
+
+    -   **RE:**  1
+
+## 8. Your turn! Answer the following questions from the shiny app (ANSWERS)
+
+13. Within the window 366 to Inf and for the concept *Systemic lupus erythematosus* (concept ID = 257628), what is the standardised mean differences between the hypertension sampled and the matched cohorts?
+
+    -   **RE:**  1.414
+
+14. How many people are in both, *hypertension* and *users of warfarin* cohorts?
+
+    -   **RE:**   52
+
+15. What is the average number of days between people entering the *hypertension* cohort and then to the *users of warfarin* cohort?
+
+    -   **RE:**  229
+
+## 8. Your turn! Answer the following questions from the shiny app (ANSWERS)
+
+16. How many people die in the *hypertension* cohort? Check if it is aligned with the cohort expectations!
+
+    -   **RE:**  5. If we observe the plot, we can see that the maximum number of follow-up days are 1077 (equivalent to 2.95 years), and a survival probability of approximately 97%. The expectations say that the average survival after 5 years of the diagnosis is 85% to 95%.
+
+17. What is the incidence of *hypertension* between 1/01/2009 to 31/12/2009 in our subsample of 10,000?
+
+    -   **RE:** Incidence 100,000 person-years [95% CI] = 41,413.76 (34,550.51 - 49,241.10)
+
+## 8. Your turn! Answer the following questions from the shiny app (ANSWERS)
+
+18. What is the prevalence of *hypertension* between 1/01/2009 to 31/12/2009 in our subsample of 10,000?
+
+    -   **RE:**  Prevalence [95% CI] = 0.64 (0.60 - 0.67)
+
+19. What is the prevalence of *hypertension* between 1/01/2009 to 31/12/2009 in our subsample of 10,000 only among Females?
+
+    -   **RE:** Prevalence [95% CI] = 0.65 (0.61 - 0.69)
 
 ## PhenotypeR
 
