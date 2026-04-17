@@ -467,9 +467,10 @@ Run the following bit of code to get mock expectations for your cohorts:
 . . .
 
 ```{r, eval=FALSE}
-url <- "https://raw.githubusercontent.com/OHDSI/PhenotypeR/main/extras/expectations/expectations.csv"
+url <- "https://raw.githubusercontent.com/OHDSI/OHDSI-EU-2026-Workshop/main/PhenotypeR/expectations.csv"
 
-expectationsDir = "..." # Write here the directory where to save the expectations
+expectationsDir <- "..." # Write here the directory where to save the expectations
+
 download.file(url, 
               destfile = here(expectationsDir, "expectations.csv"), 
               mode = "wb")
@@ -515,9 +516,7 @@ result <- phenotypeDiagnostics(cohort = cdm[["study_cohorts"]],
                                  "drugDiagnosticsSample" = 1000
                                ),
                                cohortDiagnostics = list(
-                                 "diagnostics" = c("cohortCount", "cohortCharacteristics",
-                                                   "largeScaleCharacteristics",
-                                                   "compareCohorts", "cohortSurvival"),
+                                 "cohortSurvival" = TRUE,
                                  "cohortSample" = NULL,
                                  "matchedSample" = 1000
                                ),
