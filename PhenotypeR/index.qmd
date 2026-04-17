@@ -100,6 +100,20 @@ result <- phenotypeDiagnostics(
 )
 ```
 
+-   Run only some of the diagnostics:
+
+. . .
+
+```{r, eval = FALSE}
+result <- phenotypeDiagnostics(
+  cohort,
+  databaseDiagnostics = NULL,
+  codelistDiagnostics = list(),
+  cohortDiagnostics = NULL,
+  populationDiagnostics = list()
+)
+```
+
 ## Database Diagnostics
 
 -   Summarise the database metadata including:
@@ -113,30 +127,20 @@ result <- phenotypeDiagnostics(
 ```{r, eval = FALSE}
 db_diagnostics <- databaseDiagnostics(
   cohort,
+  cohortId = NULL,
   snapshot = TRUE,
   personTableSummary = TRUE,
   observationPeriodsSummary = TRUE,
   clinicalRecordsSummary = TRUE
 )
 
-# OR 
-db_diagnostics <- phenotypeDiagnostics(
+# Modify databaseDiagnostics in phenotypeDiagnostics:
+result <- phenotypeDiagnostics(
   cohort,
   databaseDiagnostics = list(
-    "diagnostics" = c("snapshot", "personTableSummary", "observationPeriodsSummary",
-                      "clinicalRecordsSummary")),
-  codelistDiagnostics = NULL,
-  cohortDiagnostics = NULL,
-  populationDiagnostics = NULL
-)
-
-# OR 
-db_diagnostics <- phenotypeDiagnostics(
-  cohort,
-  databaseDiagnostics = list(),
-  codelistDiagnostics = NULL,
-  cohortDiagnostics = NULL,
-  populationDiagnostics = NULL
+    "cohortId" = c(1,2),
+    "snapshot" = FALSE
+  )
 )
 ```
 
@@ -154,6 +158,7 @@ db_diagnostics <- phenotypeDiagnostics(
 ```{r, eval = FALSE}
 cl_diagnostics <- codelistDiagnostics(
   cohort,
+  cohortId = NULL,
   achillesCodeUse = TRUE,
   orphanCodeUse = TRUE,
   cohortCodeUse = TRUE,
@@ -163,26 +168,14 @@ cl_diagnostics <- codelistDiagnostics(
   drugDiagnosticsSample = 20000
 )
 
-# OR 
-cl_diagnostics <- phenotypeDiagnostics(
+# Modify codelistDiagnostics in phenotypeDiagnostics:
+result <- phenotypeDiagnostics(
   cohort,
-  databaseDiagnostics = NULL,
   codelistDiagnostics = list(
-    "diagnostics" = c("achillesCodeUse", "orphanCodeUse", "cohortCodeUse", 
-                      "drugDiagnostics", "measurementDiagnostics"),
-    "measurementSample" = 20000, 
-    "drugExposureSample" = 20000
-  ),
-  cohortDiagnostics = NULL,
-  populationDiagnostics = NULL)
-  
-# OR 
-cl_diagnostics <- phenotypeDiagnostics(
-  cohort,
-  databaseDiagnostics = NULL,
-  codelistDiagnostics = list(),
-  cohortDiagnostics = NULL,
-  populationDiagnostics = NULL)
+    "cohortId" = c(1,2),
+    "achillesCodeUse" = FALSE
+  )
+)
 ```
 
 ## Cohort Diagnostics
@@ -200,6 +193,7 @@ cl_diagnostics <- phenotypeDiagnostics(
 ```{r, eval = FALSE}
 c_diagnostics <- cohortDiagnostics(
   cohort,
+  cohortId = NULL,
   cohortCount = TRUE,
   cohortCharacteristics = TRUE,
   largeScaleCharacteristics = TRUE,
@@ -209,27 +203,12 @@ c_diagnostics <- cohortDiagnostics(
   matchedSample = 1000
 )
 
-# OR 
+# Modify cohortDiagnostics in phenotypeDiagnostics:
 result <- phenotypeDiagnostics(
   cohort,
-  databaseDiagnostics = NULL
   cohortDiagnostics = list(
-    "diagnostics" = c("cohortCount", "cohortCharacteristics", "largeScaleCharacteristics",
-                      "compareCohorts"),
-    "cohortSample" = 20000,
-    "matchedSample" = 1000
-  ),
-  cohortDiagnostics = NULL,
-  populationDiagnostics = NULL
-)
-
-# OR 
-result <- phenotypeDiagnostics(
-  cohort,
-  databaseDiagnostics = NULL,
-  cohortDiagnostics = list(),
-  cohortDiagnostics = NULL,
-  populationDiagnostics = NULL
+    "cohortSample" = 1000
+  )
 )
 ```
 
@@ -244,34 +223,20 @@ result <- phenotypeDiagnostics(
 ```{r, eval = FALSE}
 c_diagnostics <- populationDiagnostics(
   cohort,
+  cohortId = NULL,
   incidence = TRUE,
   periodPrevalence = TRUE,
   populationSample = 1e+05,
   populationDateRange = as.Date(c(NA, NA))
 )
 
-# OR 
+# Modify populationDiagnostics in phenotypeDiagnostics:
 result <- phenotypeDiagnostics(
   cohort,
-  databaseDiagnostics = NULL
-  cohortDiagnostics = NULL,
-  cohortDiagnostics = NULL,
   populationDiagnostics = list(
-    "diagnostics" = c("incidence", "periodPrevalence"),
-    "populationSample" = 1e+05,
-    "populationDateRange" = as.Date(c(NA, NA))
+    "populationSample" = 10000
   )
 )
-
-# OR 
-result <- phenotypeDiagnostics(
-  cohort,
-  databaseDiagnostics = NULL,
-  cohortDiagnostics = NULL,
-  cohortDiagnostics = NULL,
-  populationDiagnostics = list(),
-)
-
 ```
 
 ## Extra: Create a database description manually and add it to the shiny app!
@@ -312,27 +277,6 @@ exp <- tibble(
 tableCohortExpectations(exp)
 ```
 
-## Extra: Our use AI!
-
-```{r, eval = FALSE}
-library(ellmer)
-
-GEMINI_API_KEY = "your API" # Create
-chat <- chat("google_gemini")
-
-exp <- getCohortExpectations(chat = chat, 
-                             phenotypes = c("type_2_diabetes")) 
-
-tableCohortExpectations(exp)
-```
-
-```{r, eval = TRUE, echo = FALSE}
-library(readr)
-t <- read_csv(here::here("PhenotypeR", "Figures", "shiny_expectations.csv")) |>
-  dplyr::filter(cohort_name == "type_2_diabetes")
-tableCohortExpectations(t)
-```
-
 ## Final: Create a shiny app to visualise all the results!
 
 -   Create a shiny app to visualize all the results
@@ -343,7 +287,7 @@ tableCohortExpectations(t)
 shinyDiagnostics(result = result, 
                  directory = here(), 
                  minCellCount = 5, 
-                 expectations = exp, 
+                 expectationsDir =  here("expectations"), 
                  clinicalDescriptionsDir = here("clinical_descriptions"),
                  databaseDescriptionsDir = here("database_descriptions"),
                  removeEmptyTabs = FALSE)
@@ -364,8 +308,7 @@ See the results in the [shiny app](https://dpa-pde-oxford.shinyapps.io/Phenotype
 ```{r, eval = FALSE}
 # Install all the packages:
 install.packages(c("omock", "here", "OmopConstructor", "CohortConstructor",
-                   "CohortSurvival", "omopgenerics", "readr", "duckdb"))
-remotes::install_github("OHDSI/PhenotypeR")
+                   "CohortSurvival", "omopgenerics", "readr", "duckdb", "PhenotypeR"))
 
 # Load all the packages
 library(omock)
@@ -378,7 +321,8 @@ library(omopgenerics)
 library(readr)
 
 # Create mock CDM
-cdm <- mockCdmFromDataset(datasetName = "synpuf-1k_5.3", source = "duckdb")
+cdm <- mockCdmFromDataset(datasetName = "synpuf-1k_5.3", 
+                          source = "duckdb")
 cdm <- cdm |> buildAchillesTables()
 
 ```
@@ -523,16 +467,12 @@ Run the following bit of code to get mock expectations for your cohorts:
 . . .
 
 ```{r, eval=FALSE}
-url <- "https://raw.githubusercontent.com/OHDSI/PhenotypeR/main/extras/shiny_expectations.csv"
+url <- "https://raw.githubusercontent.com/OHDSI/PhenotypeR/main/extras/expectations/expectations.csv"
+
+expectationsDir = "..." # Write here the directory where to save the expectations
 download.file(url, 
-              destfile = here("expectations.csv"), 
+              destfile = here(expectationsDir, "expectations.csv"), 
               mode = "wb")
-
-exp <- read_csv(here("expectations.csv")) |> 
-  filter(cohort_name %in% c("hypertension", "user_of_warfarin", "measurement_of_prostate_specific_antigen_level"))
-file.remove(here("expectations.csv"))
-
-tableCohortExpectations(exp)
 ```
 
 ## 6. Your turn! Run phenotypeDiagnostics
