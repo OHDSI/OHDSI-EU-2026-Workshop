@@ -49,7 +49,7 @@ It is the key and principal piece used in epidemiological studies. In the OMOP C
 
 ```{r}
 library(omock)
-cdm <- mockCdmFromDataset(datasetName = "synpuf-1k_5.3", source = "duckdb")
+cdm <- mockCdmFromDataset(datasetName = "delphi-100k_5.4", source = "duckdb")
 cdm$person
 ```
 
@@ -416,7 +416,7 @@ library(gt)
 library(here)
 library(PatientProfiles)
 
-cdm <- mockCdmFromDataset(datasetName = "synpuf-1k_5.3", source = "duckdb")
+cdm <- mockCdmFromDataset(datasetName = "delphi-100k_5.4", source = "duckdb")
 ```
 
 ## Demographics based - Example
@@ -572,7 +572,6 @@ systBP <- list(syst_blood_presure = systBP$concept_id)
 . . .
 
 ```{r}
-cdm <- mockCdmFromDataset(datasetName = "delphi-100k_5.4", source = "duckdb")
 cdm$hyp_sbp <- measurementCohort(
   cdm = cdm, 
   conceptSet = systBP, 
