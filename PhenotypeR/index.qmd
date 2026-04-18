@@ -605,9 +605,9 @@ Help: You can check the arguments of the function using:
 
 ## 8. Your turn! Answer the following questions from the shiny app:
 
-Use the Shiny App to answer the following questions. The next slide lists questions from 1-20. After that, you'll find the same questions again with hints to guide you.
+- If you were not able to create the shiny app, you can find it See the results in the [here](https://dpa-pde-oxford.shinyapps.io/PhenotypeRShiny_OHDSIEuropeWorkshop/)
 
-After that, you'll find the answers!
+- Use the Shiny App to answer the following questions. The next slide lists questions from 1-20. After that, you'll find the same questions again with hints to guide you. After that, you'll find the answers!
 
 ## 8. Your turn! Answer the following questions from the shiny app:
 
