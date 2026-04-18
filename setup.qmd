@@ -7,7 +7,8 @@ And some R packages, please copy paste this code to make sure you have all the p
 ```{r, eval=FALSE}
 install.packages(c(
   "CDMConnector", "duckdb", "CohortConstructor", "PhenotypeR", "gt", "visOmopResults",
-  "ggplot2", "plotly", "flextable", "omock", "here"
+  "ggplot2", "plotly", "flextable", "omock", "here", "IncidencePrevalence",
+  "CohortCharacteristics", "DrugUtilisation"
 ))
 ```
 
@@ -45,7 +46,6 @@ library(PhenotypeR)
 cdm <- mockCdmFromDataset(datasetName = "synpuf-1k_5.3", source = "duckdb")
 cdm
 ```
-
 ::: {.callout-note collapse="true"}
 ## Alternative if you can not download 'synpuf-1k_5.3'
 

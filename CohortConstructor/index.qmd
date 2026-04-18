@@ -720,7 +720,7 @@ tableCohortCount(result = counts)
 
 ## Requirement functions - Example
 
-- *require** functions eliminate the records that **do not** satisfy the inclusion criteria at `indexDate`.
+- *require* functions eliminate the records that **do not** satisfy the inclusion criteria at `indexDate`.
 
 ::: {style="margin-bottom: 10px;"}
 :::
