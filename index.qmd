@@ -1,4 +1,4 @@
 
 ## Introduction
 
-Welcome to the website for the OHDSI EU 2026 workshop on '...'
+Welcome to the website for the OHDSI EU 2026 workshop on **Hands-on characterisation session using OHDSI and DARWIN-EU packages**.

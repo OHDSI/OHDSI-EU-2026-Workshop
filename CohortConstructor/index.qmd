@@ -29,14 +29,6 @@ options(width = 120)
 
 ## Motivation
 
-<!-- # phylosofical differences -->
-<!-- # scalability -->
-<!-- # set of cohorts -->
-<!-- # building blocks -->
-<!-- # R notebook -->
-<!-- # how smoking is recorded -->
-<!-- # real study -->
-
 A **cohort** is a group of individuals that satisfy some inclusion criteria within a defined time period (inclusion criteria + time).
 
 It is the key and principal piece used in epidemiological studies. In the OMOP CDM we define a cohort a table with 4 columns:
@@ -197,6 +189,8 @@ cdm$my_cohort |>
 - Record decisions and its impact in attrition
 
 - Flexibility
+
+- Reusability
 
 ## Introduction
 
@@ -422,13 +416,7 @@ library(gt)
 library(here)
 library(PatientProfiles)
 
-requireEunomia(datasetName = "delphi-100k", cdmVersion = "5.4")
-con <- dbConnect(drv = duckdb(dbdir = eunomiaDir(datasetName = "delphi-100k", cdmVersion = "5.4")))
-cdm <- cdmFromCon(
-  con = con, 
-  cdmSchema = "main",
-  writeSchema = "main"
-)
+cdm <- mockCdmFromDataset(datasetName = "synpuf-1k_5.3", source = "duckdb")
 ```
 
 ## Demographics based - Example
@@ -1357,6 +1345,12 @@ tableCohortAttrition(result = result)
 ```
 
 </details>
+
+## Real study code
+
+Lets see the code of a real study that we are conducting right now where we create 37 cohorts (with multiple inclusion and exclusion criteria) in less than 200 lines of code.
+
+<https://github.com/heron-uk/HERON-UK-02-003-CVDMedsInpatient/blob/main/study/Cohorts/InstantiateCohorts.R>
 
 ## CohortConstructor
 
