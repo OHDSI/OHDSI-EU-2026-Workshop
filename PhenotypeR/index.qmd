@@ -32,6 +32,10 @@ Review codelists and cohorts in OMOP CDM
 
 </p>
 
+<p style="text-align:center; font-size:20px; color:#777;">
+Marta Alcalde-Herraiz, Edward Burn
+</p>
+
 ## Introduction
 
 -   PhenotypeR package can help us to assess the research-readiness of a set of cohorts we have defined.
@@ -44,7 +48,7 @@ Review codelists and cohorts in OMOP CDM
 ::: {style="margin-bottom: 10px;"}
 :::
 
--   PhenotypeR 0.3.4 is available in [CRAN](https://cran.r-project.org/web/packages/PhenotypeR/index.html){.link}.
+-   PhenotypeR 0.4 is available in [CRAN](https://cran.r-project.org/web/packages/PhenotypeR/index.html){.link}.
 
 ::: {style="margin-bottom: 10px;"}
 :::
@@ -183,10 +187,9 @@ result <- phenotypeDiagnostics(
 -   Summarise your cohort characteristics:
     1.  **Cohort count & attrition**
     2.  **Cohort characteristics**: Baseline characteristics of your cohort
-    3.  **Large scale characteristics**: Summary of the records from clinical tables within a time window.
-    4.  **Compare large scale characteristics**: Comparison of the LSC with a matched (by age & sex) cohort.
-    5.  **Compare cohorts**: Overlap and timing between cohorts (only if more than one cohort are present).
-    6.  **Cohort survival**: Survival curves
+    3.  **Large scale characteristics**: Summary of the records from clinical tables within a time window
+    4.  **Compare cohorts**: Overlap and timing between cohorts (only if more than one cohort are present)
+    5.  **Cohort survival**: Survival until the event of death (if death table is present)
 
 ## Cohort Diagnostics
 
@@ -198,7 +201,7 @@ c_diagnostics <- cohortDiagnostics(
   cohortCharacteristics = TRUE,
   largeScaleCharacteristics = TRUE,
   compareCohorts = TRUE,
-  cohortSurvival = FALSE,
+  cohortSurvival = FALSE, # Notice that by default, cohortSurvival it's not run!!
   cohortSample = 20000,
   matchedSample = 1000
 )
@@ -214,9 +217,9 @@ result <- phenotypeDiagnostics(
 
 ## Population Diagnostics
 
--   Contextualise your cohort including:
+-   Contextualises the frequency of your study cohorts in the database calculating:
     1.  **Incidence**
-    2.  **Prevalence**
+    2.  **Period Prevalence**
 
 ## Population Diagnostics
 
@@ -239,7 +242,60 @@ result <- phenotypeDiagnostics(
 )
 ```
 
-## Extra: Create a database description manually and add it to the shiny app!
+## Summary:
+
+::: {style="margin-bottom: 10px;"}
+:::
+
+::::::: columns
+:::: {.column width="45%"}
+**Database diagnostics**
+
+    -   databaseDiagnostics()
+
+::: {style="margin-bottom: 10px;"}
+:::
+
+**Codelist diagnostics**
+
+    -   codelistDiagnostics()
+::::
+
+:::: {.column width="55%"}
+**Cohort diagnostics**
+
+    -   cohortDiagnostics()
+
+::: {style="margin-bottom: 10px;"}
+:::
+
+**Population diagnostics**
+
+    -   populationDiagnostics()
+::::
+:::::::
+
+
+. . .
+
+
+- Run all the diagnostics together:
+
+. . .
+
+
+```{r, eval = FALSE}
+result <- phenotypeDiagnostics(
+  cohort,
+  databaseDiagnostics = list(), 
+  codelistDiagnostics = list(), 
+  cohortDiagnostics = list(), 
+  populationDiagnostics = list(), 
+  stagingDirectory = NULL
+)
+```
+
+## Extra: Create a database description manually!
 
 ```{r, eval = FALSE}
 downloadDatabaseDescriptionTemplate(
@@ -249,7 +305,7 @@ downloadDatabaseDescriptionTemplate(
 
 ![](Figures/database_description.png)
 
-## Extra: Create a clinical description manually and add it to the shiny app!
+## Extra: Create a clinical description manually!
 
 ```{r, eval = FALSE}
 downloadClinicalDescriptionTemplate(
@@ -276,6 +332,7 @@ exp <- tibble(
 )
 tableCohortExpectations(exp)
 ```
+
 
 ## Final: Create a shiny app to visualise all the results!
 
@@ -354,20 +411,14 @@ To create a database description, follow the following instructions:
 . . .
 
 0.  Check your database name using `cdmName(cdm)`
-
-. . .
-
 1.  Download a template using `downloadDatabaseDescriptionTemplate()`. Remember that the docx files **MUST** have the same name as the database!!!
 
 . . .
 
 Help: You can check the arguments of the function using:
-
 `??downloadDatabaseDescriptionTemplate` or in the [**PhenotypeR website**](https://ohdsi.github.io/PhenotypeR/reference/index.html)
 
-. . .
-
-2.  Fill the template with the following information (please copy paste):
+2.  Fill the template with the following information (you can copy paste):
 
 . . .
 
@@ -384,21 +435,17 @@ Description:
 
 To create clinical descriptions for the previous cohorts, follow the following instructions:
 
-. . .
-
 0.  Check the name of your cohorts using `getCohortName(cdm)`
-
-. . .
-
 1.  Download three templates for each of the cohorts using `downloadClinicalDescriptionTemplate()`. Remember that the docx files **MUST** have the same name as the cohorts!!!
 
 . . .
 
-`??downloadDatabaseDescriptionTemplate` or in the [**PhenotypeR website**](https://ohdsi.github.io/PhenotypeR/reference/index.html)
+Help: You can check the arguments of the function using:
+`??downloadClinicalDescriptionTemplate` or in the [**PhenotypeR website**](https://ohdsi.github.io/PhenotypeR/reference/index.html)
 
 ## 4. Your turn! Create clinical descriptions for this cohorts
 
-2.  Fill the templates with the following information (please copy paste):
+2.  Fill the templates with the following information (you can copy paste):
 
 . . .
 
@@ -462,7 +509,7 @@ Index date:Measurement date of the recorded PSA test."
 
 ## 5. Get cohort expectations
 
-Run the following bit of code to get mock expectations for your cohorts:
+Run the following bit of code to download mock expectations for your cohorts. 
 
 . . .
 
@@ -476,11 +523,21 @@ download.file(url,
               mode = "wb")
 ```
 
+. . .
+
+- Check that you've download the expectations properly by reading the csv file:
+
+. . .
+
+```{r, eval=FALSE}
+exp <- read_csv(expectationsDir)
+
+tableCohortExpectations(exp)
+```
+
 ## 6. Your turn! Run phenotypeDiagnostics
 
 We'll now run `phenotypeDiagnostics()` with the following specifications:
-
-. . .
 
 -   For **databaseDiagnostics**, use the default settings.
 -   For **codelistDiagnostics**:
@@ -571,14 +628,14 @@ After that, you'll find the answers!
 ## 8. Your turn! Answer the following questions from the shiny app:
 
 11. How many females are within the cohort *hypertension*?
-12. How many people get a prescription of *tolazamide 250 MG Oral Tablet* (concept ID = 1502811) after 30 days of having an *hypertension* diagnosis?
-13. Within the window 366 to Inf and for the concept *Systemic lupus erythematosus* (concept ID = 257628), what is the standardised mean differences between the hypertension sampled and the matched cohorts?
+12. How many people get a prescription of *lovastatin 10 MG Oral Tablet* (concept ID = 19019115) after 30 days of having an *hypertension* diagnosis?
+13. Which condition shows the greatest SMD between the matched cohort and the sampled cohort within 1–30 days after warfarin initiation (*users_of_warfarin* cohort)?
 14. How many people are in both, *hypertension* and *users of warfarin* cohorts?
 15. What is the average number of days between people entering the *hypertension* cohort and then to the *users of warfarin* cohort?
 
 ## 8. Your turn! Answer the following questions from the shiny app:
 
-16. How many people die in the *hypertension* cohort? Check if it is aligned with the cohort expectations!
+16. How many people die in the *hypertension* cohort? Check if it is aligned with the cohort expectations and explore the survival plot. 
 17. What is the incidence of *hypertension* between 1/01/2009 to 31/12/2009 in our subsample of 10,000?
 18. What is the prevalence of *hypertension* between 1/01/2009 to 31/12/2009 in our subsample of 10,000?
 19. What is the prevalence of *hypertension* between 1/01/2009 to 31/12/2009 in our subsample of 10,000 only among Females?
@@ -636,16 +693,16 @@ After that, you'll find the answers!
 
     -   **HINT:** Go to Cohort Diagnostics / Cohort characteristics and select the cohort *hypertension*
 
-12. How many people get a prescription of *tolazamide 250 MG Oral Tablet* (concept ID = 1502811) after 30 days of having an *hypertension* diagnosis?
+12. How many people get a prescription of *lovastatin 10 MG Oral Tablet* (concept ID = 19019115) after 30 days of having an *hypertension* diagnosis?
 
     -   **HINT:** Go to Cohort Diagnostics / Large scale characteristics and select the cohort *hypertension*. Use the left expandable menu to select *drug_exposure* table and the window c(1,30)
 
 
 ## 8. Your turn! Answer the following questions from the shiny app (with HINTS)
 
-13. Within the window 366 to Inf and for the concept *Systemic lupus erythematosus* (concept ID = 257628), what is the standardised mean differences between the hypertension sampled and the matched cohorts?
+13. Which condition shows the greatest SMD between the matched cohort and the sampled cohort within 1–30 days after warfarin initiation (*users_of_warfarin* cohort)?
 
-    -   **HINT:** Go to Cohort Diagnostics / Compare Large scale characteristics and select the cohort *hypertension sampled* as reference cohort, and *hypertension matched* as a comparator cohort. Use the left expandable menu to select *condition_occurrence* table and the window c(366,Inf)
+    -   **HINT:** Go to Cohort Diagnostics / Compare Large scale characteristics and select the cohort *users_of_warfarin sampled* as reference cohort, and *users_of_warfarin matched* as a comparator cohort. Use the left expandable menu to select *condition_occurrence* table and the window c(1,30)
 
 14. How many people are in both, *hypertension* and *users of warfarin* cohorts?
 
@@ -658,7 +715,7 @@ After that, you'll find the answers!
 
     -   **HINT:** Go to Cohort Diagnostics / Compare cohorts / Cohort Timing and select the cohort *hypertension*
 
-16. How many people die in the *hypertension* cohort? Check if it is aligned with the cohort expectations!
+16. How many people die in the *hypertension* cohort? Check if it is aligned with the cohort expectations and explore the survival plot. 
 
     -   **HINT:** Go to Cohort Diagnostics / Cohort Survival and select the cohort *hypertension*. Explore the table and the plot!
 
@@ -728,15 +785,15 @@ After that, you'll find the answers!
 
     -   **RE:** N (%) = 2,145 (50.94%)
 
-12. How many people get a prescription of *tolazamide 250 MG Oral Tablet* (concept ID = 1502811) after 30 days of having an *hypertension* diagnosis?
+12. How many people get a prescription of *lovastatin 10 MG Oral Tablet* (concept ID = 19019115) after 30 days of having an *hypertension* diagnosis?
 
-    -   **RE:**  1
+    -   **RE:**  19
 
 ## 8. Your turn! Answer the following questions from the shiny app (ANSWERS)
 
-13. Within the window 366 to Inf and for the concept *Systemic lupus erythematosus* (concept ID = 257628), what is the standardised mean differences between the hypertension sampled and the matched cohorts?
+13. Which condition shows the greatest SMD between the matched cohort and the sampled cohort within 1–30 days after warfarin initiation (*users_of_warfarin* cohort)?
 
-    -   **RE:**  1.414
+    -   **RE:**  type 2 diabetes, with an SMD = 0.562
 
 14. How many people are in both, *hypertension* and *users of warfarin* cohorts?
 
@@ -748,9 +805,9 @@ After that, you'll find the answers!
 
 ## 8. Your turn! Answer the following questions from the shiny app (ANSWERS)
 
-16. How many people die in the *hypertension* cohort? Check if it is aligned with the cohort expectations!
+16. How many people die in the *hypertension* cohort? Check if it is aligned with the cohort expectations and explore the survival plot. 
 
-    -   **RE:**  5. If we observe the plot, we can see that the maximum number of follow-up days are 1077 (equivalent to 2.95 years), and a survival probability of approximately 97%. The expectations say that the average survival after 5 years of the diagnosis is 85% to 95%.
+    -   **RE:**  93. If we observe the plot, we can see that the maximum number of follow-up days are 1077 (equivalent to 2.95 years), and a survival probability of approximately 96%. The expectations say that the average survival after 5 years of the diagnosis is 85% to 95%.
 
 17. What is the incidence of *hypertension* between 1/01/2009 to 31/12/2009 in our subsample of 10,000?
 
@@ -770,10 +827,11 @@ After that, you'll find the answers!
 
 ::::: {style="display: flex; align-items: center; justify-content: space-between;"}
 ::: {style="flex: 1;"}
-👉 [**Packages website**](https://ohdsi.github.io/PhenotypeR/)\
+👉 [**Package website**](https://ohdsi.github.io/PhenotypeR/)\
 👉 [**CRAN link**](https://cran.r-project.org/package=PhenotypeR)\
+👉 [**GitHub link**](https://github.com/OHDSI/PhenotypeR)\
 👉 [**Manual**](https://cran.r-project.org/web/packages/PhenotypeR/PhenotypeR.pdf)
-
+📧 <a href="mailto:edward.burn@ndorms.ox.ac.uk">edward.burn@ndorms.ox.ac.uk</a>
 📧 <a href="mailto:marta.alcaldeherraiz@ndorms.ox.ac.uk">marta.alcaldeherraiz\@ndorms.ox.ac.uk</a>
 :::
 
