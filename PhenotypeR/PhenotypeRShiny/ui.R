@@ -241,7 +241,7 @@ ui <- fluidPage(
                 #     value = 300
                 #   ),
                 #   shiny::downloadButton(outputId = "plot_age_pyramid_download", label = "Download")
-                # ),
+                 ),
                 # class = "text-end",
             bslib::layout_sidebar(
               sidebar = bslib::sidebar(width = 400, open = "closed",
@@ -256,7 +256,6 @@ ui <- fluidPage(
                                        position = "right"
               ),
               shiny::plotOutput("dobPlot")
-            )
           )
             )
         )
@@ -339,7 +338,7 @@ ui <- fluidPage(
                 #     value = 300
                 #   ),
                 #   shiny::downloadButton(outputId = "plot_age_pyramid_download", label = "Download")
-                # ),
+                 ),
                 # class = "text-end",
             bslib::layout_sidebar(
               sidebar = bslib::sidebar(width = 400, open = "closed",
@@ -354,7 +353,6 @@ ui <- fluidPage(
                                        position = "right"
               ),
             plotOutput("obsPlot")
-            )
           )
         )
           )
@@ -1096,10 +1094,10 @@ ui <- fluidPage(
                 tags$div(
                   style = "margin-top: 15px;",
                   shinyWidgets::pickerInput(
-                    inputId = "drug_diagnostics_cdm_name",
+                    inputId = "summarise_drug_use_cdm_name",
                     label = NULL,
-                    selected = selected$shared_cdm_name,
-                    choices = choices$shared_cdm_name,
+                    selected = selected$shared_cdm_names,
+                    choices = choices$shared_cdm_names,
                     multiple = TRUE,
                     options = list(`actions-box` = TRUE, `selected-text-format` = "count > 1",
                                    `deselect-all-text` = "None", `select-all-text` = "All"),
@@ -1113,7 +1111,7 @@ ui <- fluidPage(
                 tags$div(
                   style = "margin-top: 15px;",
                   shinyWidgets::pickerInput(
-                    inputId = "drug_diagnostics_cohort_name",
+                    inputId = "summarise_drug_use_cohort_name",
                     label = NULL,
                     selected = selected$shared_cohort_name,
                     choices = choices$shared_cohort_name,
