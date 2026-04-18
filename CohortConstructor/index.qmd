@@ -423,8 +423,20 @@ library(dplyr)
 library(gt)
 library(here)
 library(PatientProfiles)
+```
 
+```{r, eval=FALSE}
 cdm <- mockCdmFromDataset(datasetName = "delphi-100k_5.4", source = "duckdb")
+```
+
+```{r, echo=FALSE}
+con <- DBI::dbConnect(drv = duckdb::duckdb(dbdir = "/Users/martics/Documents/delphi-100k_5.4_1.5.duckdb"))
+cdm <- CDMConnector::cdmFromCon(
+  con = con,
+  cdmSchema = "main",
+  writeSchema = "main",
+  cdmName = "delphi-100k"
+)
 ```
 
 ## Demographics based - Example

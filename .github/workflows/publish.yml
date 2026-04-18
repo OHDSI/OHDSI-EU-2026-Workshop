@@ -16,8 +16,6 @@ name: Quarto Publish
 jobs:
   build-deploy:
     runs-on: ubuntu-latest
-    env:
-      OMOP_DATA_FOLDER: ${{ github.workspace }}/omop-data
     steps:
       - name: Check out repository
         uses: actions/checkout@v2
@@ -25,22 +23,8 @@ jobs:
       - name: Set up Quarto
         uses: quarto-dev/quarto-actions/setup@v2
 
-      - name: Install R
-        uses: r-lib/actions/setup-r@v2
-
-      - name: Install R libraries in renv # add packages to the renv file if you need them to render the code
-        uses: r-lib/actions/setup-renv@v2
-
-      - name: Download OMOP mock data
-        run: |
-          mkdir -p "${OMOP_DATA_FOLDER}"
-          Rscript -e 'omock::downloadMockDataset(datasetName = "delphi-100k_5.4")'
-
-      - name: Render quarto website
-        run: quarto render
-
       - name: Publish
-        if: github.event_name != 'pull_request' # for PR the quarto will only be rendered when merged to main also published
+        if: github.event_name != 'pull_request'
         uses: quarto-dev/quarto-actions/publish@v2
         with:
           target: gh-pages
