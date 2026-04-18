@@ -42,8 +42,18 @@ If you are all set you should be able to run the following code:
 library(omock)
 library(CohortConstructor)
 library(PhenotypeR)
+```
 
+```{r, eval=FALSE}
 cdm <- mockCdmFromDataset(datasetName = "synpuf-1k_5.3", source = "duckdb")
+```
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
+cdm <- mockCdmFromDataset(datasetName = "GiBleed", source = "duckdb")
+attr(cdm, "cdm_name") <- "synpuf-1k_5.3"
+```
+
+```{r}
 cdm
 ```
 ::: {.callout-note collapse="true"}

@@ -47,9 +47,17 @@ It is the key and principal piece used in epidemiological studies. In the OMOP C
 
 . . .
 
-```{r}
+```{r, eval=FALSE}
 library(omock)
 cdm <- mockCdmFromDataset(datasetName = "delphi-100k_5.4", source = "duckdb")
+```
+
+```{r, message=FALSE, echo=FALSE}
+library(omock)
+cdm <- mockCdmFromDataset(datasetName = "GiBleed", source = "duckdb")
+```
+
+```{r}
 cdm$person
 ```
 
@@ -617,7 +625,7 @@ attr(cdm$hyp_sbp, "cohort_codelist")
 
 ## Get Started: Create the cdm_reference object
 
-```{r, eval=FALSE}
+```{r, warning=FALSE}
 # Load relevant packages
 library(CDMConnector)
 library(duckdb)
