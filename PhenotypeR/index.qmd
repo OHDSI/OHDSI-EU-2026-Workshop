@@ -32,10 +32,6 @@ Review codelists and cohorts in OMOP CDM
 
 </p>
 
-<p style="text-align:center; font-size:20px; color:#777;">
-Marta Alcalde-Herraiz, Edward Burn
-</p>
-
 ## Introduction
 
 -   PhenotypeR package can help us to assess the research-readiness of a set of cohorts we have defined.
@@ -605,7 +601,7 @@ Help: You can check the arguments of the function using:
 
 ## 8. Your turn! Answer the following questions from the shiny app:
 
-- If you were not able to create the shiny app, you can find it See the results in the [here](https://dpa-pde-oxford.shinyapps.io/PhenotypeRShiny_OHDSIEuropeWorkshop/)
+- If you were not able to create the shiny app, you can find it [here](https://dpa-pde-oxford.shinyapps.io/PhenotypeRShiny_OHDSIEuropeWorkshop/)
 
 - Use the Shiny App to answer the following questions. The next slide lists questions from 1-20. After that, you'll find the same questions again with hints to guide you. After that, you'll find the answers!
 
