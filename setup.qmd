@@ -32,6 +32,7 @@ OMOP_DATA_FOLDER="path/to/your/folder"
 ```{r, eval=FALSE}
 options(timeout = 600)
 omock::downloadMockDataset(datasetName = "synpuf-1k_5.3")
+omock::downloadMockDataset(datasetName = "delphi-100k_5.4")
 ```
 
 If you are all set you should be able to run the following code:

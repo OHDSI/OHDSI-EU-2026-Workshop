@@ -572,7 +572,7 @@ systBP <- list(syst_blood_presure = systBP$concept_id)
 . . .
 
 ```{r}
-cdm <- mockCdmFromDataset(datasetName = "delphi-100k", source = "duckdb")
+cdm <- mockCdmFromDataset(datasetName = "delphi-100k_5.4", source = "duckdb")
 cdm$hyp_sbp <- measurementCohort(
   cdm = cdm, 
   conceptSet = systBP, 
@@ -630,13 +630,7 @@ library(gt)
 library(here)
 library(PatientProfiles)
 
-requireEunomia(datasetName = "delphi-100k", cdmVersion = "5.4")
-con <- dbConnect(drv = duckdb(dbdir = eunomiaDir(datasetName = "delphi-100k", cdmVersion = "5.4")))
-cdm <- cdmFromCon(
-  con = con, 
-  cdmSchema = "main",
-  writeSchema = "main"
-)
+cdm <- mockCdmFromDataset(datasetName = "delphi-100k_5.4", source = "duckdb")
 ```
 
 ## Exercise 1 - Base cohorts

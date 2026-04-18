@@ -35,6 +35,7 @@ jobs:
         run: |
           mkdir -p "${OMOP_DATA_FOLDER}"
           Rscript -e 'omock::downloadMockDataset(datasetName = "synpuf-1k_5.3")'
+          Rscript -e 'omock::downloadMockDataset(datasetName = "delphi-100k_5.4")'
 
       - name: Render quarto website
         run: quarto render
