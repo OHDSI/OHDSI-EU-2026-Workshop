@@ -212,6 +212,9 @@
 <p style="text-align:center;">
 </p><p><img src="Figures/logo.png" style="width:180px; height:auto;"></p>
 <p></p>
+<p style="text-align:center; font-size:20px; color:#777;">
+Marta Alcalde-Herraiz, Edward Burn
+</p>
 </section>
 <section id="introduction" class="slide level2">
 <h2>Introduction</h2>
@@ -228,7 +231,7 @@
 
 </div>
 <ul>
-<li class="fragment">PhenotypeR 0.3.4 is available in <a href="https://cran.r-project.org/web/packages/PhenotypeR/index.html" class="link">CRAN</a>.</li>
+<li class="fragment">PhenotypeR 0.4 is available in <a href="https://cran.r-project.org/web/packages/PhenotypeR/index.html" class="link">CRAN</a>.</li>
 </ul>
 <div style="margin-bottom: 10px;">
 
@@ -387,10 +390,9 @@
 <ol type="1">
 <li class="fragment"><strong>Cohort count &amp; attrition</strong></li>
 <li class="fragment"><strong>Cohort characteristics</strong>: Baseline characteristics of your cohort</li>
-<li class="fragment"><strong>Large scale characteristics</strong>: Summary of the records from clinical tables within a time window.</li>
-<li class="fragment"><strong>Compare large scale characteristics</strong>: Comparison of the LSC with a matched (by age &amp; sex) cohort.</li>
-<li class="fragment"><strong>Compare cohorts</strong>: Overlap and timing between cohorts (only if more than one cohort are present).</li>
-<li class="fragment"><strong>Cohort survival</strong>: Survival curves</li>
+<li class="fragment"><strong>Large scale characteristics</strong>: Summary of the records from clinical tables within a time window</li>
+<li class="fragment"><strong>Compare cohorts</strong>: Overlap and timing between cohorts (only if more than one cohort are present)</li>
+<li class="fragment"><strong>Cohort survival</strong>: Survival until the event of death (if death table is present)</li>
 </ol></li>
 </ul>
 </section>
@@ -404,7 +406,7 @@
 <span id="cb5-5"><a aria-hidden="true" tabindex="-1"></a>  <span class="at">cohortCharacteristics =</span> <span class="cn">TRUE</span>,</span>
 <span id="cb5-6"><a aria-hidden="true" tabindex="-1"></a>  <span class="at">largeScaleCharacteristics =</span> <span class="cn">TRUE</span>,</span>
 <span id="cb5-7"><a aria-hidden="true" tabindex="-1"></a>  <span class="at">compareCohorts =</span> <span class="cn">TRUE</span>,</span>
-<span id="cb5-8"><a aria-hidden="true" tabindex="-1"></a>  <span class="at">cohortSurvival =</span> <span class="cn">FALSE</span>,</span>
+<span id="cb5-8"><a aria-hidden="true" tabindex="-1"></a>  <span class="at">cohortSurvival =</span> <span class="cn">FALSE</span>, <span class="co"># Notice that by default, cohortSurvival it's not run!!</span></span>
 <span id="cb5-9"><a aria-hidden="true" tabindex="-1"></a>  <span class="at">cohortSample =</span> <span class="dv">20000</span>,</span>
 <span id="cb5-10"><a aria-hidden="true" tabindex="-1"></a>  <span class="at">matchedSample =</span> <span class="dv">1000</span></span>
 <span id="cb5-11"><a aria-hidden="true" tabindex="-1"></a>)</span>
@@ -421,10 +423,10 @@
 <section id="population-diagnostics" class="slide level2">
 <h2>Population Diagnostics</h2>
 <ul>
-<li class="fragment">Contextualise your cohort including:
+<li class="fragment">Contextualises the frequency of your study cohorts in the database calculating:
 <ol type="1">
 <li class="fragment"><strong>Incidence</strong></li>
-<li class="fragment"><strong>Prevalence</strong></li>
+<li class="fragment"><strong>Period Prevalence</strong></li>
 </ol></li>
 </ul>
 </section>
@@ -449,43 +451,84 @@
 <span id="cb6-16"><a aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </section>
-<section id="extra-create-a-database-description-manually-and-add-it-to-the-shiny-app" class="slide level2">
-<h2>Extra: Create a database description manually and add it to the shiny app!</h2>
+<section id="summary" class="slide level2">
+<h2>Summary:</h2>
+<div style="margin-bottom: 10px;">
+
+</div>
+<div class="columns">
+<div class="column" style="width:45%;">
+<p><strong>Database diagnostics</strong></p>
+<pre><code>-   databaseDiagnostics()</code></pre>
+<div style="margin-bottom: 10px;">
+
+</div>
+<p><strong>Codelist diagnostics</strong></p>
+<pre><code>-   codelistDiagnostics()</code></pre>
+</div><div class="column" style="width:55%;">
+<p><strong>Cohort diagnostics</strong></p>
+<pre><code>-   cohortDiagnostics()</code></pre>
+<div style="margin-bottom: 10px;">
+
+</div>
+<p><strong>Population diagnostics</strong></p>
+<pre><code>-   populationDiagnostics()</code></pre>
+</div></div>
+<div class="fragment">
+<ul>
+<li class="fragment">Run all the diagnostics together:</li>
+</ul>
+</div>
+<div class="fragment">
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a aria-hidden="true" tabindex="-1"></a><span class="fu">downloadDatabaseDescriptionTemplate</span>(</span>
-<span id="cb7-2"><a aria-hidden="true" tabindex="-1"></a>  <span class="at">directory =</span> <span class="fu">here</span>(),</span>
-<span id="cb7-3"><a aria-hidden="true" tabindex="-1"></a>  <span class="at">name =</span> <span class="st">"GiBleed"</span>) <span class="co"># Same name of your database!!!!</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a aria-hidden="true" tabindex="-1"></a>result <span class="ot">&lt;-</span> <span class="fu">phenotypeDiagnostics</span>(</span>
+<span id="cb11-2"><a aria-hidden="true" tabindex="-1"></a>  cohort,</span>
+<span id="cb11-3"><a aria-hidden="true" tabindex="-1"></a>  <span class="at">databaseDiagnostics =</span> <span class="fu">list</span>(), </span>
+<span id="cb11-4"><a aria-hidden="true" tabindex="-1"></a>  <span class="at">codelistDiagnostics =</span> <span class="fu">list</span>(), </span>
+<span id="cb11-5"><a aria-hidden="true" tabindex="-1"></a>  <span class="at">cohortDiagnostics =</span> <span class="fu">list</span>(), </span>
+<span id="cb11-6"><a aria-hidden="true" tabindex="-1"></a>  <span class="at">populationDiagnostics =</span> <span class="fu">list</span>(), </span>
+<span id="cb11-7"><a aria-hidden="true" tabindex="-1"></a>  <span class="at">stagingDirectory =</span> <span class="cn">NULL</span></span>
+<span id="cb11-8"><a aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</div>
+</section>
+<section id="extra-create-a-database-description-manually" class="slide level2">
+<h2>Extra: Create a database description manually!</h2>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a aria-hidden="true" tabindex="-1"></a><span class="fu">downloadDatabaseDescriptionTemplate</span>(</span>
+<span id="cb12-2"><a aria-hidden="true" tabindex="-1"></a>  <span class="at">directory =</span> <span class="fu">here</span>(),</span>
+<span id="cb12-3"><a aria-hidden="true" tabindex="-1"></a>  <span class="at">name =</span> <span class="st">"GiBleed"</span>) <span class="co"># Same name of your database!!!!</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 
 <img data-src="Figures/database_description.png" class="r-stretch"></section>
-<section id="extra-create-a-clinical-description-manually-and-add-it-to-the-shiny-app" class="slide level2">
-<h2>Extra: Create a clinical description manually and add it to the shiny app!</h2>
+<section id="extra-create-a-clinical-description-manually" class="slide level2">
+<h2>Extra: Create a clinical description manually!</h2>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a aria-hidden="true" tabindex="-1"></a><span class="fu">downloadClinicalDescriptionTemplate</span>(</span>
-<span id="cb8-2"><a aria-hidden="true" tabindex="-1"></a>  <span class="at">directory =</span> <span class="fu">here</span>(),</span>
-<span id="cb8-3"><a aria-hidden="true" tabindex="-1"></a>  <span class="at">name =</span> <span class="st">"type_2_diabetes"</span>) <span class="co"># Same name of your cohort!!!!</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a aria-hidden="true" tabindex="-1"></a><span class="fu">downloadClinicalDescriptionTemplate</span>(</span>
+<span id="cb13-2"><a aria-hidden="true" tabindex="-1"></a>  <span class="at">directory =</span> <span class="fu">here</span>(),</span>
+<span id="cb13-3"><a aria-hidden="true" tabindex="-1"></a>  <span class="at">name =</span> <span class="st">"type_2_diabetes"</span>) <span class="co"># Same name of your cohort!!!!</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 
 <img data-src="Figures/clinical_description.png" class="r-stretch"></section>
 <section id="extra-create-clinical-expectations-for-your-cohorts" class="slide level2">
 <h2>Extra: Create clinical expectations for your cohorts:</h2>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span>
-<span id="cb9-2"><a aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(PhenotypeR)</span>
-<span id="cb9-3"><a aria-hidden="true" tabindex="-1"></a>exp <span class="ot">&lt;-</span> <span class="fu">tibble</span>(</span>
-<span id="cb9-4"><a aria-hidden="true" tabindex="-1"></a>  <span class="st">"cohort_name"</span> <span class="ot">=</span> <span class="st">"type_2_diabetes"</span>,</span>
-<span id="cb9-5"><a aria-hidden="true" tabindex="-1"></a>  <span class="st">"estimate"</span> <span class="ot">=</span> <span class="fu">c</span>(<span class="st">"Median age of incident cases"</span>, </span>
-<span id="cb9-6"><a aria-hidden="true" tabindex="-1"></a>                 <span class="st">" Survival at five years"</span>),</span>
-<span id="cb9-7"><a aria-hidden="true" tabindex="-1"></a>  <span class="st">"value"</span> <span class="ot">=</span> <span class="fu">c</span>(<span class="st">"45 to 65"</span>,</span>
-<span id="cb9-8"><a aria-hidden="true" tabindex="-1"></a>              <span class="st">"85% to 95%"</span>),</span>
-<span id="cb9-9"><a aria-hidden="true" tabindex="-1"></a>  <span class="st">"diagnostics"</span> <span class="ot">=</span> <span class="fu">c</span>(<span class="st">"cohort_characteristics"</span>,</span>
-<span id="cb9-10"><a aria-hidden="true" tabindex="-1"></a>                    <span class="st">"cohort_survival"</span>),</span>
-<span id="cb9-11"><a aria-hidden="true" tabindex="-1"></a>  <span class="st">"source"</span> <span class="ot">=</span> <span class="st">"Marta"</span></span>
-<span id="cb9-12"><a aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb9-13"><a aria-hidden="true" tabindex="-1"></a><span class="fu">tableCohortExpectations</span>(exp)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span>
+<span id="cb14-2"><a aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(PhenotypeR)</span>
+<span id="cb14-3"><a aria-hidden="true" tabindex="-1"></a>exp <span class="ot">&lt;-</span> <span class="fu">tibble</span>(</span>
+<span id="cb14-4"><a aria-hidden="true" tabindex="-1"></a>  <span class="st">"cohort_name"</span> <span class="ot">=</span> <span class="st">"type_2_diabetes"</span>,</span>
+<span id="cb14-5"><a aria-hidden="true" tabindex="-1"></a>  <span class="st">"estimate"</span> <span class="ot">=</span> <span class="fu">c</span>(<span class="st">"Median age of incident cases"</span>, </span>
+<span id="cb14-6"><a aria-hidden="true" tabindex="-1"></a>                 <span class="st">" Survival at five years"</span>),</span>
+<span id="cb14-7"><a aria-hidden="true" tabindex="-1"></a>  <span class="st">"value"</span> <span class="ot">=</span> <span class="fu">c</span>(<span class="st">"45 to 65"</span>,</span>
+<span id="cb14-8"><a aria-hidden="true" tabindex="-1"></a>              <span class="st">"85% to 95%"</span>),</span>
+<span id="cb14-9"><a aria-hidden="true" tabindex="-1"></a>  <span class="st">"diagnostics"</span> <span class="ot">=</span> <span class="fu">c</span>(<span class="st">"cohort_characteristics"</span>,</span>
+<span id="cb14-10"><a aria-hidden="true" tabindex="-1"></a>                    <span class="st">"cohort_survival"</span>),</span>
+<span id="cb14-11"><a aria-hidden="true" tabindex="-1"></a>  <span class="st">"source"</span> <span class="ot">=</span> <span class="st">"Marta"</span></span>
+<span id="cb14-12"><a aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb14-13"><a aria-hidden="true" tabindex="-1"></a><span class="fu">tableCohortExpectations</span>(exp)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output-display">
-<div class="reactable html-widget html-fill-item" id="htmlwidget-19b54ca7e319318c5c39" style="width:auto;height:auto;"></div>
-<script type="application/json" data-for="htmlwidget-19b54ca7e319318c5c39">{"x":{"tag":{"name":"Reactable","attribs":{"data":{"cohort_name":["type_2_diabetes"]},"columns":[{"id":".details","name":"","type":null,"sortable":false,"resizable":false,"filterable":false,"searchable":false,"width":45,"align":"center","details":[{"name":"Fragment","attribs":[],"children":[{"name":"div","attribs":{"style":{"padding":"10px","background-color":"#f9f9f9"}},"children":[{"name":"div","attribs":{"style":{"padding":"6px 10px","margin-bottom":"6px","border-bottom":"1px solid #ccc"}},"children":[{"name":"span","attribs":{"style":{"font-weight":"bold"}},"children":["Median age of incident cases"]},": 45 to 65",{"name":"span","attribs":{"style":{"font-style":"italic"}},"children":[" (Source: "]},{"name":"span","attribs":{"style":{"font-style":"italic"}},"children":["Marta"]},{"name":"span","attribs":{"style":{"font-style":"italic"}},"children":[")"]}]},{"name":"div","attribs":{"style":{"padding":"6px 10px","margin-bottom":"6px","border-bottom":"1px solid #ccc"}},"children":[{"name":"span","attribs":{"style":{"font-weight":"bold"}},"children":[" Survival at five years"]},": 85% to 95%",{"name":"span","attribs":{"style":{"font-style":"italic"}},"children":[" (Source: "]},{"name":"span","attribs":{"style":{"font-style":"italic"}},"children":["Marta"]},{"name":"span","attribs":{"style":{"font-style":"italic"}},"children":[")"]}]}]}]}]},{"id":"cohort_name","name":"cohort_name","type":"character"}],"resizable":true,"onClick":"expand","nowrap":true,"className":"packages-table","rowStyle":{"cursor":"pointer"},"theme":{"cellPadding":"8px 12px","headerStyle":{"display":"none"}},"dataKey":"eca58aefd0ff0616d152155878d74fc8"},"children":[]},"class":"reactR_markup"},"evals":[],"jsHooks":[]}</script>
+<div class="reactable html-widget html-fill-item" id="htmlwidget-84fe77807427f4b24621" style="width:auto;height:auto;"></div>
+<script type="application/json" data-for="htmlwidget-84fe77807427f4b24621">{"x":{"tag":{"name":"Reactable","attribs":{"data":{"cohort_name":["type_2_diabetes"]},"columns":[{"id":".details","name":"","type":null,"sortable":false,"resizable":false,"filterable":false,"searchable":false,"width":45,"align":"center","details":[{"name":"Fragment","attribs":[],"children":[{"name":"div","attribs":{"style":{"padding":"10px","background-color":"#f9f9f9"}},"children":[{"name":"div","attribs":{"style":{"padding":"6px 10px","margin-bottom":"6px","border-bottom":"1px solid #ccc"}},"children":[{"name":"span","attribs":{"style":{"font-weight":"bold"}},"children":["Median age of incident cases"]},": 45 to 65",{"name":"span","attribs":{"style":{"font-style":"italic"}},"children":[" (Source: "]},{"name":"span","attribs":{"style":{"font-style":"italic"}},"children":["Marta"]},{"name":"span","attribs":{"style":{"font-style":"italic"}},"children":[")"]}]},{"name":"div","attribs":{"style":{"padding":"6px 10px","margin-bottom":"6px","border-bottom":"1px solid #ccc"}},"children":[{"name":"span","attribs":{"style":{"font-weight":"bold"}},"children":[" Survival at five years"]},": 85% to 95%",{"name":"span","attribs":{"style":{"font-style":"italic"}},"children":[" (Source: "]},{"name":"span","attribs":{"style":{"font-style":"italic"}},"children":["Marta"]},{"name":"span","attribs":{"style":{"font-style":"italic"}},"children":[")"]}]}]}]}]},{"id":"cohort_name","name":"cohort_name","type":"character"}],"resizable":true,"onClick":"expand","nowrap":true,"className":"packages-table","rowStyle":{"cursor":"pointer"},"theme":{"cellPadding":"8px 12px","headerStyle":{"display":"none"}},"dataKey":"eca58aefd0ff0616d152155878d74fc8"},"children":[]},"class":"reactR_markup"},"evals":[],"jsHooks":[]}</script>
 </div>
 </div>
 </section>
@@ -496,13 +539,13 @@
 </ul>
 <div class="fragment">
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a aria-hidden="true" tabindex="-1"></a><span class="fu">shinyDiagnostics</span>(<span class="at">result =</span> result, </span>
-<span id="cb10-2"><a aria-hidden="true" tabindex="-1"></a>                 <span class="at">directory =</span> <span class="fu">here</span>(), </span>
-<span id="cb10-3"><a aria-hidden="true" tabindex="-1"></a>                 <span class="at">minCellCount =</span> <span class="dv">5</span>, </span>
-<span id="cb10-4"><a aria-hidden="true" tabindex="-1"></a>                 <span class="at">expectationsDir =</span>  <span class="fu">here</span>(<span class="st">"expectations"</span>), </span>
-<span id="cb10-5"><a aria-hidden="true" tabindex="-1"></a>                 <span class="at">clinicalDescriptionsDir =</span> <span class="fu">here</span>(<span class="st">"clinical_descriptions"</span>),</span>
-<span id="cb10-6"><a aria-hidden="true" tabindex="-1"></a>                 <span class="at">databaseDescriptionsDir =</span> <span class="fu">here</span>(<span class="st">"database_descriptions"</span>),</span>
-<span id="cb10-7"><a aria-hidden="true" tabindex="-1"></a>                 <span class="at">removeEmptyTabs =</span> <span class="cn">FALSE</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a aria-hidden="true" tabindex="-1"></a><span class="fu">shinyDiagnostics</span>(<span class="at">result =</span> result, </span>
+<span id="cb15-2"><a aria-hidden="true" tabindex="-1"></a>                 <span class="at">directory =</span> <span class="fu">here</span>(), </span>
+<span id="cb15-3"><a aria-hidden="true" tabindex="-1"></a>                 <span class="at">minCellCount =</span> <span class="dv">5</span>, </span>
+<span id="cb15-4"><a aria-hidden="true" tabindex="-1"></a>                 <span class="at">expectationsDir =</span>  <span class="fu">here</span>(<span class="st">"expectations"</span>), </span>
+<span id="cb15-5"><a aria-hidden="true" tabindex="-1"></a>                 <span class="at">clinicalDescriptionsDir =</span> <span class="fu">here</span>(<span class="st">"clinical_descriptions"</span>),</span>
+<span id="cb15-6"><a aria-hidden="true" tabindex="-1"></a>                 <span class="at">databaseDescriptionsDir =</span> <span class="fu">here</span>(<span class="st">"database_descriptions"</span>),</span>
+<span id="cb15-7"><a aria-hidden="true" tabindex="-1"></a>                 <span class="at">removeEmptyTabs =</span> <span class="cn">FALSE</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p>See the results in the <a href="https://dpa-pde-oxford.shinyapps.io/PhenotypeRShiny_OHDSIEuropeWorkshop/">shiny app</a></p>
 </div>
@@ -520,24 +563,24 @@
 </ul>
 <div class="fragment">
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a aria-hidden="true" tabindex="-1"></a><span class="co"># Install all the packages:</span></span>
-<span id="cb11-2"><a aria-hidden="true" tabindex="-1"></a><span class="fu">install.packages</span>(<span class="fu">c</span>(<span class="st">"omock"</span>, <span class="st">"here"</span>, <span class="st">"OmopConstructor"</span>, <span class="st">"CohortConstructor"</span>,</span>
-<span id="cb11-3"><a aria-hidden="true" tabindex="-1"></a>                   <span class="st">"CohortSurvival"</span>, <span class="st">"omopgenerics"</span>, <span class="st">"readr"</span>, <span class="st">"duckdb"</span>, <span class="st">"PhenotypeR"</span>))</span>
-<span id="cb11-4"><a aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb11-5"><a aria-hidden="true" tabindex="-1"></a><span class="co"># Load all the packages</span></span>
-<span id="cb11-6"><a aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(omock)</span>
-<span id="cb11-7"><a aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(here)</span>
-<span id="cb11-8"><a aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(PhenotypeR)</span>
-<span id="cb11-9"><a aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(OmopConstructor)</span>
-<span id="cb11-10"><a aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(CohortConstructor)</span>
-<span id="cb11-11"><a aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(CohortSurvival)</span>
-<span id="cb11-12"><a aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(omopgenerics)</span>
-<span id="cb11-13"><a aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(readr)</span>
-<span id="cb11-14"><a aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb11-15"><a aria-hidden="true" tabindex="-1"></a><span class="co"># Create mock CDM</span></span>
-<span id="cb11-16"><a aria-hidden="true" tabindex="-1"></a>cdm <span class="ot">&lt;-</span> <span class="fu">mockCdmFromDataset</span>(<span class="at">datasetName =</span> <span class="st">"synpuf-1k_5.3"</span>, </span>
-<span id="cb11-17"><a aria-hidden="true" tabindex="-1"></a>                          <span class="at">source =</span> <span class="st">"duckdb"</span>)</span>
-<span id="cb11-18"><a aria-hidden="true" tabindex="-1"></a>cdm <span class="ot">&lt;-</span> cdm <span class="sc">|&gt;</span> <span class="fu">buildAchillesTables</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a aria-hidden="true" tabindex="-1"></a><span class="co"># Install all the packages:</span></span>
+<span id="cb16-2"><a aria-hidden="true" tabindex="-1"></a><span class="fu">install.packages</span>(<span class="fu">c</span>(<span class="st">"omock"</span>, <span class="st">"here"</span>, <span class="st">"OmopConstructor"</span>, <span class="st">"CohortConstructor"</span>,</span>
+<span id="cb16-3"><a aria-hidden="true" tabindex="-1"></a>                   <span class="st">"CohortSurvival"</span>, <span class="st">"omopgenerics"</span>, <span class="st">"readr"</span>, <span class="st">"duckdb"</span>, <span class="st">"PhenotypeR"</span>))</span>
+<span id="cb16-4"><a aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-5"><a aria-hidden="true" tabindex="-1"></a><span class="co"># Load all the packages</span></span>
+<span id="cb16-6"><a aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(omock)</span>
+<span id="cb16-7"><a aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(here)</span>
+<span id="cb16-8"><a aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(PhenotypeR)</span>
+<span id="cb16-9"><a aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(OmopConstructor)</span>
+<span id="cb16-10"><a aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(CohortConstructor)</span>
+<span id="cb16-11"><a aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(CohortSurvival)</span>
+<span id="cb16-12"><a aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(omopgenerics)</span>
+<span id="cb16-13"><a aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(readr)</span>
+<span id="cb16-14"><a aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-15"><a aria-hidden="true" tabindex="-1"></a><span class="co"># Create mock CDM</span></span>
+<span id="cb16-16"><a aria-hidden="true" tabindex="-1"></a>cdm <span class="ot">&lt;-</span> <span class="fu">mockCdmFromDataset</span>(<span class="at">datasetName =</span> <span class="st">"synpuf-1k_5.3"</span>, </span>
+<span id="cb16-17"><a aria-hidden="true" tabindex="-1"></a>                          <span class="at">source =</span> <span class="st">"duckdb"</span>)</span>
+<span id="cb16-18"><a aria-hidden="true" tabindex="-1"></a>cdm <span class="ot">&lt;-</span> cdm <span class="sc">|&gt;</span> <span class="fu">buildAchillesTables</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </div>
 </section>
@@ -548,17 +591,17 @@
 </ul>
 <div class="fragment">
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a aria-hidden="true" tabindex="-1"></a><span class="co"># Define code list for your cohort</span></span>
-<span id="cb12-2"><a aria-hidden="true" tabindex="-1"></a>codes <span class="ot">&lt;-</span> <span class="fu">list</span>(</span>
-<span id="cb12-3"><a aria-hidden="true" tabindex="-1"></a>  <span class="st">"hypertension"</span> <span class="ot">=</span> <span class="fu">c</span>(<span class="dv">320128</span>L),</span>
-<span id="cb12-4"><a aria-hidden="true" tabindex="-1"></a>  <span class="st">"users_of_warfarin"</span> <span class="ot">=</span> <span class="fu">c</span>(<span class="dv">1310149</span>L, <span class="dv">40163554</span>L),</span>
-<span id="cb12-5"><a aria-hidden="true" tabindex="-1"></a>  <span class="st">"measurement_of_prostate_specific_antigen_level"</span> <span class="ot">=</span> <span class="fu">c</span>(<span class="dv">2617206</span>L)</span>
-<span id="cb12-6"><a aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb12-7"><a aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-8"><a aria-hidden="true" tabindex="-1"></a><span class="co"># Instantiate your cohort</span></span>
-<span id="cb12-9"><a aria-hidden="true" tabindex="-1"></a>cdm[[<span class="st">"study_cohorts"</span>]] <span class="ot">&lt;-</span> <span class="fu">conceptCohort</span>(cdm,</span>
-<span id="cb12-10"><a aria-hidden="true" tabindex="-1"></a>                                        <span class="at">conceptSet =</span> codes,</span>
-<span id="cb12-11"><a aria-hidden="true" tabindex="-1"></a>                                        <span class="at">name =</span> <span class="st">"study_cohorts"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a aria-hidden="true" tabindex="-1"></a><span class="co"># Define code list for your cohort</span></span>
+<span id="cb17-2"><a aria-hidden="true" tabindex="-1"></a>codes <span class="ot">&lt;-</span> <span class="fu">list</span>(</span>
+<span id="cb17-3"><a aria-hidden="true" tabindex="-1"></a>  <span class="st">"hypertension"</span> <span class="ot">=</span> <span class="fu">c</span>(<span class="dv">320128</span>L),</span>
+<span id="cb17-4"><a aria-hidden="true" tabindex="-1"></a>  <span class="st">"users_of_warfarin"</span> <span class="ot">=</span> <span class="fu">c</span>(<span class="dv">1310149</span>L, <span class="dv">40163554</span>L),</span>
+<span id="cb17-5"><a aria-hidden="true" tabindex="-1"></a>  <span class="st">"measurement_of_prostate_specific_antigen_level"</span> <span class="ot">=</span> <span class="fu">c</span>(<span class="dv">2617206</span>L)</span>
+<span id="cb17-6"><a aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb17-7"><a aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-8"><a aria-hidden="true" tabindex="-1"></a><span class="co"># Instantiate your cohort</span></span>
+<span id="cb17-9"><a aria-hidden="true" tabindex="-1"></a>cdm[[<span class="st">"study_cohorts"</span>]] <span class="ot">&lt;-</span> <span class="fu">conceptCohort</span>(cdm,</span>
+<span id="cb17-10"><a aria-hidden="true" tabindex="-1"></a>                                        <span class="at">conceptSet =</span> codes,</span>
+<span id="cb17-11"><a aria-hidden="true" tabindex="-1"></a>                                        <span class="at">name =</span> <span class="st">"study_cohorts"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </div>
 </section>
@@ -568,71 +611,58 @@
 <div class="fragment">
 <ol start="0" type="1">
 <li class="fragment">Check your database name using <code>cdmName(cdm)</code></li>
-</ol>
-</div>
-<div class="fragment">
-<ol type="1">
 <li class="fragment">Download a template using <code>downloadDatabaseDescriptionTemplate()</code>. Remember that the docx files <strong>MUST</strong> have the same name as the database!!!</li>
 </ol>
 </div>
 <div class="fragment">
-<p>Help: You can check the arguments of the function using:</p>
-<p><code>??downloadDatabaseDescriptionTemplate</code> or in the <a href="https://ohdsi.github.io/PhenotypeR/reference/index.html"><strong>PhenotypeR website</strong></a></p>
-</div>
-<div class="fragment">
+<p>Help: You can check the arguments of the function using: <code>??downloadDatabaseDescriptionTemplate</code> or in the <a href="https://ohdsi.github.io/PhenotypeR/reference/index.html"><strong>PhenotypeR website</strong></a></p>
 <ol start="2" type="1">
-<li class="fragment">Fill the template with the following information (please copy paste):</li>
+<li class="fragment">Fill the template with the following information (you can copy paste):</li>
 </ol>
 </div>
 <div class="fragment">
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a aria-hidden="true" tabindex="-1"></a>Information source<span class="sc">:</span> </span>
-<span id="cb13-2"><a aria-hidden="true" tabindex="-1"></a><span class="st">"OHDSI/Eunomia: An R package that facilitates access to a variety of OMOP CDM sample data sets."</span></span>
-<span id="cb13-3"><a aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-4"><a aria-hidden="true" tabindex="-1"></a>Description<span class="sc">:</span> </span>
-<span id="cb13-5"><a aria-hidden="true" tabindex="-1"></a><span class="st">"synput-1k_5.3 is a synthetic dataset designed for testing OHDSI tools. It is based on a subsample of Medicare claims data standardised to the OMOP Common Data Model (CDM) version 5.3.  It contains approximately records for 1k participants."</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a aria-hidden="true" tabindex="-1"></a>Information source<span class="sc">:</span> </span>
+<span id="cb18-2"><a aria-hidden="true" tabindex="-1"></a><span class="st">"OHDSI/Eunomia: An R package that facilitates access to a variety of OMOP CDM sample data sets."</span></span>
+<span id="cb18-3"><a aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-4"><a aria-hidden="true" tabindex="-1"></a>Description<span class="sc">:</span> </span>
+<span id="cb18-5"><a aria-hidden="true" tabindex="-1"></a><span class="st">"synput-1k_5.3 is a synthetic dataset designed for testing OHDSI tools. It is based on a subsample of Medicare claims data standardised to the OMOP Common Data Model (CDM) version 5.3.  It contains approximately records for 1k participants."</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </div>
 </section>
 <section id="your-turn-create-clinical-descriptions-for-this-cohorts" class="slide level2">
 <h2>4. Your turn! Create clinical descriptions for this cohorts</h2>
 <p>To create clinical descriptions for the previous cohorts, follow the following instructions:</p>
-<div class="fragment">
 <ol start="0" type="1">
 <li class="fragment">Check the name of your cohorts using <code>getCohortName(cdm)</code></li>
-</ol>
-</div>
-<div class="fragment">
-<ol type="1">
 <li class="fragment">Download three templates for each of the cohorts using <code>downloadClinicalDescriptionTemplate()</code>. Remember that the docx files <strong>MUST</strong> have the same name as the cohorts!!!</li>
 </ol>
-</div>
 <div class="fragment">
-<p><code>??downloadDatabaseDescriptionTemplate</code> or in the <a href="https://ohdsi.github.io/PhenotypeR/reference/index.html"><strong>PhenotypeR website</strong></a></p>
+<p>Help: You can check the arguments of the function using: <code>??downloadClinicalDescriptionTemplate</code> or in the <a href="https://ohdsi.github.io/PhenotypeR/reference/index.html"><strong>PhenotypeR website</strong></a></p>
 </div>
 </section>
 <section id="your-turn-create-clinical-descriptions-for-this-cohorts-1" class="slide level2">
 <h2>4. Your turn! Create clinical descriptions for this cohorts</h2>
 <ol start="2" type="1">
-<li class="fragment">Fill the templates with the following information (please copy paste):</li>
+<li class="fragment">Fill the templates with the following information (you can copy paste):</li>
 </ol>
 <div class="fragment">
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a aria-hidden="true" tabindex="-1"></a><span class="co"># Hypertension</span></span>
-<span id="cb14-2"><a aria-hidden="true" tabindex="-1"></a>Information source<span class="sc">:</span> </span>
-<span id="cb14-3"><a aria-hidden="true" tabindex="-1"></a><span class="st">"Dynamed (Home - DynaMed)"</span></span>
-<span id="cb14-4"><a aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-5"><a aria-hidden="true" tabindex="-1"></a>Introduction<span class="sc">:</span> </span>
-<span id="cb14-6"><a aria-hidden="true" tabindex="-1"></a><span class="st">"Hypertension is a sustained elevation of systemic arterial blood pressure, most commonly defined as a systolic blood pressure (BP) ≥ 140 mm Hg or diastolic BP ≥ 90 mm Hg, but definitions vary by professional organization and cardiovascular risk.</span></span>
-<span id="cb14-7"><a aria-hidden="true" tabindex="-1"></a><span class="st">Other names include: primary hypertension, essential hypertension, idiopathic hypertension, sustained hypertension."</span></span>
-<span id="cb14-8"><a aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-9"><a aria-hidden="true" tabindex="-1"></a>Complications<span class="sc">:</span></span>
-<span id="cb14-10"><a aria-hidden="true" tabindex="-1"></a><span class="st">"Hypertension is a risk factor for: Coronary artery disease (CAD), Heart failure, Chronic kidney disease, Stroke, Intracerebral hemorrhage, Transient ischemic attack (TIA), Peripheral artery disease (PAD), Aortic regurgitation, Atrial flutter, Mild cognitive impairment (MCI)."</span></span>
-<span id="cb14-11"><a aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-12"><a aria-hidden="true" tabindex="-1"></a>Phenotyping plan<span class="sc">:</span> </span>
-<span id="cb14-13"><a aria-hidden="true" tabindex="-1"></a><span class="st">"Inclusion criteria: At least one record of a diagnosis code for essential hypertension (ConceptId = 320128L). </span></span>
-<span id="cb14-14"><a aria-hidden="true" tabindex="-1"></a><span class="st">Index date: Date of the first occurrence of the essential hypertension diagnosis code. </span></span>
-<span id="cb14-15"><a aria-hidden="true" tabindex="-1"></a><span class="st">Exit criteria: As it is considered a chronic condition, once a patient enters the cohort they remain in it until the end of their observation period in the database."</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a aria-hidden="true" tabindex="-1"></a><span class="co"># Hypertension</span></span>
+<span id="cb19-2"><a aria-hidden="true" tabindex="-1"></a>Information source<span class="sc">:</span> </span>
+<span id="cb19-3"><a aria-hidden="true" tabindex="-1"></a><span class="st">"Dynamed (Home - DynaMed)"</span></span>
+<span id="cb19-4"><a aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-5"><a aria-hidden="true" tabindex="-1"></a>Introduction<span class="sc">:</span> </span>
+<span id="cb19-6"><a aria-hidden="true" tabindex="-1"></a><span class="st">"Hypertension is a sustained elevation of systemic arterial blood pressure, most commonly defined as a systolic blood pressure (BP) ≥ 140 mm Hg or diastolic BP ≥ 90 mm Hg, but definitions vary by professional organization and cardiovascular risk.</span></span>
+<span id="cb19-7"><a aria-hidden="true" tabindex="-1"></a><span class="st">Other names include: primary hypertension, essential hypertension, idiopathic hypertension, sustained hypertension."</span></span>
+<span id="cb19-8"><a aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-9"><a aria-hidden="true" tabindex="-1"></a>Complications<span class="sc">:</span></span>
+<span id="cb19-10"><a aria-hidden="true" tabindex="-1"></a><span class="st">"Hypertension is a risk factor for: Coronary artery disease (CAD), Heart failure, Chronic kidney disease, Stroke, Intracerebral hemorrhage, Transient ischemic attack (TIA), Peripheral artery disease (PAD), Aortic regurgitation, Atrial flutter, Mild cognitive impairment (MCI)."</span></span>
+<span id="cb19-11"><a aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-12"><a aria-hidden="true" tabindex="-1"></a>Phenotyping plan<span class="sc">:</span> </span>
+<span id="cb19-13"><a aria-hidden="true" tabindex="-1"></a><span class="st">"Inclusion criteria: At least one record of a diagnosis code for essential hypertension (ConceptId = 320128L). </span></span>
+<span id="cb19-14"><a aria-hidden="true" tabindex="-1"></a><span class="st">Index date: Date of the first occurrence of the essential hypertension diagnosis code. </span></span>
+<span id="cb19-15"><a aria-hidden="true" tabindex="-1"></a><span class="st">Exit criteria: As it is considered a chronic condition, once a patient enters the cohort they remain in it until the end of their observation period in the database."</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </div>
 </section>
@@ -643,17 +673,17 @@
 </ol>
 <div class="fragment">
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a aria-hidden="true" tabindex="-1"></a><span class="co"># Warfarin users</span></span>
-<span id="cb15-2"><a aria-hidden="true" tabindex="-1"></a>Information source<span class="sc">:</span> </span>
-<span id="cb15-3"><a aria-hidden="true" tabindex="-1"></a><span class="st">"Gemini (https://gemini.google.com/)"</span></span>
-<span id="cb15-4"><a aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-5"><a aria-hidden="true" tabindex="-1"></a>Introduction<span class="sc">:</span> </span>
-<span id="cb15-6"><a aria-hidden="true" tabindex="-1"></a><span class="st">"Warfarin is an oral anticoagulant that interferes with the hepatic synthesis of Vitamin K-dependent clotting factors (II, VII, IX, and X). It is primarily indicated for the prophylaxis and treatment of venous thrombosis, pulmonary embolism, and thromboembolic complications associated with atrial fibrillation (AFib) or cardiac valve replacement."</span></span>
-<span id="cb15-7"><a aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-8"><a aria-hidden="true" tabindex="-1"></a>Phenotyping plan<span class="sc">:</span> </span>
-<span id="cb15-9"><a aria-hidden="true" tabindex="-1"></a><span class="st">"Inclusion criteria: At least one record in the drug_exposure table of warfarin prescription. Multiple records per person are allowed.</span></span>
-<span id="cb15-10"><a aria-hidden="true" tabindex="-1"></a><span class="st">Index date: Date of the recorded drug exposure.</span></span>
-<span id="cb15-11"><a aria-hidden="true" tabindex="-1"></a><span class="st">Washout period: No washout period is used."</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a aria-hidden="true" tabindex="-1"></a><span class="co"># Warfarin users</span></span>
+<span id="cb20-2"><a aria-hidden="true" tabindex="-1"></a>Information source<span class="sc">:</span> </span>
+<span id="cb20-3"><a aria-hidden="true" tabindex="-1"></a><span class="st">"Gemini (https://gemini.google.com/)"</span></span>
+<span id="cb20-4"><a aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-5"><a aria-hidden="true" tabindex="-1"></a>Introduction<span class="sc">:</span> </span>
+<span id="cb20-6"><a aria-hidden="true" tabindex="-1"></a><span class="st">"Warfarin is an oral anticoagulant that interferes with the hepatic synthesis of Vitamin K-dependent clotting factors (II, VII, IX, and X). It is primarily indicated for the prophylaxis and treatment of venous thrombosis, pulmonary embolism, and thromboembolic complications associated with atrial fibrillation (AFib) or cardiac valve replacement."</span></span>
+<span id="cb20-7"><a aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-8"><a aria-hidden="true" tabindex="-1"></a>Phenotyping plan<span class="sc">:</span> </span>
+<span id="cb20-9"><a aria-hidden="true" tabindex="-1"></a><span class="st">"Inclusion criteria: At least one record in the drug_exposure table of warfarin prescription. Multiple records per person are allowed.</span></span>
+<span id="cb20-10"><a aria-hidden="true" tabindex="-1"></a><span class="st">Index date: Date of the recorded drug exposure.</span></span>
+<span id="cb20-11"><a aria-hidden="true" tabindex="-1"></a><span class="st">Washout period: No washout period is used."</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </div>
 </section>
@@ -664,38 +694,50 @@
 </ol>
 <div class="fragment">
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a aria-hidden="true" tabindex="-1"></a><span class="co"># Measurement of antigen specific cancer</span></span>
-<span id="cb16-2"><a aria-hidden="true" tabindex="-1"></a>Information source<span class="sc">:</span> </span>
-<span id="cb16-3"><a aria-hidden="true" tabindex="-1"></a><span class="st">"Dynamed (https://www.dynamed.com/)"</span></span>
-<span id="cb16-4"><a aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-5"><a aria-hidden="true" tabindex="-1"></a>Introduction<span class="sc">:</span> </span>
-<span id="cb16-6"><a aria-hidden="true" tabindex="-1"></a><span class="st">"Measurement of prostate specific antigen in serum for the detection and management of benign prostatic hyperplasia and prostate cancer. </span></span>
-<span id="cb16-7"><a aria-hidden="true" tabindex="-1"></a><span class="st">Other names include: PSA measurement, PSA - Prostate-specific antigen level, PSA - Serum prostate specific antigen level, tPSA measurement - Total prostate specific antigen measurement"</span></span>
-<span id="cb16-8"><a aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-9"><a aria-hidden="true" tabindex="-1"></a>Phenotyping plan<span class="sc">:</span> </span>
-<span id="cb16-10"><a aria-hidden="true" tabindex="-1"></a><span class="st">"Inclusion criteria: A record in the measurement table where the measurement_concept_id is 2617206L. Multiple records per person are allowed.</span></span>
-<span id="cb16-11"><a aria-hidden="true" tabindex="-1"></a><span class="st">Index date:Measurement date of the recorded PSA test."</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a aria-hidden="true" tabindex="-1"></a><span class="co"># Measurement of antigen specific cancer</span></span>
+<span id="cb21-2"><a aria-hidden="true" tabindex="-1"></a>Information source<span class="sc">:</span> </span>
+<span id="cb21-3"><a aria-hidden="true" tabindex="-1"></a><span class="st">"Dynamed (https://www.dynamed.com/)"</span></span>
+<span id="cb21-4"><a aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-5"><a aria-hidden="true" tabindex="-1"></a>Introduction<span class="sc">:</span> </span>
+<span id="cb21-6"><a aria-hidden="true" tabindex="-1"></a><span class="st">"Measurement of prostate specific antigen in serum for the detection and management of benign prostatic hyperplasia and prostate cancer. </span></span>
+<span id="cb21-7"><a aria-hidden="true" tabindex="-1"></a><span class="st">Other names include: PSA measurement, PSA - Prostate-specific antigen level, PSA - Serum prostate specific antigen level, tPSA measurement - Total prostate specific antigen measurement"</span></span>
+<span id="cb21-8"><a aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-9"><a aria-hidden="true" tabindex="-1"></a>Phenotyping plan<span class="sc">:</span> </span>
+<span id="cb21-10"><a aria-hidden="true" tabindex="-1"></a><span class="st">"Inclusion criteria: A record in the measurement table where the measurement_concept_id is 2617206L. Multiple records per person are allowed.</span></span>
+<span id="cb21-11"><a aria-hidden="true" tabindex="-1"></a><span class="st">Index date:Measurement date of the recorded PSA test."</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </div>
 </section>
 <section id="get-cohort-expectations" class="slide level2">
 <h2>5. Get cohort expectations</h2>
-<p>Run the following bit of code to get mock expectations for your cohorts:</p>
+<p>Run the following bit of code to download mock expectations for your cohorts.</p>
 <div class="fragment">
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a aria-hidden="true" tabindex="-1"></a>url <span class="ot">&lt;-</span> <span class="st">"https://raw.githubusercontent.com/OHDSI/PhenotypeR/main/extras/expectations/expectations.csv"</span></span>
-<span id="cb17-2"><a aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb17-3"><a aria-hidden="true" tabindex="-1"></a>expectationsDir <span class="ot">=</span> <span class="st">"..."</span> <span class="co"># Write here the directory where to save the expectations</span></span>
-<span id="cb17-4"><a aria-hidden="true" tabindex="-1"></a><span class="fu">download.file</span>(url, </span>
-<span id="cb17-5"><a aria-hidden="true" tabindex="-1"></a>              <span class="at">destfile =</span> <span class="fu">here</span>(expectationsDir, <span class="st">"expectations.csv"</span>), </span>
-<span id="cb17-6"><a aria-hidden="true" tabindex="-1"></a>              <span class="at">mode =</span> <span class="st">"wb"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a aria-hidden="true" tabindex="-1"></a>url <span class="ot">&lt;-</span> <span class="st">"https://raw.githubusercontent.com/OHDSI/OHDSI-EU-2026-Workshop/main/PhenotypeR/expectations.csv"</span></span>
+<span id="cb22-2"><a aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-3"><a aria-hidden="true" tabindex="-1"></a>expectationsDir <span class="ot">&lt;-</span> <span class="st">"..."</span> <span class="co"># Write here the directory where to save the expectations</span></span>
+<span id="cb22-4"><a aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-5"><a aria-hidden="true" tabindex="-1"></a><span class="fu">download.file</span>(url, </span>
+<span id="cb22-6"><a aria-hidden="true" tabindex="-1"></a>              <span class="at">destfile =</span> <span class="fu">here</span>(expectationsDir, <span class="st">"expectations.csv"</span>), </span>
+<span id="cb22-7"><a aria-hidden="true" tabindex="-1"></a>              <span class="at">mode =</span> <span class="st">"wb"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</div>
+<div class="fragment">
+<ul>
+<li class="fragment">Check that you’ve download the expectations properly by reading the csv file:</li>
+</ul>
+</div>
+<div class="fragment">
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a aria-hidden="true" tabindex="-1"></a>exp <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(expectationsDir)</span>
+<span id="cb23-2"><a aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-3"><a aria-hidden="true" tabindex="-1"></a><span class="fu">tableCohortExpectations</span>(exp)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </div>
 </section>
 <section id="your-turn-run-phenotypediagnostics" class="slide level2">
 <h2>6. Your turn! Run phenotypeDiagnostics</h2>
 <p>We’ll now run <code>phenotypeDiagnostics()</code> with the following specifications:</p>
-<div class="fragment">
 <ul>
 <li class="fragment">For <strong>databaseDiagnostics</strong>, use the default settings.</li>
 <li class="fragment">For <strong>codelistDiagnostics</strong>:
@@ -704,7 +746,6 @@
 <li class="fragment">Set <code>drugDiagnosticsSample = 1000</code></li>
 </ul></li>
 </ul>
-</div>
 </section>
 <section id="your-turn-run-phenotypediagnostics-1" class="slide level2">
 <h2>6. Your turn! Run phenotypeDiagnostics</h2>
@@ -733,22 +774,20 @@
 <section id="solution" class="slide level2">
 <h2>6. Solution:</h2>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a aria-hidden="true" tabindex="-1"></a>result <span class="ot">&lt;-</span> <span class="fu">phenotypeDiagnostics</span>(<span class="at">cohort =</span> cdm[[<span class="st">"study_cohorts"</span>]], </span>
-<span id="cb18-2"><a aria-hidden="true" tabindex="-1"></a>                               <span class="at">databaseDiagnostics =</span> <span class="fu">list</span>(), </span>
-<span id="cb18-3"><a aria-hidden="true" tabindex="-1"></a>                               <span class="at">codelistDiagnostics =</span> <span class="fu">list</span>(</span>
-<span id="cb18-4"><a aria-hidden="true" tabindex="-1"></a>                                 <span class="st">"measurementDiagnosticsSample"</span> <span class="ot">=</span> <span class="dv">1000</span>,</span>
-<span id="cb18-5"><a aria-hidden="true" tabindex="-1"></a>                                 <span class="st">"drugDiagnosticsSample"</span> <span class="ot">=</span> <span class="dv">1000</span></span>
-<span id="cb18-6"><a aria-hidden="true" tabindex="-1"></a>                               ),</span>
-<span id="cb18-7"><a aria-hidden="true" tabindex="-1"></a>                               <span class="at">cohortDiagnostics =</span> <span class="fu">list</span>(</span>
-<span id="cb18-8"><a aria-hidden="true" tabindex="-1"></a>                                 <span class="st">"diagnostics"</span> <span class="ot">=</span> <span class="fu">c</span>(<span class="st">"cohortCount"</span>, <span class="st">"cohortCharacteristics"</span>,</span>
-<span id="cb18-9"><a aria-hidden="true" tabindex="-1"></a>                                                   <span class="st">"largeScaleCharacteristics"</span>,</span>
-<span id="cb18-10"><a aria-hidden="true" tabindex="-1"></a>                                                   <span class="st">"compareCohorts"</span>, <span class="st">"cohortSurvival"</span>),</span>
-<span id="cb18-11"><a aria-hidden="true" tabindex="-1"></a>                                 <span class="st">"cohortSample"</span> <span class="ot">=</span> <span class="cn">NULL</span>,</span>
-<span id="cb18-12"><a aria-hidden="true" tabindex="-1"></a>                                 <span class="st">"matchedSample"</span> <span class="ot">=</span> <span class="dv">1000</span></span>
-<span id="cb18-13"><a aria-hidden="true" tabindex="-1"></a>                               ),</span>
-<span id="cb18-14"><a aria-hidden="true" tabindex="-1"></a>                               <span class="at">populationDiagnostics =</span> <span class="fu">list</span>(</span>
-<span id="cb18-15"><a aria-hidden="true" tabindex="-1"></a>                                 <span class="st">"populationSample"</span> <span class="ot">=</span> <span class="dv">10000</span></span>
-<span id="cb18-16"><a aria-hidden="true" tabindex="-1"></a>                               ))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a aria-hidden="true" tabindex="-1"></a>result <span class="ot">&lt;-</span> <span class="fu">phenotypeDiagnostics</span>(<span class="at">cohort =</span> cdm[[<span class="st">"study_cohorts"</span>]], </span>
+<span id="cb24-2"><a aria-hidden="true" tabindex="-1"></a>                               <span class="at">databaseDiagnostics =</span> <span class="fu">list</span>(), </span>
+<span id="cb24-3"><a aria-hidden="true" tabindex="-1"></a>                               <span class="at">codelistDiagnostics =</span> <span class="fu">list</span>(</span>
+<span id="cb24-4"><a aria-hidden="true" tabindex="-1"></a>                                 <span class="st">"measurementDiagnosticsSample"</span> <span class="ot">=</span> <span class="dv">1000</span>,</span>
+<span id="cb24-5"><a aria-hidden="true" tabindex="-1"></a>                                 <span class="st">"drugDiagnosticsSample"</span> <span class="ot">=</span> <span class="dv">1000</span></span>
+<span id="cb24-6"><a aria-hidden="true" tabindex="-1"></a>                               ),</span>
+<span id="cb24-7"><a aria-hidden="true" tabindex="-1"></a>                               <span class="at">cohortDiagnostics =</span> <span class="fu">list</span>(</span>
+<span id="cb24-8"><a aria-hidden="true" tabindex="-1"></a>                                 <span class="st">"cohortSurvival"</span> <span class="ot">=</span> <span class="cn">TRUE</span>,</span>
+<span id="cb24-9"><a aria-hidden="true" tabindex="-1"></a>                                 <span class="st">"cohortSample"</span> <span class="ot">=</span> <span class="cn">NULL</span>,</span>
+<span id="cb24-10"><a aria-hidden="true" tabindex="-1"></a>                                 <span class="st">"matchedSample"</span> <span class="ot">=</span> <span class="dv">1000</span></span>
+<span id="cb24-11"><a aria-hidden="true" tabindex="-1"></a>                               ),</span>
+<span id="cb24-12"><a aria-hidden="true" tabindex="-1"></a>                               <span class="at">populationDiagnostics =</span> <span class="fu">list</span>(</span>
+<span id="cb24-13"><a aria-hidden="true" tabindex="-1"></a>                                 <span class="st">"populationSample"</span> <span class="ot">=</span> <span class="dv">10000</span></span>
+<span id="cb24-14"><a aria-hidden="true" tabindex="-1"></a>                               ))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </section>
 <section id="your-turn-run-your-shiny-app" class="slide level2">
@@ -756,14 +795,14 @@
 <p>Let us now create the shiny app using <code>shinyDiagnostics()</code>! To do that, complete the following spaces:</p>
 <div class="fragment">
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a aria-hidden="true" tabindex="-1"></a><span class="fu">shinyDiagnostics</span>(result, </span>
-<span id="cb19-2"><a aria-hidden="true" tabindex="-1"></a>                 <span class="at">directory =</span> <span class="st">"..."</span>, </span>
-<span id="cb19-3"><a aria-hidden="true" tabindex="-1"></a>                 <span class="at">expectations =</span> <span class="st">"..."</span>, </span>
-<span id="cb19-4"><a aria-hidden="true" tabindex="-1"></a>                 <span class="at">clinicalDescriptionsDir =</span> <span class="st">"..."</span>, </span>
-<span id="cb19-5"><a aria-hidden="true" tabindex="-1"></a>                 <span class="at">databaseDescriptionsDir =</span> <span class="st">"..."</span>,</span>
-<span id="cb19-6"><a aria-hidden="true" tabindex="-1"></a>                 <span class="at">minCellCount =</span> <span class="dv">1</span>, </span>
-<span id="cb19-7"><a aria-hidden="true" tabindex="-1"></a>                 <span class="at">open =</span> <span class="cn">TRUE</span></span>
-<span id="cb19-8"><a aria-hidden="true" tabindex="-1"></a>                 ) </span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a aria-hidden="true" tabindex="-1"></a><span class="fu">shinyDiagnostics</span>(result, </span>
+<span id="cb25-2"><a aria-hidden="true" tabindex="-1"></a>                 <span class="at">directory =</span> <span class="st">"..."</span>, </span>
+<span id="cb25-3"><a aria-hidden="true" tabindex="-1"></a>                 <span class="at">expectations =</span> <span class="st">"..."</span>, </span>
+<span id="cb25-4"><a aria-hidden="true" tabindex="-1"></a>                 <span class="at">clinicalDescriptionsDir =</span> <span class="st">"..."</span>, </span>
+<span id="cb25-5"><a aria-hidden="true" tabindex="-1"></a>                 <span class="at">databaseDescriptionsDir =</span> <span class="st">"..."</span>,</span>
+<span id="cb25-6"><a aria-hidden="true" tabindex="-1"></a>                 <span class="at">minCellCount =</span> <span class="dv">1</span>, </span>
+<span id="cb25-7"><a aria-hidden="true" tabindex="-1"></a>                 <span class="at">open =</span> <span class="cn">TRUE</span></span>
+<span id="cb25-8"><a aria-hidden="true" tabindex="-1"></a>                 ) </span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p>Help: You can check the arguments of the function using:</p>
 <p><code>??shinyDiagnostics</code> or in the <a href="https://ohdsi.github.io/PhenotypeR/reference/index.html"><strong>PhenotypeR website</strong></a></p>
@@ -798,8 +837,8 @@
 <h2>8. Your turn! Answer the following questions from the shiny app:</h2>
 <ol start="11" type="1">
 <li class="fragment">How many females are within the cohort <em>hypertension</em>?</li>
-<li class="fragment">How many people get a prescription of <em>tolazamide 250 MG Oral Tablet</em> (concept ID = 1502811) after 30 days of having an <em>hypertension</em> diagnosis?</li>
-<li class="fragment">Within the window 366 to Inf and for the concept <em>Systemic lupus erythematosus</em> (concept ID = 257628), what is the standardised mean differences between the hypertension sampled and the matched cohorts?</li>
+<li class="fragment">How many people get a prescription of <em>lovastatin 10 MG Oral Tablet</em> (concept ID = 19019115) after 30 days of having an <em>hypertension</em> diagnosis?</li>
+<li class="fragment">Which condition shows the greatest SMD between the matched cohort and the sampled cohort within 1–30 days after warfarin initiation (<em>users_of_warfarin</em> cohort)?</li>
 <li class="fragment">How many people are in both, <em>hypertension</em> and <em>users of warfarin</em> cohorts?</li>
 <li class="fragment">What is the average number of days between people entering the <em>hypertension</em> cohort and then to the <em>users of warfarin</em> cohort?</li>
 </ol>
@@ -807,7 +846,7 @@
 <section id="your-turn-answer-the-following-questions-from-the-shiny-app-4" class="slide level2">
 <h2>8. Your turn! Answer the following questions from the shiny app:</h2>
 <ol start="16" type="1">
-<li class="fragment">How many people die in the <em>hypertension</em> cohort? Check if it is aligned with the cohort expectations!</li>
+<li class="fragment">How many people die in the <em>hypertension</em> cohort? Check if it is aligned with the cohort expectations and explore the survival plot.</li>
 <li class="fragment">What is the incidence of <em>hypertension</em> between 1/01/2009 to 31/12/2009 in our subsample of 10,000?</li>
 <li class="fragment">What is the prevalence of <em>hypertension</em> between 1/01/2009 to 31/12/2009 in our subsample of 10,000?</li>
 <li class="fragment">What is the prevalence of <em>hypertension</em> between 1/01/2009 to 31/12/2009 in our subsample of 10,000 only among Females?</li>
@@ -876,7 +915,7 @@
 <ul>
 <li class="fragment"><strong>HINT:</strong> Go to Cohort Diagnostics / Cohort characteristics and select the cohort <em>hypertension</em></li>
 </ul></li>
-<li class="fragment"><p>How many people get a prescription of <em>tolazamide 250 MG Oral Tablet</em> (concept ID = 1502811) after 30 days of having an <em>hypertension</em> diagnosis?</p>
+<li class="fragment"><p>How many people get a prescription of <em>lovastatin 10 MG Oral Tablet</em> (concept ID = 19019115) after 30 days of having an <em>hypertension</em> diagnosis?</p>
 <ul>
 <li class="fragment"><strong>HINT:</strong> Go to Cohort Diagnostics / Large scale characteristics and select the cohort <em>hypertension</em>. Use the left expandable menu to select <em>drug_exposure</em> table and the window c(1,30)</li>
 </ul></li>
@@ -885,9 +924,9 @@
 <section id="your-turn-answer-the-following-questions-from-the-shiny-app-with-hints-4" class="slide level2">
 <h2>8. Your turn! Answer the following questions from the shiny app (with HINTS)</h2>
 <ol start="13" type="1">
-<li class="fragment"><p>Within the window 366 to Inf and for the concept <em>Systemic lupus erythematosus</em> (concept ID = 257628), what is the standardised mean differences between the hypertension sampled and the matched cohorts?</p>
+<li class="fragment"><p>Which condition shows the greatest SMD between the matched cohort and the sampled cohort within 1–30 days after warfarin initiation (<em>users_of_warfarin</em> cohort)?</p>
 <ul>
-<li class="fragment"><strong>HINT:</strong> Go to Cohort Diagnostics / Compare Large scale characteristics and select the cohort <em>hypertension sampled</em> as reference cohort, and <em>hypertension matched</em> as a comparator cohort. Use the left expandable menu to select <em>condition_occurrence</em> table and the window c(366,Inf)</li>
+<li class="fragment"><strong>HINT:</strong> Go to Cohort Diagnostics / Compare Large scale characteristics and select the cohort <em>users_of_warfarin sampled</em> as reference cohort, and <em>users_of_warfarin matched</em> as a comparator cohort. Use the left expandable menu to select <em>condition_occurrence</em> table and the window c(1,30)</li>
 </ul></li>
 <li class="fragment"><p>How many people are in both, <em>hypertension</em> and <em>users of warfarin</em> cohorts?</p>
 <ul>
@@ -902,7 +941,7 @@
 <ul>
 <li class="fragment"><strong>HINT:</strong> Go to Cohort Diagnostics / Compare cohorts / Cohort Timing and select the cohort <em>hypertension</em></li>
 </ul></li>
-<li class="fragment"><p>How many people die in the <em>hypertension</em> cohort? Check if it is aligned with the cohort expectations!</p>
+<li class="fragment"><p>How many people die in the <em>hypertension</em> cohort? Check if it is aligned with the cohort expectations and explore the survival plot.</p>
 <ul>
 <li class="fragment"><strong>HINT:</strong> Go to Cohort Diagnostics / Cohort Survival and select the cohort <em>hypertension</em>. Explore the table and the plot!</li>
 </ul></li>
@@ -983,18 +1022,18 @@
 <ul>
 <li class="fragment"><strong>RE:</strong> N (%) = 2,145 (50.94%)</li>
 </ul></li>
-<li class="fragment"><p>How many people get a prescription of <em>tolazamide 250 MG Oral Tablet</em> (concept ID = 1502811) after 30 days of having an <em>hypertension</em> diagnosis?</p>
+<li class="fragment"><p>How many people get a prescription of <em>lovastatin 10 MG Oral Tablet</em> (concept ID = 19019115) after 30 days of having an <em>hypertension</em> diagnosis?</p>
 <ul>
-<li class="fragment"><strong>RE:</strong> 1</li>
+<li class="fragment"><strong>RE:</strong> 19</li>
 </ul></li>
 </ol>
 </section>
 <section id="your-turn-answer-the-following-questions-from-the-shiny-app-answers-3" class="slide level2">
 <h2>8. Your turn! Answer the following questions from the shiny app (ANSWERS)</h2>
 <ol start="13" type="1">
-<li class="fragment"><p>Within the window 366 to Inf and for the concept <em>Systemic lupus erythematosus</em> (concept ID = 257628), what is the standardised mean differences between the hypertension sampled and the matched cohorts?</p>
+<li class="fragment"><p>Which condition shows the greatest SMD between the matched cohort and the sampled cohort within 1–30 days after warfarin initiation (<em>users_of_warfarin</em> cohort)?</p>
 <ul>
-<li class="fragment"><strong>RE:</strong> 1.414</li>
+<li class="fragment"><strong>RE:</strong> type 2 diabetes, with an SMD = 0.562</li>
 </ul></li>
 <li class="fragment"><p>How many people are in both, <em>hypertension</em> and <em>users of warfarin</em> cohorts?</p>
 <ul>
@@ -1009,9 +1048,9 @@
 <section id="your-turn-answer-the-following-questions-from-the-shiny-app-answers-4" class="slide level2">
 <h2>8. Your turn! Answer the following questions from the shiny app (ANSWERS)</h2>
 <ol start="16" type="1">
-<li class="fragment"><p>How many people die in the <em>hypertension</em> cohort? Check if it is aligned with the cohort expectations!</p>
+<li class="fragment"><p>How many people die in the <em>hypertension</em> cohort? Check if it is aligned with the cohort expectations and explore the survival plot.</p>
 <ul>
-<li class="fragment"><strong>RE:</strong> 5. If we observe the plot, we can see that the maximum number of follow-up days are 1077 (equivalent to 2.95 years), and a survival probability of approximately 97%. The expectations say that the average survival after 5 years of the diagnosis is 85% to 95%.</li>
+<li class="fragment"><strong>RE:</strong> 93. If we observe the plot, we can see that the maximum number of follow-up days are 1077 (equivalent to 2.95 years), and a survival probability of approximately 96%. The expectations say that the average survival after 5 years of the diagnosis is 85% to 95%.</li>
 </ul></li>
 <li class="fragment"><p>What is the incidence of <em>hypertension</em> between 1/01/2009 to 31/12/2009 in our subsample of 10,000?</p>
 <ul>
@@ -1036,10 +1075,10 @@
 <h2>PhenotypeR</h2>
 <div style="display: flex; align-items: center; justify-content: space-between;">
 <div style="flex: 1;">
-<p>👉 <a href="https://ohdsi.github.io/PhenotypeR/"><strong>Packages website</strong></a><br>
+<p>👉 <a href="https://ohdsi.github.io/PhenotypeR/"><strong>Package website</strong></a><br>
 👉 <a href="https://cran.r-project.org/package=PhenotypeR"><strong>CRAN link</strong></a><br>
-👉 <a href="https://cran.r-project.org/web/packages/PhenotypeR/PhenotypeR.pdf"><strong>Manual</strong></a></p>
-<p>📧 <a href="mailto:marta.alcaldeherraiz@ndorms.ox.ac.uk">marta.alcaldeherraiz@ndorms.ox.ac.uk</a></p>
+👉 <a href="https://github.com/OHDSI/PhenotypeR"><strong>GitHub link</strong></a><br>
+👉 <a href="https://cran.r-project.org/web/packages/PhenotypeR/PhenotypeR.pdf"><strong>Manual</strong></a> 📧 <a href="mailto:edward.burn@ndorms.ox.ac.uk">edward.burn@ndorms.ox.ac.uk</a> 📧 <a href="mailto:marta.alcaldeherraiz@ndorms.ox.ac.uk">marta.alcaldeherraiz@ndorms.ox.ac.uk</a></p>
 </div>
 <div style="flex: 1; text-align: center;">
 <p><img src="https://github.com/OHDSI/PhenotypeR/blob/main/man/figures/logo.png?raw=true" width="600"></p>

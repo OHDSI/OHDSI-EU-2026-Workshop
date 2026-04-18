@@ -39,7 +39,7 @@
     "href": "PhenotypeR/index.html#introduction",
     "title": "OHDSI EU 2026 Workshop",
     "section": "Introduction",
-    "text": "Introduction\n\nPhenotypeR package can help us to assess the research-readiness of a set of cohorts we have defined.\n\n\n\n\n\nThe code is publicly available in OHDSI’s GitHub repository PhenoypeR.\n\n\n\n\n\nPhenotypeR 0.3.4 is available in CRAN.\n\n\n\n\n\nVignettes with further information can be found in the package website."
+    "text": "Introduction\n\nPhenotypeR package can help us to assess the research-readiness of a set of cohorts we have defined.\n\n\n\n\n\nThe code is publicly available in OHDSI’s GitHub repository PhenoypeR.\n\n\n\n\n\nPhenotypeR 0.4 is available in CRAN.\n\n\n\n\n\nVignettes with further information can be found in the package website."
   },
   {
     "objectID": "PhenotypeR/index.html#set-of-functions-individual-diagnostics-assessment",
@@ -88,21 +88,21 @@
     "href": "PhenotypeR/index.html#cohort-diagnostics",
     "title": "OHDSI EU 2026 Workshop",
     "section": "Cohort Diagnostics",
-    "text": "Cohort Diagnostics\n\nSummarise your cohort characteristics:\n\nCohort count & attrition\nCohort characteristics: Baseline characteristics of your cohort\nLarge scale characteristics: Summary of the records from clinical tables within a time window.\nCompare large scale characteristics: Comparison of the LSC with a matched (by age & sex) cohort.\nCompare cohorts: Overlap and timing between cohorts (only if more than one cohort are present).\nCohort survival: Survival curves"
+    "text": "Cohort Diagnostics\n\nSummarise your cohort characteristics:\n\nCohort count & attrition\nCohort characteristics: Baseline characteristics of your cohort\nLarge scale characteristics: Summary of the records from clinical tables within a time window\nCompare cohorts: Overlap and timing between cohorts (only if more than one cohort are present)\nCohort survival: Survival until the event of death (if death table is present)"
   },
   {
     "objectID": "PhenotypeR/index.html#cohort-diagnostics-1",
     "href": "PhenotypeR/index.html#cohort-diagnostics-1",
     "title": "OHDSI EU 2026 Workshop",
     "section": "Cohort Diagnostics",
-    "text": "Cohort Diagnostics\n\nc_diagnostics &lt;- cohortDiagnostics(\n  cohort,\n  cohortId = NULL,\n  cohortCount = TRUE,\n  cohortCharacteristics = TRUE,\n  largeScaleCharacteristics = TRUE,\n  compareCohorts = TRUE,\n  cohortSurvival = FALSE,\n  cohortSample = 20000,\n  matchedSample = 1000\n)\n\n# Modify cohortDiagnostics in phenotypeDiagnostics:\nresult &lt;- phenotypeDiagnostics(\n  cohort,\n  cohortDiagnostics = list(\n    \"cohortSample\" = 1000\n  )\n)"
+    "text": "Cohort Diagnostics\n\nc_diagnostics &lt;- cohortDiagnostics(\n  cohort,\n  cohortId = NULL,\n  cohortCount = TRUE,\n  cohortCharacteristics = TRUE,\n  largeScaleCharacteristics = TRUE,\n  compareCohorts = TRUE,\n  cohortSurvival = FALSE, # Notice that by default, cohortSurvival it's not run!!\n  cohortSample = 20000,\n  matchedSample = 1000\n)\n\n# Modify cohortDiagnostics in phenotypeDiagnostics:\nresult &lt;- phenotypeDiagnostics(\n  cohort,\n  cohortDiagnostics = list(\n    \"cohortSample\" = 1000\n  )\n)"
   },
   {
     "objectID": "PhenotypeR/index.html#population-diagnostics",
     "href": "PhenotypeR/index.html#population-diagnostics",
     "title": "OHDSI EU 2026 Workshop",
     "section": "Population Diagnostics",
-    "text": "Population Diagnostics\n\nContextualise your cohort including:\n\nIncidence\nPrevalence"
+    "text": "Population Diagnostics\n\nContextualises the frequency of your study cohorts in the database calculating:\n\nIncidence\nPeriod Prevalence"
   },
   {
     "objectID": "PhenotypeR/index.html#population-diagnostics-1",
@@ -112,18 +112,25 @@
     "text": "Population Diagnostics\n\nc_diagnostics &lt;- populationDiagnostics(\n  cohort,\n  cohortId = NULL,\n  incidence = TRUE,\n  periodPrevalence = TRUE,\n  populationSample = 1e+05,\n  populationDateRange = as.Date(c(NA, NA))\n)\n\n# Modify populationDiagnostics in phenotypeDiagnostics:\nresult &lt;- phenotypeDiagnostics(\n  cohort,\n  populationDiagnostics = list(\n    \"populationSample\" = 10000\n  )\n)"
   },
   {
-    "objectID": "PhenotypeR/index.html#extra-create-a-database-description-manually-and-add-it-to-the-shiny-app",
-    "href": "PhenotypeR/index.html#extra-create-a-database-description-manually-and-add-it-to-the-shiny-app",
+    "objectID": "PhenotypeR/index.html#summary",
+    "href": "PhenotypeR/index.html#summary",
     "title": "OHDSI EU 2026 Workshop",
-    "section": "Extra: Create a database description manually and add it to the shiny app!",
-    "text": "Extra: Create a database description manually and add it to the shiny app!\n\ndownloadDatabaseDescriptionTemplate(\n  directory = here(),\n  name = \"GiBleed\") # Same name of your database!!!!"
+    "section": "Summary:",
+    "text": "Summary:\n\n\n\n\n\nDatabase diagnostics\n-   databaseDiagnostics()\n\n\n\nCodelist diagnostics\n-   codelistDiagnostics()\n\nCohort diagnostics\n-   cohortDiagnostics()\n\n\n\nPopulation diagnostics\n-   populationDiagnostics()\n\n\n\nRun all the diagnostics together:\n\n\n\n\nresult &lt;- phenotypeDiagnostics(\n  cohort,\n  databaseDiagnostics = list(), \n  codelistDiagnostics = list(), \n  cohortDiagnostics = list(), \n  populationDiagnostics = list(), \n  stagingDirectory = NULL\n)"
   },
   {
-    "objectID": "PhenotypeR/index.html#extra-create-a-clinical-description-manually-and-add-it-to-the-shiny-app",
-    "href": "PhenotypeR/index.html#extra-create-a-clinical-description-manually-and-add-it-to-the-shiny-app",
+    "objectID": "PhenotypeR/index.html#extra-create-a-database-description-manually",
+    "href": "PhenotypeR/index.html#extra-create-a-database-description-manually",
     "title": "OHDSI EU 2026 Workshop",
-    "section": "Extra: Create a clinical description manually and add it to the shiny app!",
-    "text": "Extra: Create a clinical description manually and add it to the shiny app!\n\ndownloadClinicalDescriptionTemplate(\n  directory = here(),\n  name = \"type_2_diabetes\") # Same name of your cohort!!!!"
+    "section": "Extra: Create a database description manually!",
+    "text": "Extra: Create a database description manually!\n\ndownloadDatabaseDescriptionTemplate(\n  directory = here(),\n  name = \"GiBleed\") # Same name of your database!!!!"
+  },
+  {
+    "objectID": "PhenotypeR/index.html#extra-create-a-clinical-description-manually",
+    "href": "PhenotypeR/index.html#extra-create-a-clinical-description-manually",
+    "title": "OHDSI EU 2026 Workshop",
+    "section": "Extra: Create a clinical description manually!",
+    "text": "Extra: Create a clinical description manually!\n\ndownloadClinicalDescriptionTemplate(\n  directory = here(),\n  name = \"type_2_diabetes\") # Same name of your cohort!!!!"
   },
   {
     "objectID": "PhenotypeR/index.html#extra-create-clinical-expectations-for-your-cohorts",
@@ -158,21 +165,21 @@
     "href": "PhenotypeR/index.html#your-turn-create-a-database-description-for-our-database",
     "title": "OHDSI EU 2026 Workshop",
     "section": "3. Your turn! Create a database description for our database",
-    "text": "3. Your turn! Create a database description for our database\nTo create a database description, follow the following instructions:\n\n\nCheck your database name using cdmName(cdm)\n\n\n\n\nDownload a template using downloadDatabaseDescriptionTemplate(). Remember that the docx files MUST have the same name as the database!!!\n\n\n\nHelp: You can check the arguments of the function using:\n??downloadDatabaseDescriptionTemplate or in the PhenotypeR website\n\n\n\nFill the template with the following information (please copy paste):\n\n\n\n\nInformation source: \n\"OHDSI/Eunomia: An R package that facilitates access to a variety of OMOP CDM sample data sets.\"\n\nDescription: \n\"synput-1k_5.3 is a synthetic dataset designed for testing OHDSI tools. It is based on a subsample of Medicare claims data standardised to the OMOP Common Data Model (CDM) version 5.3.  It contains approximately records for 1k participants.\""
+    "text": "3. Your turn! Create a database description for our database\nTo create a database description, follow the following instructions:\n\n\nCheck your database name using cdmName(cdm)\nDownload a template using downloadDatabaseDescriptionTemplate(). Remember that the docx files MUST have the same name as the database!!!\n\n\n\nHelp: You can check the arguments of the function using: ??downloadDatabaseDescriptionTemplate or in the PhenotypeR website\n\nFill the template with the following information (you can copy paste):\n\n\n\n\nInformation source: \n\"OHDSI/Eunomia: An R package that facilitates access to a variety of OMOP CDM sample data sets.\"\n\nDescription: \n\"synput-1k_5.3 is a synthetic dataset designed for testing OHDSI tools. It is based on a subsample of Medicare claims data standardised to the OMOP Common Data Model (CDM) version 5.3.  It contains approximately records for 1k participants.\""
   },
   {
     "objectID": "PhenotypeR/index.html#your-turn-create-clinical-descriptions-for-this-cohorts",
     "href": "PhenotypeR/index.html#your-turn-create-clinical-descriptions-for-this-cohorts",
     "title": "OHDSI EU 2026 Workshop",
     "section": "4. Your turn! Create clinical descriptions for this cohorts",
-    "text": "4. Your turn! Create clinical descriptions for this cohorts\nTo create clinical descriptions for the previous cohorts, follow the following instructions:\n\n\nCheck the name of your cohorts using getCohortName(cdm)\n\n\n\n\nDownload three templates for each of the cohorts using downloadClinicalDescriptionTemplate(). Remember that the docx files MUST have the same name as the cohorts!!!\n\n\n\n??downloadDatabaseDescriptionTemplate or in the PhenotypeR website"
+    "text": "4. Your turn! Create clinical descriptions for this cohorts\nTo create clinical descriptions for the previous cohorts, follow the following instructions:\n\nCheck the name of your cohorts using getCohortName(cdm)\nDownload three templates for each of the cohorts using downloadClinicalDescriptionTemplate(). Remember that the docx files MUST have the same name as the cohorts!!!\n\n\nHelp: You can check the arguments of the function using: ??downloadClinicalDescriptionTemplate or in the PhenotypeR website"
   },
   {
     "objectID": "PhenotypeR/index.html#your-turn-create-clinical-descriptions-for-this-cohorts-1",
     "href": "PhenotypeR/index.html#your-turn-create-clinical-descriptions-for-this-cohorts-1",
     "title": "OHDSI EU 2026 Workshop",
     "section": "4. Your turn! Create clinical descriptions for this cohorts",
-    "text": "4. Your turn! Create clinical descriptions for this cohorts\n\nFill the templates with the following information (please copy paste):\n\n\n\n# Hypertension\nInformation source: \n\"Dynamed (Home - DynaMed)\"\n\nIntroduction: \n\"Hypertension is a sustained elevation of systemic arterial blood pressure, most commonly defined as a systolic blood pressure (BP) ≥ 140 mm Hg or diastolic BP ≥ 90 mm Hg, but definitions vary by professional organization and cardiovascular risk.\nOther names include: primary hypertension, essential hypertension, idiopathic hypertension, sustained hypertension.\"\n\nComplications:\n\"Hypertension is a risk factor for: Coronary artery disease (CAD), Heart failure, Chronic kidney disease, Stroke, Intracerebral hemorrhage, Transient ischemic attack (TIA), Peripheral artery disease (PAD), Aortic regurgitation, Atrial flutter, Mild cognitive impairment (MCI).\"\n\nPhenotyping plan: \n\"Inclusion criteria: At least one record of a diagnosis code for essential hypertension (ConceptId = 320128L). \nIndex date: Date of the first occurrence of the essential hypertension diagnosis code. \nExit criteria: As it is considered a chronic condition, once a patient enters the cohort they remain in it until the end of their observation period in the database.\""
+    "text": "4. Your turn! Create clinical descriptions for this cohorts\n\nFill the templates with the following information (you can copy paste):\n\n\n\n# Hypertension\nInformation source: \n\"Dynamed (Home - DynaMed)\"\n\nIntroduction: \n\"Hypertension is a sustained elevation of systemic arterial blood pressure, most commonly defined as a systolic blood pressure (BP) ≥ 140 mm Hg or diastolic BP ≥ 90 mm Hg, but definitions vary by professional organization and cardiovascular risk.\nOther names include: primary hypertension, essential hypertension, idiopathic hypertension, sustained hypertension.\"\n\nComplications:\n\"Hypertension is a risk factor for: Coronary artery disease (CAD), Heart failure, Chronic kidney disease, Stroke, Intracerebral hemorrhage, Transient ischemic attack (TIA), Peripheral artery disease (PAD), Aortic regurgitation, Atrial flutter, Mild cognitive impairment (MCI).\"\n\nPhenotyping plan: \n\"Inclusion criteria: At least one record of a diagnosis code for essential hypertension (ConceptId = 320128L). \nIndex date: Date of the first occurrence of the essential hypertension diagnosis code. \nExit criteria: As it is considered a chronic condition, once a patient enters the cohort they remain in it until the end of their observation period in the database.\""
   },
   {
     "objectID": "PhenotypeR/index.html#your-turn-create-clinical-descriptions-for-this-cohorts-2",
@@ -193,14 +200,14 @@
     "href": "PhenotypeR/index.html#get-cohort-expectations",
     "title": "OHDSI EU 2026 Workshop",
     "section": "5. Get cohort expectations",
-    "text": "5. Get cohort expectations\nRun the following bit of code to get mock expectations for your cohorts:\n\n\nurl &lt;- \"https://raw.githubusercontent.com/OHDSI/PhenotypeR/main/extras/expectations/expectations.csv\"\n\nexpectationsDir = \"...\" # Write here the directory where to save the expectations\ndownload.file(url, \n              destfile = here(expectationsDir, \"expectations.csv\"), \n              mode = \"wb\")"
+    "text": "5. Get cohort expectations\nRun the following bit of code to download mock expectations for your cohorts.\n\n\nurl &lt;- \"https://raw.githubusercontent.com/OHDSI/OHDSI-EU-2026-Workshop/main/PhenotypeR/expectations.csv\"\n\nexpectationsDir &lt;- \"...\" # Write here the directory where to save the expectations\n\ndownload.file(url, \n              destfile = here(expectationsDir, \"expectations.csv\"), \n              mode = \"wb\")\n\n\n\n\nCheck that you’ve download the expectations properly by reading the csv file:\n\n\n\n\nexp &lt;- read_csv(expectationsDir)\n\ntableCohortExpectations(exp)"
   },
   {
     "objectID": "PhenotypeR/index.html#your-turn-run-phenotypediagnostics",
     "href": "PhenotypeR/index.html#your-turn-run-phenotypediagnostics",
     "title": "OHDSI EU 2026 Workshop",
     "section": "6. Your turn! Run phenotypeDiagnostics",
-    "text": "6. Your turn! Run phenotypeDiagnostics\nWe’ll now run phenotypeDiagnostics() with the following specifications:\n\n\nFor databaseDiagnostics, use the default settings.\nFor codelistDiagnostics:\n\nSet measurementDiagnosticsSample = 1000\nSet drugDiagnosticsSample = 1000"
+    "text": "6. Your turn! Run phenotypeDiagnostics\nWe’ll now run phenotypeDiagnostics() with the following specifications:\n\nFor databaseDiagnostics, use the default settings.\nFor codelistDiagnostics:\n\nSet measurementDiagnosticsSample = 1000\nSet drugDiagnosticsSample = 1000"
   },
   {
     "objectID": "PhenotypeR/index.html#your-turn-run-phenotypediagnostics-1",
@@ -221,7 +228,7 @@
     "href": "PhenotypeR/index.html#solution",
     "title": "OHDSI EU 2026 Workshop",
     "section": "6. Solution:",
-    "text": "6. Solution:\n\nresult &lt;- phenotypeDiagnostics(cohort = cdm[[\"study_cohorts\"]], \n                               databaseDiagnostics = list(), \n                               codelistDiagnostics = list(\n                                 \"measurementDiagnosticsSample\" = 1000,\n                                 \"drugDiagnosticsSample\" = 1000\n                               ),\n                               cohortDiagnostics = list(\n                                 \"diagnostics\" = c(\"cohortCount\", \"cohortCharacteristics\",\n                                                   \"largeScaleCharacteristics\",\n                                                   \"compareCohorts\", \"cohortSurvival\"),\n                                 \"cohortSample\" = NULL,\n                                 \"matchedSample\" = 1000\n                               ),\n                               populationDiagnostics = list(\n                                 \"populationSample\" = 10000\n                               ))"
+    "text": "6. Solution:\n\nresult &lt;- phenotypeDiagnostics(cohort = cdm[[\"study_cohorts\"]], \n                               databaseDiagnostics = list(), \n                               codelistDiagnostics = list(\n                                 \"measurementDiagnosticsSample\" = 1000,\n                                 \"drugDiagnosticsSample\" = 1000\n                               ),\n                               cohortDiagnostics = list(\n                                 \"cohortSurvival\" = TRUE,\n                                 \"cohortSample\" = NULL,\n                                 \"matchedSample\" = 1000\n                               ),\n                               populationDiagnostics = list(\n                                 \"populationSample\" = 10000\n                               ))"
   },
   {
     "objectID": "PhenotypeR/index.html#your-turn-run-your-shiny-app",
@@ -256,14 +263,14 @@
     "href": "PhenotypeR/index.html#your-turn-answer-the-following-questions-from-the-shiny-app-3",
     "title": "OHDSI EU 2026 Workshop",
     "section": "8. Your turn! Answer the following questions from the shiny app:",
-    "text": "8. Your turn! Answer the following questions from the shiny app:\n\nHow many females are within the cohort hypertension?\nHow many people get a prescription of tolazamide 250 MG Oral Tablet (concept ID = 1502811) after 30 days of having an hypertension diagnosis?\nWithin the window 366 to Inf and for the concept Systemic lupus erythematosus (concept ID = 257628), what is the standardised mean differences between the hypertension sampled and the matched cohorts?\nHow many people are in both, hypertension and users of warfarin cohorts?\nWhat is the average number of days between people entering the hypertension cohort and then to the users of warfarin cohort?"
+    "text": "8. Your turn! Answer the following questions from the shiny app:\n\nHow many females are within the cohort hypertension?\nHow many people get a prescription of lovastatin 10 MG Oral Tablet (concept ID = 19019115) after 30 days of having an hypertension diagnosis?\nWhich condition shows the greatest SMD between the matched cohort and the sampled cohort within 1–30 days after warfarin initiation (users_of_warfarin cohort)?\nHow many people are in both, hypertension and users of warfarin cohorts?\nWhat is the average number of days between people entering the hypertension cohort and then to the users of warfarin cohort?"
   },
   {
     "objectID": "PhenotypeR/index.html#your-turn-answer-the-following-questions-from-the-shiny-app-4",
     "href": "PhenotypeR/index.html#your-turn-answer-the-following-questions-from-the-shiny-app-4",
     "title": "OHDSI EU 2026 Workshop",
     "section": "8. Your turn! Answer the following questions from the shiny app:",
-    "text": "8. Your turn! Answer the following questions from the shiny app:\n\nHow many people die in the hypertension cohort? Check if it is aligned with the cohort expectations!\nWhat is the incidence of hypertension between 1/01/2009 to 31/12/2009 in our subsample of 10,000?\nWhat is the prevalence of hypertension between 1/01/2009 to 31/12/2009 in our subsample of 10,000?\nWhat is the prevalence of hypertension between 1/01/2009 to 31/12/2009 in our subsample of 10,000 only among Females?\nSave the prevalence plot as a png image."
+    "text": "8. Your turn! Answer the following questions from the shiny app:\n\nHow many people die in the hypertension cohort? Check if it is aligned with the cohort expectations and explore the survival plot.\nWhat is the incidence of hypertension between 1/01/2009 to 31/12/2009 in our subsample of 10,000?\nWhat is the prevalence of hypertension between 1/01/2009 to 31/12/2009 in our subsample of 10,000?\nWhat is the prevalence of hypertension between 1/01/2009 to 31/12/2009 in our subsample of 10,000 only among Females?\nSave the prevalence plot as a png image."
   },
   {
     "objectID": "PhenotypeR/index.html#your-turn-answer-the-following-questions-from-the-shiny-app-with-hints",
@@ -291,21 +298,21 @@
     "href": "PhenotypeR/index.html#your-turn-answer-the-following-questions-from-the-shiny-app-with-hints-3",
     "title": "OHDSI EU 2026 Workshop",
     "section": "8. Your turn! Answer the following questions from the shiny app (with HINTS)",
-    "text": "8. Your turn! Answer the following questions from the shiny app (with HINTS)\n\nHow many females are within the cohort hypertension?\n\nHINT: Go to Cohort Diagnostics / Cohort characteristics and select the cohort hypertension\n\nHow many people get a prescription of tolazamide 250 MG Oral Tablet (concept ID = 1502811) after 30 days of having an hypertension diagnosis?\n\nHINT: Go to Cohort Diagnostics / Large scale characteristics and select the cohort hypertension. Use the left expandable menu to select drug_exposure table and the window c(1,30)"
+    "text": "8. Your turn! Answer the following questions from the shiny app (with HINTS)\n\nHow many females are within the cohort hypertension?\n\nHINT: Go to Cohort Diagnostics / Cohort characteristics and select the cohort hypertension\n\nHow many people get a prescription of lovastatin 10 MG Oral Tablet (concept ID = 19019115) after 30 days of having an hypertension diagnosis?\n\nHINT: Go to Cohort Diagnostics / Large scale characteristics and select the cohort hypertension. Use the left expandable menu to select drug_exposure table and the window c(1,30)"
   },
   {
     "objectID": "PhenotypeR/index.html#your-turn-answer-the-following-questions-from-the-shiny-app-with-hints-4",
     "href": "PhenotypeR/index.html#your-turn-answer-the-following-questions-from-the-shiny-app-with-hints-4",
     "title": "OHDSI EU 2026 Workshop",
     "section": "8. Your turn! Answer the following questions from the shiny app (with HINTS)",
-    "text": "8. Your turn! Answer the following questions from the shiny app (with HINTS)\n\nWithin the window 366 to Inf and for the concept Systemic lupus erythematosus (concept ID = 257628), what is the standardised mean differences between the hypertension sampled and the matched cohorts?\n\nHINT: Go to Cohort Diagnostics / Compare Large scale characteristics and select the cohort hypertension sampled as reference cohort, and hypertension matched as a comparator cohort. Use the left expandable menu to select condition_occurrence table and the window c(366,Inf)\n\nHow many people are in both, hypertension and users of warfarin cohorts?\n\nHINT: Go to Cohort Diagnostics / Compare cohorts / Cohort Overlap and select the cohort hypertension"
+    "text": "8. Your turn! Answer the following questions from the shiny app (with HINTS)\n\nWhich condition shows the greatest SMD between the matched cohort and the sampled cohort within 1–30 days after warfarin initiation (users_of_warfarin cohort)?\n\nHINT: Go to Cohort Diagnostics / Compare Large scale characteristics and select the cohort users_of_warfarin sampled as reference cohort, and users_of_warfarin matched as a comparator cohort. Use the left expandable menu to select condition_occurrence table and the window c(1,30)\n\nHow many people are in both, hypertension and users of warfarin cohorts?\n\nHINT: Go to Cohort Diagnostics / Compare cohorts / Cohort Overlap and select the cohort hypertension"
   },
   {
     "objectID": "PhenotypeR/index.html#your-turn-answer-the-following-questions-from-the-shiny-app-with-hints-5",
     "href": "PhenotypeR/index.html#your-turn-answer-the-following-questions-from-the-shiny-app-with-hints-5",
     "title": "OHDSI EU 2026 Workshop",
     "section": "8. Your turn! Answer the following questions from the shiny app (with HINTS)",
-    "text": "8. Your turn! Answer the following questions from the shiny app (with HINTS)\n\nWhat is the average number of days between people entering the hypertension cohort and then to the users of warfarin cohort?\n\nHINT: Go to Cohort Diagnostics / Compare cohorts / Cohort Timing and select the cohort hypertension\n\nHow many people die in the hypertension cohort? Check if it is aligned with the cohort expectations!\n\nHINT: Go to Cohort Diagnostics / Cohort Survival and select the cohort hypertension. Explore the table and the plot!\n\nWhat is the incidence of hypertension between 1/01/2009 to 31/12/2009 in our subsample of 10,000?\n\nHINT: Go to Population Diagnostics / Incidence and select the cohort hypertension"
+    "text": "8. Your turn! Answer the following questions from the shiny app (with HINTS)\n\nWhat is the average number of days between people entering the hypertension cohort and then to the users of warfarin cohort?\n\nHINT: Go to Cohort Diagnostics / Compare cohorts / Cohort Timing and select the cohort hypertension\n\nHow many people die in the hypertension cohort? Check if it is aligned with the cohort expectations and explore the survival plot.\n\nHINT: Go to Cohort Diagnostics / Cohort Survival and select the cohort hypertension. Explore the table and the plot!\n\nWhat is the incidence of hypertension between 1/01/2009 to 31/12/2009 in our subsample of 10,000?\n\nHINT: Go to Population Diagnostics / Incidence and select the cohort hypertension"
   },
   {
     "objectID": "PhenotypeR/index.html#your-turn-answer-the-following-questions-from-the-shiny-app-with-hints-6",
@@ -333,21 +340,21 @@
     "href": "PhenotypeR/index.html#your-turn-answer-the-following-questions-from-the-shiny-app-answers-2",
     "title": "OHDSI EU 2026 Workshop",
     "section": "8. Your turn! Answer the following questions from the shiny app (ANSWERS)",
-    "text": "8. Your turn! Answer the following questions from the shiny app (ANSWERS)\n\nFor our cohort measurement of prostate specific antigen level, how many days are between measurements (in average)?\n\nRE: Median [Q25 - Q75] = 226 [88 – 571]\n\nHow many records are excluded after merging overlapping records in the cohort hypertension?\n\nRE: 1,406\n\nHow many females are within the cohort hypertension?\n\nRE: N (%) = 2,145 (50.94%)\n\nHow many people get a prescription of tolazamide 250 MG Oral Tablet (concept ID = 1502811) after 30 days of having an hypertension diagnosis?\n\nRE: 1"
+    "text": "8. Your turn! Answer the following questions from the shiny app (ANSWERS)\n\nFor our cohort measurement of prostate specific antigen level, how many days are between measurements (in average)?\n\nRE: Median [Q25 - Q75] = 226 [88 – 571]\n\nHow many records are excluded after merging overlapping records in the cohort hypertension?\n\nRE: 1,406\n\nHow many females are within the cohort hypertension?\n\nRE: N (%) = 2,145 (50.94%)\n\nHow many people get a prescription of lovastatin 10 MG Oral Tablet (concept ID = 19019115) after 30 days of having an hypertension diagnosis?\n\nRE: 19"
   },
   {
     "objectID": "PhenotypeR/index.html#your-turn-answer-the-following-questions-from-the-shiny-app-answers-3",
     "href": "PhenotypeR/index.html#your-turn-answer-the-following-questions-from-the-shiny-app-answers-3",
     "title": "OHDSI EU 2026 Workshop",
     "section": "8. Your turn! Answer the following questions from the shiny app (ANSWERS)",
-    "text": "8. Your turn! Answer the following questions from the shiny app (ANSWERS)\n\nWithin the window 366 to Inf and for the concept Systemic lupus erythematosus (concept ID = 257628), what is the standardised mean differences between the hypertension sampled and the matched cohorts?\n\nRE: 1.414\n\nHow many people are in both, hypertension and users of warfarin cohorts?\n\nRE: 52\n\nWhat is the average number of days between people entering the hypertension cohort and then to the users of warfarin cohort?\n\nRE: 229"
+    "text": "8. Your turn! Answer the following questions from the shiny app (ANSWERS)\n\nWhich condition shows the greatest SMD between the matched cohort and the sampled cohort within 1–30 days after warfarin initiation (users_of_warfarin cohort)?\n\nRE: type 2 diabetes, with an SMD = 0.562\n\nHow many people are in both, hypertension and users of warfarin cohorts?\n\nRE: 52\n\nWhat is the average number of days between people entering the hypertension cohort and then to the users of warfarin cohort?\n\nRE: 229"
   },
   {
     "objectID": "PhenotypeR/index.html#your-turn-answer-the-following-questions-from-the-shiny-app-answers-4",
     "href": "PhenotypeR/index.html#your-turn-answer-the-following-questions-from-the-shiny-app-answers-4",
     "title": "OHDSI EU 2026 Workshop",
     "section": "8. Your turn! Answer the following questions from the shiny app (ANSWERS)",
-    "text": "8. Your turn! Answer the following questions from the shiny app (ANSWERS)\n\nHow many people die in the hypertension cohort? Check if it is aligned with the cohort expectations!\n\nRE: 5. If we observe the plot, we can see that the maximum number of follow-up days are 1077 (equivalent to 2.95 years), and a survival probability of approximately 97%. The expectations say that the average survival after 5 years of the diagnosis is 85% to 95%.\n\nWhat is the incidence of hypertension between 1/01/2009 to 31/12/2009 in our subsample of 10,000?\n\nRE: Incidence 100,000 person-years [95% CI] = 41,413.76 (34,550.51 - 49,241.10)"
+    "text": "8. Your turn! Answer the following questions from the shiny app (ANSWERS)\n\nHow many people die in the hypertension cohort? Check if it is aligned with the cohort expectations and explore the survival plot.\n\nRE: 93. If we observe the plot, we can see that the maximum number of follow-up days are 1077 (equivalent to 2.95 years), and a survival probability of approximately 96%. The expectations say that the average survival after 5 years of the diagnosis is 85% to 95%.\n\nWhat is the incidence of hypertension between 1/01/2009 to 31/12/2009 in our subsample of 10,000?\n\nRE: Incidence 100,000 person-years [95% CI] = 41,413.76 (34,550.51 - 49,241.10)"
   },
   {
     "objectID": "PhenotypeR/index.html#your-turn-answer-the-following-questions-from-the-shiny-app-answers-5",
@@ -361,7 +368,7 @@
     "href": "PhenotypeR/index.html#phenotyper-1",
     "title": "OHDSI EU 2026 Workshop",
     "section": "PhenotypeR",
-    "text": "PhenotypeR\n\n\n👉 Packages website\n👉 CRAN link\n👉 Manual\n📧 marta.alcaldeherraiz@ndorms.ox.ac.uk"
+    "text": "PhenotypeR\n\n\n👉 Package website\n👉 CRAN link\n👉 GitHub link\n👉 Manual 📧 edward.burn@ndorms.ox.ac.uk 📧 marta.alcaldeherraiz@ndorms.ox.ac.uk"
   },
   {
     "objectID": "CohortConstructor/index.html#motivation",
@@ -375,14 +382,14 @@
     "href": "CohortConstructor/index.html#motivation-build-in-a-tidy-way",
     "title": "CohortConstructor",
     "section": "Motivation: Build in a tidy way",
-    "text": "Motivation: Build in a tidy way\n\nomopgenerics and CDMConnector define an ecosystem of R packages that allow us to interact with an OMOP CDM instance using packages such as dplyr and tidyr.\n\n\n\nlibrary(omock)\ncdm &lt;- mockCdmFromDataset(datasetName = \"GiBleed\", source = \"duckdb\")\ncdm$person\n\n# Source:   table&lt;person&gt; [?? x 18]\n# Database: DuckDB 1.5.0 [unknown@Linux 6.17.0-1010-azure:R 4.5.3//tmp/RtmpTdND18/file15c17181f49f.duckdb]\n   person_id gender_concept_id year_of_birth month_of_birth day_of_birth birth_datetime      race_concept_id\n       &lt;int&gt;             &lt;int&gt;         &lt;int&gt;          &lt;int&gt;        &lt;int&gt; &lt;dttm&gt;                        &lt;int&gt;\n 1         6              8532          1963             12           31 1963-12-31 00:00:00            8516\n 2       123              8507          1950              4           12 1950-04-12 00:00:00            8527\n 3       129              8507          1974             10            7 1974-10-07 00:00:00            8527\n 4        16              8532          1971             10           13 1971-10-13 00:00:00            8527\n 5        65              8532          1967              3           31 1967-03-31 00:00:00            8516\n 6        74              8532          1972              1            5 1972-01-05 00:00:00            8527\n 7        42              8532          1909             11            2 1909-11-02 00:00:00            8527\n 8       187              8507          1945              7           23 1945-07-23 00:00:00            8527\n 9        18              8532          1965             11           17 1965-11-17 00:00:00            8527\n10       111              8532          1975              5            2 1975-05-02 00:00:00            8527\n# ℹ more rows\n# ℹ 11 more variables: ethnicity_concept_id &lt;int&gt;, location_id &lt;int&gt;, provider_id &lt;int&gt;, care_site_id &lt;int&gt;,\n#   person_source_value &lt;chr&gt;, gender_source_value &lt;chr&gt;, gender_source_concept_id &lt;int&gt;, race_source_value &lt;chr&gt;,\n#   race_source_concept_id &lt;int&gt;, ethnicity_source_value &lt;chr&gt;, ethnicity_source_concept_id &lt;int&gt;"
+    "text": "Motivation: Build in a tidy way\n\nomopgenerics and CDMConnector define an ecosystem of R packages that allow us to interact with an OMOP CDM instance using packages such as dplyr and tidyr.\n\n\n\nlibrary(omock)\ncdm &lt;- mockCdmFromDataset(datasetName = \"GiBleed\", source = \"duckdb\")\ncdm$person\n\n# Source:   table&lt;person&gt; [?? x 18]\n# Database: DuckDB 1.5.0 [unknown@Linux 6.17.0-1010-azure:R 4.5.3//tmp/RtmphkvSCy/file1601724b99b2.duckdb]\n   person_id gender_concept_id year_of_birth month_of_birth day_of_birth birth_datetime      race_concept_id\n       &lt;int&gt;             &lt;int&gt;         &lt;int&gt;          &lt;int&gt;        &lt;int&gt; &lt;dttm&gt;                        &lt;int&gt;\n 1         6              8532          1963             12           31 1963-12-31 00:00:00            8516\n 2       123              8507          1950              4           12 1950-04-12 00:00:00            8527\n 3       129              8507          1974             10            7 1974-10-07 00:00:00            8527\n 4        16              8532          1971             10           13 1971-10-13 00:00:00            8527\n 5        65              8532          1967              3           31 1967-03-31 00:00:00            8516\n 6        74              8532          1972              1            5 1972-01-05 00:00:00            8527\n 7        42              8532          1909             11            2 1909-11-02 00:00:00            8527\n 8       187              8507          1945              7           23 1945-07-23 00:00:00            8527\n 9        18              8532          1965             11           17 1965-11-17 00:00:00            8527\n10       111              8532          1975              5            2 1975-05-02 00:00:00            8527\n# ℹ more rows\n# ℹ 11 more variables: ethnicity_concept_id &lt;int&gt;, location_id &lt;int&gt;, provider_id &lt;int&gt;, care_site_id &lt;int&gt;,\n#   person_source_value &lt;chr&gt;, gender_source_value &lt;chr&gt;, gender_source_concept_id &lt;int&gt;, race_source_value &lt;chr&gt;,\n#   race_source_concept_id &lt;int&gt;, ethnicity_source_value &lt;chr&gt;, ethnicity_source_concept_id &lt;int&gt;"
   },
   {
     "objectID": "CohortConstructor/index.html#motivation-build-in-a-tidy-way-1",
     "href": "CohortConstructor/index.html#motivation-build-in-a-tidy-way-1",
     "title": "CohortConstructor",
     "section": "Motivation: Build in a tidy way",
-    "text": "Motivation: Build in a tidy way\n\nlibrary(dplyr)\ncdm$person |&gt;\n  select(person_id, sex = gender_concept_id) |&gt;\n  left_join(\n    cdm$observation_period |&gt;\n      select(person_id, obs_start = observation_period_start_date),\n    by = \"person_id\"\n  ) |&gt;\n  glimpse()\n\nRows: ??\nColumns: 3\nDatabase: DuckDB 1.5.0 [unknown@Linux 6.17.0-1010-azure:R 4.5.3//tmp/RtmpTdND18/file15c17181f49f.duckdb]\n$ person_id &lt;int&gt; 6, 16, 42, 18, 35, 40, 53, 9, 2, 49, 11, 61, 32, 43, 12, 7, 17, 41, 63, 19, 5, 30, 3, 36, 57, 1, 23,…\n$ sex       &lt;int&gt; 8532, 8532, 8532, 8532, 8532, 8507, 8507, 8532, 8532, 8507, 8507, 8532, 8507, 8532, 8532, 8532, 8532…\n$ obs_start &lt;date&gt; 1963-12-31, 1971-10-14, 1909-11-03, 1965-11-17, 1960-03-22, 1951-12-05, 1962-08-15, 1978-07-20, 192…\n\n\n\nFor more details on this approach please refer to the following book:\nBurn, E., & Català, M. (2025). Tidy R programming with the OMOP Common Data Model (first edition). Zenodo. https://doi.org/10.5281/zenodo.17532124. Online version"
+    "text": "Motivation: Build in a tidy way\n\nlibrary(dplyr)\ncdm$person |&gt;\n  select(person_id, sex = gender_concept_id) |&gt;\n  left_join(\n    cdm$observation_period |&gt;\n      select(person_id, obs_start = observation_period_start_date),\n    by = \"person_id\"\n  ) |&gt;\n  glimpse()\n\nRows: ??\nColumns: 3\nDatabase: DuckDB 1.5.0 [unknown@Linux 6.17.0-1010-azure:R 4.5.3//tmp/RtmphkvSCy/file1601724b99b2.duckdb]\n$ person_id &lt;int&gt; 6, 16, 42, 18, 35, 40, 53, 9, 2, 49, 11, 61, 32, 43, 12, 7, 17, 41, 63, 19, 5, 30, 3, 36, 57, 1, 23,…\n$ sex       &lt;int&gt; 8532, 8532, 8532, 8532, 8532, 8507, 8507, 8532, 8532, 8507, 8507, 8532, 8507, 8532, 8532, 8532, 8532…\n$ obs_start &lt;date&gt; 1963-12-31, 1971-10-14, 1909-11-03, 1965-11-17, 1960-03-22, 1951-12-05, 1962-08-15, 1978-07-20, 192…\n\n\n\nFor more details on this approach please refer to the following book:\nBurn, E., & Català, M. (2025). Tidy R programming with the OMOP Common Data Model (first edition). Zenodo. https://doi.org/10.5281/zenodo.17532124. Online version"
   },
   {
     "objectID": "CohortConstructor/index.html#motivation-order-of-operations-atlas",
@@ -438,7 +445,7 @@
     "href": "CohortConstructor/index.html#omop-cohorts-in-r-2",
     "title": "CohortConstructor",
     "section": "OMOP Cohorts in R",
-    "text": "OMOP Cohorts in R\n\ncdm$cohort\n\n# Source:   table&lt;results.test_cohort&gt; [?? x 4]\n# Database: DuckDB 1.5.0 [unknown@Linux 6.17.0-1010-azure:R 4.5.3//tmp/RtmpTdND18/file15c17181f49f.duckdb]\n   cohort_definition_id subject_id cohort_start_date cohort_end_date\n                  &lt;int&gt;      &lt;int&gt; &lt;date&gt;            &lt;date&gt;         \n 1                    2       2461 2002-02-16        2002-03-09     \n 2                    2       3561 1967-11-24        1967-12-15     \n 3                    2       3561 2014-04-19        2014-05-10     \n 4                    2       4125 1985-11-15        1985-11-22     \n 5                    2       4275 2015-02-06        2015-02-13     \n 6                    2       4621 1996-02-04        1996-02-25     \n 7                    2       4724 1952-11-14        1952-11-28     \n 8                    2       2325 1973-11-18        1973-11-25     \n 9                    2       2686 1989-10-29        1989-11-19     \n10                    2       2860 1952-10-28        1952-11-04     \n# ℹ more rows"
+    "text": "OMOP Cohorts in R\n\ncdm$cohort\n\n# Source:   table&lt;results.test_cohort&gt; [?? x 4]\n# Database: DuckDB 1.5.0 [unknown@Linux 6.17.0-1010-azure:R 4.5.3//tmp/RtmphkvSCy/file1601724b99b2.duckdb]\n   cohort_definition_id subject_id cohort_start_date cohort_end_date\n                  &lt;int&gt;      &lt;int&gt; &lt;date&gt;            &lt;date&gt;         \n 1                    1        153 1945-08-10        1945-08-19     \n 2                    1        299 1965-10-29        1965-11-11     \n 3                    1        439 1979-07-24        1979-08-02     \n 4                    1        653 1959-02-01        1959-02-11     \n 5                    1        752 1985-11-21        1985-12-04     \n 6                    1        883 2005-04-26        2005-05-07     \n 7                    1       1068 2018-10-21        2018-11-02     \n 8                    1       1623 2002-05-12        2002-05-22     \n 9                    1       2450 1980-01-17        1980-01-28     \n10                    1       3399 1996-11-02        1996-11-10     \n# ℹ more rows"
   },
   {
     "objectID": "CohortConstructor/index.html#omop-cohorts-in-r-3",
@@ -466,7 +473,7 @@
     "href": "CohortConstructor/index.html#omop-cohorts-in-r-6",
     "title": "CohortConstructor",
     "section": "OMOP Cohorts in R",
-    "text": "OMOP Cohorts in R\n\nCohort codelist: Codelists used to define entry events and inclusion criteria for each cohort.\n\n\n\nattr(cdm$cohort, \"cohort_codelist\")\n\n# Source:   table&lt;results.test_cohort_codelist&gt; [?? x 4]\n# Database: DuckDB 1.5.0 [unknown@Linux 6.17.0-1010-azure:R 4.5.3//tmp/RtmpTdND18/file15c17181f49f.duckdb]\n  cohort_definition_id codelist_name     concept_id codelist_type\n                 &lt;int&gt; &lt;chr&gt;                  &lt;int&gt; &lt;chr&gt;        \n1                    1 viral_pharyngitis    4112343 index event  \n2                    2 viral_sinusitis     40481087 index event"
+    "text": "OMOP Cohorts in R\n\nCohort codelist: Codelists used to define entry events and inclusion criteria for each cohort.\n\n\n\nattr(cdm$cohort, \"cohort_codelist\")\n\n# Source:   table&lt;results.test_cohort_codelist&gt; [?? x 4]\n# Database: DuckDB 1.5.0 [unknown@Linux 6.17.0-1010-azure:R 4.5.3//tmp/RtmphkvSCy/file1601724b99b2.duckdb]\n  cohort_definition_id codelist_name     concept_id codelist_type\n                 &lt;int&gt; &lt;chr&gt;                  &lt;int&gt; &lt;chr&gt;        \n1                    1 viral_pharyngitis    4112343 index event  \n2                    2 viral_sinusitis     40481087 index event"
   },
   {
     "objectID": "CohortConstructor/index.html#cohortconstructor-pipeline",
@@ -543,7 +550,7 @@
     "href": "CohortConstructor/index.html#concept-based---example-3",
     "title": "CohortConstructor",
     "section": "Concept based - Example",
-    "text": "Concept based - Example\n\n\n\n\nCohort codelist as an attribute\n\n\n\nattr(cdm$medications, \"cohort_codelist\")\n\n# Source:   table&lt;medications_codelist&gt; [?? x 4]\n# Database: DuckDB 1.5.0 [unknown@Linux 6.17.0-1010-azure:R 4.5.3//tmp/RtmpTdND18/file15c1f5cd6ed.duckdb]\n   cohort_definition_id codelist_name concept_id codelist_type\n                  &lt;int&gt; &lt;chr&gt;              &lt;int&gt; &lt;chr&gt;        \n 1                    1 acetaminophen     587290 index event  \n 2                    1 acetaminophen     587473 index event  \n 3                    1 acetaminophen     587705 index event  \n 4                    1 acetaminophen     587929 index event  \n 5                    1 acetaminophen     588401 index event  \n 6                    1 acetaminophen     588590 index event  \n 7                    1 acetaminophen     588717 index event  \n 8                    1 acetaminophen     589218 index event  \n 9                    1 acetaminophen     589245 index event  \n10                    1 acetaminophen     589441 index event  \n# ℹ more rows"
+    "text": "Concept based - Example\n\n\n\n\nCohort codelist as an attribute\n\n\n\nattr(cdm$medications, \"cohort_codelist\")\n\n# Source:   table&lt;medications_codelist&gt; [?? x 4]\n# Database: DuckDB 1.5.0 [unknown@Linux 6.17.0-1010-azure:R 4.5.3//tmp/RtmphkvSCy/file16011baffb68.duckdb]\n   cohort_definition_id codelist_name concept_id codelist_type\n                  &lt;int&gt; &lt;chr&gt;              &lt;int&gt; &lt;chr&gt;        \n 1                    1 acetaminophen     587290 index event  \n 2                    1 acetaminophen     587473 index event  \n 3                    1 acetaminophen     587705 index event  \n 4                    1 acetaminophen     587929 index event  \n 5                    1 acetaminophen     588401 index event  \n 6                    1 acetaminophen     588590 index event  \n 7                    1 acetaminophen     588717 index event  \n 8                    1 acetaminophen     589218 index event  \n 9                    1 acetaminophen     589245 index event  \n10                    1 acetaminophen     589441 index event  \n# ℹ more rows"
   },
   {
     "objectID": "CohortConstructor/index.html#measurement-based---example",
@@ -571,7 +578,7 @@
     "href": "CohortConstructor/index.html#measurement-based---example-3",
     "title": "CohortConstructor",
     "section": "Measurement based - Example",
-    "text": "Measurement based - Example\n\n\n\n\nCohort codelist as an attribute\n\n\n\nattr(cdm$hyp_sbp, \"cohort_codelist\")\n\n# Source:   table&lt;hyp_sbp_codelist&gt; [?? x 4]\n# Database: DuckDB 1.5.0 [unknown@Linux 6.17.0-1010-azure:R 4.5.3//tmp/RtmpTdND18/file15c1f5cd6ed.duckdb]\n   cohort_definition_id codelist_name      concept_id codelist_type\n                  &lt;int&gt; &lt;chr&gt;                   &lt;int&gt; &lt;chr&gt;        \n 1                    1 syst_blood_presure     608615 index event  \n 2                    1 syst_blood_presure     903107 index event  \n 3                    1 syst_blood_presure     903118 index event  \n 4                    1 syst_blood_presure    1076804 index event  \n 5                    1 syst_blood_presure    1076806 index event  \n 6                    1 syst_blood_presure    1076808 index event  \n 7                    1 syst_blood_presure    3000054 index event  \n 8                    1 syst_blood_presure    3000368 index event  \n 9                    1 syst_blood_presure    3000605 index event  \n10                    1 syst_blood_presure    3000653 index event  \n# ℹ more rows"
+    "text": "Measurement based - Example\n\n\n\n\nCohort codelist as an attribute\n\n\n\nattr(cdm$hyp_sbp, \"cohort_codelist\")\n\n# Source:   table&lt;hyp_sbp_codelist&gt; [?? x 4]\n# Database: DuckDB 1.5.0 [unknown@Linux 6.17.0-1010-azure:R 4.5.3//tmp/RtmphkvSCy/file16011baffb68.duckdb]\n   cohort_definition_id codelist_name      concept_id codelist_type\n                  &lt;int&gt; &lt;chr&gt;                   &lt;int&gt; &lt;chr&gt;        \n 1                    1 syst_blood_presure     608615 index event  \n 2                    1 syst_blood_presure     903107 index event  \n 3                    1 syst_blood_presure     903118 index event  \n 4                    1 syst_blood_presure    1076804 index event  \n 5                    1 syst_blood_presure    1076806 index event  \n 6                    1 syst_blood_presure    1076808 index event  \n 7                    1 syst_blood_presure    3000054 index event  \n 8                    1 syst_blood_presure    3000368 index event  \n 9                    1 syst_blood_presure    3000605 index event  \n10                    1 syst_blood_presure    3000653 index event  \n# ℹ more rows"
   },
   {
     "objectID": "CohortConstructor/index.html#get-started-create-the-cdm_reference-object",
