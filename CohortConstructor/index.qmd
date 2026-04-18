@@ -625,7 +625,7 @@ attr(cdm$hyp_sbp, "cohort_codelist")
 
 ## Get Started: Create the cdm_reference object
 
-```{r, warning=FALSE}
+```{r, eval=FALSE}
 # Load relevant packages
 library(CDMConnector)
 library(duckdb)
