@@ -1,1 +1,61 @@
 ## Setup
+
+To follow the demonstrations of this presentation you will need [R](https://cran.r-project.org/bin/windows/base/) installed and an IDE like [R Studio](https://posit.co/products/open-source/rstudio) or [Positron](https://positron.posit.co/download.html).
+
+And some R packages, please copy paste this code to make sure you have all the packages we need:
+
+```{r, eval=FALSE}
+install.packages(c(
+  "CDMConnector", "duckdb", "CohortConstructor", "PhenotypeR", "gt", "visOmopResults",
+  "ggplot2", "plotly", "flextable", "omock", "here"
+))
+```
+
+In addition we will use synthetic OMOP CDM datasets to conduct the workshop. In order to download your data set in your laptop you must follow these steps:
+
+- Create a folder: For example: '/Users/martics/Documents/OMOP/'
+
+- Open your R environment file, run the following code in the console: 
+
+```{r, eval=FALSE}
+usethis::edit_r_environ()
+```
+
+- Write the following:
+
+```
+OMOP_DATA_FOLDER="path/to/your/folder"
+```
+
+- Restart R
+
+```{r, eval=FALSE}
+options(timeout = 600)
+omock::downloadMockDataset(datasetName = "synpuf-1k_5.3")
+```
+
+If you are all set you should be able to run the following code:
+
+```{r}
+library(omock)
+library(CohortConstructor)
+library(PhenotypeR)
+
+cdm <- mockCdmFromDataset(datasetName = "synpuf-1k_5.3", source = "duckdb")
+cdm
+```
+
+::: {.callout-note collapse="true"}
+## Alternative if you can not download 'synpuf-1k_5.3'
+
+Alternatively you can connect to an smaller dataset: *GiBleed*
+
+```{r}
+cdm <- mockCdmFromDataset(datasetName = "GiBleed", source = "duckdb")
+cdm
+```
+:::
+
+## Alternative (use posit cloud)
+
+Join posit cloud [here](https://posit.cloud/spaces/777897/join?access_code=hTqOr2YOVVQrdLz-AhTuCzD0DmnHwe-_3eNLwyie).

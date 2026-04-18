@@ -16,6 +16,8 @@ name: Quarto Publish
 jobs:
   build-deploy:
     runs-on: ubuntu-latest
+    env:
+      OMOP_DATA_FOLDER: ${{ github.workspace }}/omop-data
     steps:
       - name: Check out repository
         uses: actions/checkout@v2
@@ -28,6 +30,11 @@ jobs:
 
       - name: Install R libraries in renv # add packages to the renv file if you need them to render the code
         uses: r-lib/actions/setup-renv@v2
+
+      - name: Download OMOP mock data
+        run: |
+          mkdir -p "${OMOP_DATA_FOLDER}"
+          Rscript -e 'omock::downloadMockDataset(datasetName = "synpuf-1k_5.3")'
 
       - name: Render quarto website
         run: quarto render
