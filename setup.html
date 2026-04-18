@@ -176,8 +176,9 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">install.packages</span>(<span class="fu">c</span>(</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>  <span class="st">"CDMConnector"</span>, <span class="st">"duckdb"</span>, <span class="st">"CohortConstructor"</span>, <span class="st">"PhenotypeR"</span>, <span class="st">"gt"</span>, <span class="st">"visOmopResults"</span>,</span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>  <span class="st">"ggplot2"</span>, <span class="st">"plotly"</span>, <span class="st">"flextable"</span>, <span class="st">"omock"</span>, <span class="st">"here"</span></span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>  <span class="st">"ggplot2"</span>, <span class="st">"plotly"</span>, <span class="st">"flextable"</span>, <span class="st">"omock"</span>, <span class="st">"here"</span>, <span class="st">"IncidencePrevalence"</span>,</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>  <span class="st">"CohortCharacteristics"</span>, <span class="st">"DrugUtilisation"</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p>In addition we will use synthetic OMOP CDM datasets to conduct the workshop. In order to download your data set in your laptop you must follow these steps:</p>
 <ul>
@@ -196,36 +197,43 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </ul>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">options</span>(<span class="at">timeout =</span> <span class="dv">600</span>)</span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>omock<span class="sc">::</span><span class="fu">downloadMockDataset</span>(<span class="at">datasetName =</span> <span class="st">"synpuf-1k_5.3"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>omock<span class="sc">::</span><span class="fu">downloadMockDataset</span>(<span class="at">datasetName =</span> <span class="st">"synpuf-1k_5.3"</span>)</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>omock<span class="sc">::</span><span class="fu">downloadMockDataset</span>(<span class="at">datasetName =</span> <span class="st">"delphi-100k_5.4"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p>If you are all set you should be able to run the following code:</p>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(omock)</span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(CohortConstructor)</span>
-<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(PhenotypeR)</span>
-<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>cdm <span class="ot">&lt;-</span> <span class="fu">mockCdmFromDataset</span>(<span class="at">datasetName =</span> <span class="st">"synpuf-1k_5.3"</span>, <span class="at">source =</span> <span class="st">"duckdb"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stderr">
-<pre><code>ℹ Reading synpuf-1k_5.3 tables.
-ℹ Adding drug_strength table.
-ℹ Creating local &lt;cdm_reference&gt; object.
-ℹ Inserting &lt;cdm_reference&gt; into duckdb.</code></pre>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(PhenotypeR)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>cdm <span class="ot">&lt;-</span> <span class="fu">mockCdmFromDataset</span>(<span class="at">datasetName =</span> <span class="st">"synpuf-1k_5.3"</span>, <span class="at">source =</span> <span class="st">"duckdb"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>cdm</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stderr">
-<pre><code>
-── # OMOP CDM reference (duckdb) of synpuf-1k ──────────────────────────────────
-• omop tables: attribute_definition, care_site, cdm_source, cohort_definition,
-concept, concept_ancestor, concept_class, concept_relationship,
-concept_synonym, condition_era, condition_occurrence, cost, death,
-device_exposure, domain, dose_era, drug_era, drug_exposure, drug_strength,
-fact_relationship, location, measurement, metadata, note, note_nlp,
-observation, observation_period, payer_plan_period, person,
+<pre><code></code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>── # OMOP CDM reference (duckdb) of synpuf-1k_5.3 ──────────────────────────────</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>• omop tables: care_site, cdm_source, concept, concept_ancestor, concept_class,
+concept_relationship, concept_synonym, condition_era, condition_occurrence,
+cost, death, device_exposure, domain, dose_era, drug_era, drug_exposure,
+drug_strength, fact_relationship, location, measurement, metadata, note,
+note_nlp, observation, observation_period, payer_plan_period, person,
 procedure_occurrence, provider, relationship, source_to_concept_map, specimen,
-visit_detail, visit_occurrence, vocabulary
-• cohort tables: -
-• achilles tables: -
-• other tables: -</code></pre>
+visit_detail, visit_occurrence, vocabulary</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>• cohort tables: -</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>• achilles tables: -</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>• other tables: -</code></pre>
 </div>
 </div>
 <div class="callout callout-style-default callout-note callout-titled">
@@ -242,14 +250,14 @@ visit_detail, visit_occurrence, vocabulary
 <div class="callout-body-container callout-body">
 <p>Alternatively you can connect to an smaller dataset: <em>GiBleed</em></p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>cdm <span class="ot">&lt;-</span> <span class="fu">mockCdmFromDataset</span>(<span class="at">datasetName =</span> <span class="st">"GiBleed"</span>, <span class="at">source =</span> <span class="st">"duckdb"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>cdm <span class="ot">&lt;-</span> <span class="fu">mockCdmFromDataset</span>(<span class="at">datasetName =</span> <span class="st">"GiBleed"</span>, <span class="at">source =</span> <span class="st">"duckdb"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stderr">
 <pre><code>ℹ Loading bundled GiBleed tables from package data.
 ℹ Adding drug_strength table.
 ℹ Creating local &lt;cdm_reference&gt; object.
 ℹ Inserting &lt;cdm_reference&gt; into duckdb.</code></pre>
 </div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>cdm</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>cdm</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stderr">
 <pre><code>
 ── # OMOP CDM reference (duckdb) of GiBleed ────────────────────────────────────
